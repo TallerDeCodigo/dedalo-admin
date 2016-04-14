@@ -23,7 +23,7 @@
 						<a href="<?php echo bloginfo('url'); ?>"><h1>DEDALO</h1></a>
 					</div><!-- logo -->
 					<div class="login">
-						<a href="">LOGIN</a><a class="profilepic" href=""><img src="<?php echo THEMEPATH; ?>/images/profilepic.png"></a>
+						<a href="<?php echo bloginfo('url'); ?>/login">LOGIN</a><a class="profilepic" href=""><img src="<?php echo THEMEPATH; ?>/images/profilepic.png"></a>
 					</div><!-- login -->
 				</div><!-- contenedor -->
 			</div><!--header-->
