@@ -2,20 +2,50 @@
 
 
 <!--social Login buttons-->
+<div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" data-auto-logout-link="false"></div>
 
-<form method="post" action="<?php echo bloginfo('url')?>/dataprocess" id="testform">
-	<input name="_id" type="text" placeholder="tu id">
-	<input name="fname" type="text" placeholder="tu nombre">
-	<input name="lname" type="text" placeholder="tu apellido">
-	<input name="contra" type="text" placeholder="tu contraseña">
-	<input name="correo" type="email" placeholder="correo electrónico">
-	<input type="submit" placeholder="enviar" value="enviar"> 
-</form>	
+<div class="twitter_button">
+	<img src="<?php echo THEMEPATH; ?>images/sign-in-with-twitter-gray.png">
+</div>
 
+<section id="centrar">
+
+  <?php 
+  $redir = site_url('');
+$args = array(
+	'echo'           => true,
+	'remember'       => true,
+	'redirect'       => $redir,
+	'form_id'        => 'loginform',
+	'id_username'    => 'user_login',
+	'id_password'    => 'user_pass',
+	'id_remember'    => 'rememberme',
+	'id_submit'      => 'wp-submit',
+	'label_username' => __( 'Username' ),
+	'label_password' => __( 'Password' ),
+	'label_remember' => __( 'Remember Me' ),
+	'label_log_in'   => __( 'Log In' ),
+	'value_username' => '',
+	'value_remember' => false
+);
+
+wp_login_form($args); ?>
+
+<form method="post" action="<?php echo bloginfo('url')?>/signup" id="registro">
+	<input type="submit" value="Regístrate">
+</form>
+</section>
 
 <style>
-	#testform{margin:50px auto;}
-	input{display: block; border:1px solid #000;margin:10px; padding:3px;}
+	label{display:none;}
+	/*#centrar{width:20%;border:1px solid red;margin:0 auto;text-align: center}
+	#registro{position:relative;top:-72px;left:100px;}
+	#testform{padding:20px;background-color: #000;}
+	.fb-login-button{margin:20px 0 0 10px;} 
+	.twitter_button{margin:20px 0 20px 10px;}
+	#testform{margin:20px auto;}
+	input{display: block;  border-bottom:1px solid #fff;border-style:none;text-align:center;margin:10px; padding:3px;background:none;color:#666;}
+	input[type=submit]{width:80px; background:none; border:none}*/
 </style>
 <?php get_sidebar(); ?>
 <?php get_footer(); ?>
