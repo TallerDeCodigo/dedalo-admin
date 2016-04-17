@@ -2,11 +2,11 @@
 
 
 <!--social Login buttons-->
-<div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" data-auto-logout-link="false"></div>
+<div class="fb-login-button" data-max-rows="2" data-size="medium" data-show-faces="false" data-auto-logout-link="true" ></div>
 
-<div class="twitter_button">
-	<img src="<?php echo THEMEPATH; ?>images/sign-in-with-twitter-gray.png">
-</div>
+	<div class="twitter_button">
+		<img src="<?php echo THEMEPATH; ?>images/sign-in-with-twitter-gray.png">
+	</div>
 
 <section id="centrar">
 

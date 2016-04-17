@@ -268,12 +268,9 @@
 	 * @param Array 
 	 */
 
-// if(!empty($_POST) AND isset($aidi) AND isset($name) AND isset($mail)){
 	
 	function createUser($params = NULL, $autologin = FALSE){
 		extract($params);
-
-
 
 		$usrdata = array(
 						'user_login'=>$aidi,

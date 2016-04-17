@@ -55,13 +55,15 @@
 		$mail=$_POST["correo"];
 	 	$pass=$_POST["pass"];
 
+function custom_login(){
 
 		$usrdata = array(
 			'user_login'=>$aidi,
 			'first_name'=>$name,
 			'last_name' =>$last,
 			'user_email'=>$mail,
-			'user_pass' =>$pass
+			'user_pass' =>$pass,
+			'remember'=> true
 			);
 
 		$user_id = wp_insert_user($usrdata);
@@ -79,7 +81,9 @@
 			echo "<div class='errorUser'>" . "error user" . "</div>";
 		}else if(email_exists($mail)){
 			echo "<div class='errorMail'>" . "error mail" . "</div>";
-		};
+			};
+		}
+		custom_login();
 	}
 ?>
 
