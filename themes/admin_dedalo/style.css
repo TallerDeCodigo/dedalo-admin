@@ -100,4 +100,16 @@ h3 {font-size: 30px; margin: 0 0 30px 0; font-weight: normal; color: #1e88e5; ma
 .grid .producto span {background: #1e88e5; padding: 5px 10px; color: #fff;}
 
 
-footer {width: 100%; background: #191919; height: 250px;}
+footer {width: 100%; background: #191919; padding-bottom: 40px;}
+.top_footer, .bottom_footer {width: 100%;}
+.top_footer {border-bottom: 1px solid #606060; padding-bottom: 50px;}
+.foot_section {width: 20%; float: left; padding-top: 5%; color: #606060;}
+.foot_section img {width: 50%; height: auto;}
+.foot_section span {display: block; font-size: 18px; margin-bottom: 20px;}
+.foot_section a {display: block; font-size: 14px; margin-bottom: 5px; color: #606060;}
+.bottom_footer {margin-top: 10px;}
+.bottom_footer span {color: #606060; font-size: 12px; float: left;}
+.bottom_footer .section_foot_bottom {float: right;}
+.bottom_footer .section_foot_bottom a {color: #606060; font-size: 12px; float: left; display: block; border-right: 1px solid #606060; padding-right: 3px; margin-right: 3px; }
+.bottom_footer .section_foot_bottom a:last-child {border-right: 0px; margin-right: 0px; padding-right: 0px;}
+
