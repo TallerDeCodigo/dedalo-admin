@@ -144,3 +144,9 @@ footer {width: 100%; background: #191919; padding-bottom: 40px;}
 .productos .info_producto .meta_info .info_meta .meta_child b{font-weight: bold;}
 .productos .info_producto .meta_info .info_meta .meta_child {}
 
+.productos .extra_info {width: 100%; margin-top: 30px;}
+.extra_info .tags, .extra_info .dtools {width: 50%; float: left; height: 115px; border-bottom: 1px solid #dedede;}
+.extra_info .tags h5, .extra_info .dtools h5 {font-weight: normal; color: #1e88e5; font-size: 18px; margin-bottom: 10px;}
+.extra_info .tags i, .extra_info .dtools i {float: left; font-size: 22px; margin-right: 5px;}
+.extra_info .tags a, .extra_info .dtools a {display:block; float: left; font-size: 14px; margin-right: 5px; color: #fff; background: #90caf9; padding: 2px 5px; text-decoration: none; border-radius: 2px;}
+

@@ -110,10 +110,30 @@
 						</div><!-- contenedpr -->
 
 					</section><!-- meta_info -->
-					
+					<div class="contenedor">
+						<section class="extra_info clearfix">
+						<div class="tags">
+							<i class="material-icons">label</i><h5>Tags</h5>
+							<?php the_tags('', ''); ?>
+						</div><!-- tags -->
+						<div class="dtools">
+							<i class="material-icons">build</i><h5>Design Tools</h5>
+							<?php 
+								$dtools = get_the_terms($post->ID, 'design-tools');
+								foreach($dtools as $term):
+									$term_link = get_term_link( $term );
+									//print_r($term);
+									echo '<a href="'.$term_link.'">'.$term->name.'</a>';
+								endforeach;
+							?>
+						</div><!-- tags -->
+
+						</section><!-- tags extra_info -->
+
+					</div><!-- contenedor -->
 				
 			</article>
-		</div><!-- contenedor -->
+		
 	<?php endwhile; endif; ?>
 
 	<?php get_sidebar(); ?>
