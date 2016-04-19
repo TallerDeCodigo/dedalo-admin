@@ -50,12 +50,15 @@
 	function show_general_info($post){
 		$precio_producto = get_post_meta($post->ID, 'precio_producto', true);
 		$file_type = get_post_meta($post->ID, 'file_type', true);
+		$file_for_download = get_post_meta($post->ID, 'file_for_download', true);
 		
 		wp_nonce_field(__FILE__, 'general_info_nonce');
 		echo "<p><label>Precio del producto: </label><br />";
 		echo "<input type='text' name='precio_producto' class='widefat' value='$precio_producto' /></p>";
 		echo "<p><label>Tipo de archivo: </label><br />";
 		echo "<input type='text' name='file_type' class='widefat' value='$file_type' /></p>";
+		echo "<p><label>Archivo de descarga: </label><br />";
+		echo "<input type='text' name='file_for_download' class='widefat' value='$file_for_download' /></p>";
 		
 		
 		
@@ -97,6 +100,7 @@
 		if ( isset($_POST['precio_producto']) and check_admin_referer(__FILE__, 'general_info_nonce') ){
 			update_post_meta($post_id, 'precio_producto', $_POST['precio_producto']);
 			update_post_meta($post_id, 'file_type', $_POST['file_type']);
+			update_post_meta($post_id, 'file_for_download', $_POST['file_for_download']);
 		}
 
 

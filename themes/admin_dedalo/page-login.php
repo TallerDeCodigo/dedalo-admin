@@ -10,26 +10,27 @@
 
 <section id="centrar">
 
-  <?php 
-  $redir = site_url('');
-$args = array(
-	'echo'           => true,
-	'remember'       => true,
-	'redirect'       => $redir,
-	'form_id'        => 'loginform',
-	'id_username'    => 'user_login',
-	'id_password'    => 'user_pass',
-	'id_remember'    => 'rememberme',
-	'id_submit'      => 'wp-submit',
-	'label_username' => __( 'Username' ),
-	'label_password' => __( 'Password' ),
-	'label_remember' => __( 'Remember Me' ),
-	'label_log_in'   => __( 'Log In' ),
-	'value_username' => '',
-	'value_remember' => false
-);
+  	<?php 
+	  	$redir = site_url('');
+		$args = array(
+			'echo'           => true,
+			'remember'       => true,
+			'redirect'       => $redir,
+			'form_id'        => 'loginform',
+			'id_username'    => 'user_login',
+			'id_password'    => 'user_pass',
+			'id_remember'    => 'rememberme',
+			'id_submit'      => 'wp-submit',
+			'label_username' => __( 'Username' ),
+			'label_password' => __( 'Password' ),
+			'label_remember' => __( 'Remember Me' ),
+			'label_log_in'   => __( 'Log In' ),
+			'value_username' => '',
+			'value_remember' => false
+		);
 
-wp_login_form($args); ?>
+		wp_login_form($args); 
+	?>
 
 <form method="post" action="<?php echo bloginfo('url')?>/signup" id="registro">
 	<input type="submit" value="Regístrate">

@@ -72,7 +72,7 @@ h1   { font-size: 24px; font-size: 2.4rem; } /* =24px */
 /*** GENERAL ***/
 
 html {background: #f0f9ff;}
-body {font-family: 'roboto';}
+body {font-family: 'roboto'; color: #7a7a7a;}
 .container {width: 100%;}
 .contenedor {width: 1024px; margin: 0 auto;}
 .header {width: 100%; background: #1e88e5;}
@@ -112,4 +112,35 @@ footer {width: 100%; background: #191919; padding-bottom: 40px;}
 .bottom_footer .section_foot_bottom {float: right;}
 .bottom_footer .section_foot_bottom a {color: #606060; font-size: 12px; float: left; display: block; border-right: 1px solid #606060; padding-right: 3px; margin-right: 3px; }
 .bottom_footer .section_foot_bottom a:last-child {border-right: 0px; margin-right: 0px; padding-right: 0px;}
+
+/*** PRODUCTO ***/
+
+.productos {width: 100%; margin-bottom: 30px;}
+.productos .head_producto {width: 100%; }
+.productos .head_producto h2{font-size: 32px; color: #1e88e5; margin-bottom: 15px;}
+.productos .head_producto h3 {font-size: 18px; color: #1e88e5; float: left; margin:5px 0 30px 5px;}
+.productos .head_producto img {width: 35px; height: auto; float: left;}
+.productos .slider_producto {width: 80%; float: left; margin-right: 2%; margin-bottom: 30px;}
+.productos .slider_producto .slide {width: 100%;}
+.productos .slider_producto .slide img {width: 100%; height: auto;}
+#per-slide-template {width: 18%; float: right;}
+#per-slide-template img {width: 100%; height: auto; margin-bottom: 10px; opacity: .5}
+#per-slide-template .cycle-pager-active img {opacity: 1;}
+
+.productos .info_producto {width: 100%; font-size: 18px; font-size: 20px; line-height: 28px;}
+.productos .info_producto h3 {margin-bottom: 10px; margin-top: 10px;}
+.productos .info_producto i {float: left; color: #1e88e5;}
+.productos .info_producto .description {width: 80%; font-size: 20px; float: left;}
+.productos .info_producto .precio_down {width: 18%; font-size: 20px; float: right;}
+.productos .info_producto .precio_down span {display: block; margin-bottom: 20px;}
+.productos .info_producto .precio_down span.precio {background: #90caf9; padding: 5px 10px; color: #1e88e5; border-radius: 5px;}
+.productos .info_producto .precio_down span.download a {color: #1e88e5; text-decoration: none;}
+.productos .info_producto .meta_info {width: 100%; background: #dedede; padding: 2% 0;}
+.productos .info_producto .meta_info span {font-weight: bold; color: #1e88e5; display: block; margin-bottom: 20px;}
+.productos .info_producto .meta_info .info_meta {float: left; width: 30%; margin-right: 3%;}
+.productos .info_producto .meta_info .info_meta i {margin-right: 10px;}
+.productos .info_producto .meta_info .info_meta:last-child {margin-right: 0%;}
+.productos .info_producto .meta_info .info_meta .meta_child {color: #888888; display: block; font-weight: normal; margin-bottom: 5px;}
+.productos .info_producto .meta_info .info_meta .meta_child b{font-weight: bold;}
+.productos .info_producto .meta_info .info_meta .meta_child {}
 

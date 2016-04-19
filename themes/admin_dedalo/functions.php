@@ -104,7 +104,7 @@
 	if ( function_exists('add_image_size') ){
 		
 		add_image_size( 'dedalo_full', 900, 700, true );
-		add_image_size( 'dedalo_thumb', 900, 585, true );
+		add_image_size( 'dedalo_thumb', 705, 540, true );
 		
 		// cambiar el tamaño del thumbnail
 		/*
@@ -130,6 +130,9 @@
 
 
 	require_once('inc/pages.php');
+
+
+	require_once('inc/users.php');
 	
 	
 // MODIFICAR EL MAIN QUERY ///////////////////////////////////////////////////////////
