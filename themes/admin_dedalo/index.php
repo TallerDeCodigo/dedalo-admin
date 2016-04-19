@@ -73,47 +73,19 @@
 			</article>
 		</section>
 		<h3>NOTICIAS</h3>
+
 		<section class="notas seccion_home 	clearfix grid">
+		<?php 
+			if(have_posts()): 
+				while(have_posts()): 
+					the_post(); 
+		?>
 			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/placehold2.png"></a>
-				<h4><a href="">Título</a></h4>
-				<p class="excerpt">Lorem ipsum dolor sit amet</p>
+				<a href=""><?php the_post_thumbnail('dedalo_thumb'); ?></a>
+				<h4><a href=""><?php the_title(); ?></a></h4>
+				<p class="excerpt"><?php the_excerpt(); ?></p>
 			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/placehold2.png"></a>
-				<h4><a href="">Título</a></h4>
-				<p class="excerpt">Lorem ipsum dolor sit amet</p>
-			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/placehold2.png"></a>
-				<h4><a href="">Título</a></h4>
-				<p class="excerpt">Lorem ipsum dolor sit amet</p>
-			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/placehold2.png"></a>
-				<h4><a href="">Título</a></h4>
-				<p class="excerpt">Lorem ipsum dolor sit amet</p>
-			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/placehold2.png"></a>
-				<h4><a href="">Título</a></h4>
-				<p class="excerpt">Lorem ipsum dolor sit amet</p>
-			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/placehold2.png"></a>
-				<h4><a href="">Título</a></h4>
-				<p class="excerpt">Lorem ipsum dolor sit amet</p>
-			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/placehold2.png"></a>
-				<h4><a href="">Título</a></h4>
-				<p class="excerpt">Lorem ipsum dolor sit amet</p>
-			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/placehold2.png"></a>
-				<h4><a href="">Título</a></h4>
-				<p class="excerpt">Lorem ipsum dolor sit amet</p>
-			</article>
+		<?php endwhile; endforeach; wp_reset_postdata(); ?>
 		</section><!-- notas -->
 		<h3>MARCAS</h3>
 		<section class="notas seccion_home clearfix grid">
