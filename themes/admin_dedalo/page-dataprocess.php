@@ -19,11 +19,11 @@
 
 	wp_signon($usrdataLogin, false);
 
-	if(!is_wp_error($user)){
-		get_currentuserinfo();
-		 wp_set_current_user($user->ID);
-		 wp_redirect(site_url());	 
-	}
+	// if(!is_wp_error($user)){
+	// 	get_currentuserinfo();
+	// 	 wp_set_current_user($user->ID);
+	// 	 wp_redirect(site_url());	 
+	// }
 }
 ?>
 

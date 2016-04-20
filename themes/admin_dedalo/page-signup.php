@@ -1,15 +1,4 @@
 <?php get_header(); ?>
-
-<form method="post" action="" id="signupForm">
-	<input name="nick" 		  type="text" 		placeholder="tu nick">
-	<input name="nombre" 	  type="text" 		placeholder="tu nombre">
-	<input name="apellido" 	  type="text" 		placeholder="tu apellido">
-	<input name="correo" 	  type="email" 		placeholder="tu correo">
-	<input name="pass" 		  type="password"	class="pass" 	    placeholder="tu contraseña">
-	<input name="confirmPass" type="password" 	id="confirmPass" placeholder="otra vez tu contraseña">
-	<input type="submit" value="Enviar">
-</form>
-
 <script>
 	$("#signupForm").validate({
 		debug:true,
@@ -40,16 +29,14 @@
 			}
 		},
 		submitHandler: function(form) {
-		    // do other things for a valid form
+		    custom_login();
 		    form.submit();
 		}
 	});
-</script>
+</script><!--VALIDATE-->
 
 <?php
 	if(!empty($_POST) AND isset($_POST['correo']) AND isset($_POST['nick'])){
-
-
 
 function custom_login(){
 	
@@ -70,15 +57,16 @@ function custom_login(){
 			);
 
 		$user_id = wp_insert_user($usrdata);
-		$user = wp_signon($usrdata);
 		
+		$wpUser = get_user_by('email',$mail);
+
+		//print_r($wpUser);
+
+
+		//wp_signon(,false);
 
 		if(!is_wp_error($user_id)){
-
-			get_currentuserinfo();
-			wp_set_current_user($user_id);
-			//wp_redirect(site_url());
-
+ 		
 			echo "<div class='creado'>"."Usuario creado: ".$user_id . "</div>";
 		}else if(username_exists($aidi)){
 			echo "<div class='errorUser'>" . "error user" . "</div>";
@@ -88,13 +76,24 @@ function custom_login(){
 		}
 		custom_login();
 	}
+
 ?>
 
+<form method="post" action="" id="signupForm">
+<!-- 	<button>close<button>
+ -->	<input name="nick" 		  type="text" 		placeholder="user name">
+	<input name="nombre" 	  type="text" 		placeholder="first name">
+	<input name="apellido" 	  type="text" 		placeholder="last name">
+	<input name="correo" 	  type="email" 		placeholder="email">
+	<input name="pass" 		  type="password"	class="pass" 	    placeholder="password">
+	<input name="confirmPass" type="password" 	id="confirmPass" placeholder="confirm password">
+	<input type="submit" value="Send" class="exit">
+</form>
 
-<style type="text/css">
-	#signupForm{width:172px;margin:0 auto;}
-	input{display: block;margin-top:10px;width:170px;padding:5px;background-color:#fff;border-style: none}
-	input[type=submit]{margin-bottom:10px;}
-</style>
+	<style type="text/css">
+		#signupForm{background-color:#191919;width:40%;height:500px;padding:150px 60px;z-index:200;position:absolute;text-align: center;border-radius: 5px}
+		#signupForm input{border-style: none;text-align:left;padding-left:10px;border:1px solid #fff;border-radius: 5px;width:40%;height:30px;background-color: transparent;color:#fff;margin-bottom:20px;}
+		#signupForm input:last-child{width:80.55%;}
+	</style>
 <?php get_sidebar(); ?>
 <?php get_footer(); ?>

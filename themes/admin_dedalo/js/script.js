@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	console.log("aqui todo bien")
+	//console.log("aqui todo bien")
 
 	OAuth.initialize('-hN3dg34XiyBPZv51owHW3uihcg');
 
@@ -11,7 +11,7 @@ $(document).ready(function(){
  +
 */
 	$("button").click(function(){
-		console.log("click");
+		// console.log("click");
 		OAuth.popup('facebook').done(function(result){
 			console.log(result);
 			result.me().done(function(data){
@@ -45,8 +45,6 @@ $(document).ready(function(){
 				});
 					
 			});
-		}).fail(function(err){
-			console.log(err);
 		});
 	});//end click function
 

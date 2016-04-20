@@ -21,22 +21,22 @@
 
 	<div id="fb-root"></div>
 	<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '1066203396755847',
-      xfbml      : true,
-      version    : 'v2.6'
-    });
-  };
+	  window.fbAsyncInit = function() {
+	    FB.init({
+	      appId      : '1066203396755847',
+	      xfbml      : true,
+	      version    : 'v2.6'
+	    });
+	  };
 
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-</script>
+	  (function(d, s, id){
+	     var js, fjs = d.getElementsByTagName(s)[0];
+	     if (d.getElementById(id)) {return;}
+	     js = d.createElement(s); js.id = id;
+	     js.src = "//connect.facebook.net/en_US/sdk.js";
+	     fjs.parentNode.insertBefore(js, fjs);
+	   }(document, 'script', 'facebook-jssdk'));
+	</script><!--FACEBOOK-->
 
 		<div class="container">
 			<div class="header clearfix">
@@ -49,7 +49,6 @@
 							<a href="<?php echo wp_logout_url();?>">LOGOUT</a>
 							<?php } else { ?><a href="<?php echo bloginfo('url'); ?>/login">LOGIN</a><?php } ?>
 							<a class="profilepic" href=""><img src="<?php echo THEMEPATH; ?>/images/profilepic.png"></a>
-
 					</div><!-- login -->
 				</div><!-- contenedor -->
 			</div><!--header-->

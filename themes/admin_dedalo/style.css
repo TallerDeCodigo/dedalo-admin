@@ -100,7 +100,7 @@ h3 {font-size: 30px; margin: 0 0 30px 0; font-weight: normal; color: #1e88e5; ma
 .grid .producto span {background: #1e88e5; padding: 5px 10px; color: #fff;}
 
 
-footer {width: 100%; background: #191919; padding-bottom: 40px;}
+footer {width: 100%; background: #191919; padding-bottom: 40px;/*position:absolute;bottom:0;*/}
 .top_footer, .bottom_footer {width: 100%;}
 .top_footer {border-bottom: 1px solid #606060; padding-bottom: 50px;}
 .foot_section {width: 20%; float: left; padding-top: 5%; color: #606060;}
