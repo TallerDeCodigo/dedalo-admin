@@ -301,6 +301,7 @@
 			wp_set_current_user($wpUser->ID);
 		}
 
+
 		// if(!is_wp_error($user_id)){
 		// 	$sign = wp_signon($usrdata, false);
 		// 		if($sign){
