@@ -267,8 +267,18 @@
 		return FALSE;
 	}
 	/**
+	 *
+	 *
+	 *
+	 *
 	 * Create user in wordpress
 	 * @param Array 
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
 	 */
 
 	
@@ -276,7 +286,7 @@
 		extract($params);
 
 		$usrdata = array(
-						'user_login'=>$aidi,
+						'user_login'=>$alias,
 						'first_name'=>$name,
 						'user_email'=>$mail,
 						'user_pass' =>random_password(8)
@@ -284,50 +294,64 @@
 
 		$user_id = wp_insert_user($usrdata);
 		
-		if(!is_wp_error($user_id)){
-			$sign = wp_signon($usrdata, false);
-				if($sign){
-					return TRUE;
-				}else{
-					return FALSE;
-				}//end else
-
-		}else if(username_exists($aidi)){
-			return 300;
-			//echo "lo sentimos, ese nombre de usuario ya existe";
-		}else if(email_exists($mail)){
-			return 310;
-			//echo "esa dirección de correo ya existe";
-		}else{
-			return 320;
-			//echo "ha ocurrido un error, por favor intentalo de nuevo";
+		$wpUser = get_user_by('email',$mail);
+		
+		if ($wpUser) {
+			wp_set_auth_cookie($wpUser->ID,0,0);
+			wp_set_current_user($wpUser->ID);
 		}
-	}//end createUser
+
+		// if(!is_wp_error($user_id)){
+		// 	$sign = wp_signon($usrdata, false);
+		// 		if($sign){
+		// 			return TRUE;
+		// 		}else{
+		// 			return FALSE;
+		// 		}//end else
+
+		// }else if(username_exists($aidi)){
+		// 	return 300;
+		// 	//echo "lo sentimos, ese nombre de usuario ya existe";
+		// }else if(email_exists($mail)){
+		// 	return 310;
+		// 	//echo "esa dirección de correo ya existe";
+		// }else{
+		// 	return 320;
+		// 	//echo "ha ocurrido un error, por favor intentalo de nuevo";
+		// }
+	}//end createUser aqui se crean los usuarios en wordpress
 
 	add_action( 'wp_ajax_dedalo_createuser', 'dedalo_createuser' );
 	add_action( 'wp_ajax_nopriv_dedalo_createuser', 'dedalo_createuser' );
 
 	function dedalo_createuser() {
+	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error();//ESTE CREA EL USUARIO EN WP
 		
-		switch (createUser($_POST, TRUE)) {
-			case TRUE:
-				wp_send_json_success();
-				break;
-			case 300:
-				wp_send_json_error("Lo sentimos, ese nombre de usuario ya existe");
-				break;
-			case 310:
-				wp_send_json_error("Esa dirección de correo ya existe");
-				break;
-			case 320:
-				wp_send_json_error("Ha ocurrido un error, intentalo de nuevo");
-				break;
-			default:
-				# code...
-				break;
-		}
-	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error();
+		//wp_signon($_POST);
+
+		// switch (createUser($_POST, TRUE)) {
+		// 	case TRUE:
+		// 		wp_send_json_success();
+		// 		break;
+		// 	case 300:
+		// 		wp_send_json_error("Lo sentimos, ese nombre de usuario ya existe");
+		// 		break;
+		// 	case 310:
+		// 		wp_send_json_error("Esa dirección de correo ya existe");
+		// 		break;
+		// 	case 320:
+		// 		wp_send_json_error("Ha ocurrido un error, intentalo de nuevo");
+		// 		break;
+		// 	default:
+		// 		# code...
+		// 		break;
+		// }
+
 	}//end dedalo_create_user
+
+	function autologin(){
+
+	}//end autologin
 
 	function random_password( $length = 8 ) {
 	    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";

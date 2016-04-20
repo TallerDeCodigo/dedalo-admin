@@ -3,50 +3,52 @@ $(document).ready(function(){
 
 	OAuth.initialize('-hN3dg34XiyBPZv51owHW3uihcg');
 
-	$('.fb-login-button').click(function(){
-		
-		OAuth.popup('facebook')
-		 .done(function(result) {
+/*
+ +
+ +
+	FACEBOOK
+ +
+ +
+*/
+	$("button").click(function(){
+		console.log("click");
+		OAuth.popup('facebook').done(function(result){
+			console.log(result);
 			result.me().done(function(data){
-
 				console.log(data);
-				
-				var usr_data_facebook = { 
-					name:data.firstname, 
-					last:data.lastname, 
-					correo:data.email, 
+				var usr_data_facebook = {
+
 					aidi:data.id,
-					action:'dedalo_createuser'
-
+					alias:data.name,
+					action:'dedalo_createuser',
+					mail:data.email,
+					name:data.firstname,
+					url:data.url
 				};
-				console.log(user_data.name);
-				console.log(user_data.last);
-				console.log(user_data.correo);
-				console.log(user_data.aidi);
 
-				$.post( ajax_url, 
+				console.log(usr_data_facebook.aidi);
+				console.log(usr_data_facebook.name);
+				console.log(usr_data_facebook.alias);
+				console.log(usr_data_facebook.url);
+				console.log(usr_data_facebook.mail);
+
+				$.post(ajax_url,
 						usr_data_facebook,
 						'json'
-				  )
-				  .done(function(response) {
-				  	console.log(response);
-				    //alert( "second success" );
-				  })
-				  .fail(function(error) {
-				    alert( "error" );
-				    console.log(error)
-				  })
-				  .always(function() {
-				    //alert( "finished" );
+					).done(function(response){
+						console.log(response);
+
+					}).fail(function(error){
+						alert("error");
+						console.log(error);
+					}).always(function(){
 				});
+					
 			});
-		 })
-		 .fail(function(err){
-		 	console.log(err);
-		 });//end OAuth.popup FACEBOOK
+		}).fail(function(err){
+			console.log(err);
+		});
 	});//end click function
-
-
 
 
 	 /*
@@ -56,19 +58,18 @@ $(document).ready(function(){
 
 
 
-		OAuth.popup('twitter')
-		.done(function(result) {
+		OAuth.popup('twitter').done(function(result) {
 			result.me().done(function(data){
 
-				console.log(data);
-
+				//console.log(data);
+				console.log(result.oauth_token);
 				var usr_data_twitter = {
 					aidi: data.id,
-					name: data.name,
 					alias: data.alias,
+					action: 'dedalo_createuser',
+					mail: data.alias + "@dedalo.org",
+					name: data.name,
 					url: data.url,
-					mail: data.id+"@dedalo.org",
-					action: 'dedalo_createuser'
 				};
 				console.log(usr_data_twitter.aidi);
 				console.log(usr_data_twitter.name);
@@ -92,13 +93,9 @@ $(document).ready(function(){
 				  .always(function() {
 				    //alert( "finished" );
 				});
+				  
 			});
-		})
-		.fail(function(err){
-			console.log(err);
-		});//end OAuth.popup twitter
+		})//end oauth poopup
+	
 	 });//End click function
-
-
-
-});//end document ready
+});

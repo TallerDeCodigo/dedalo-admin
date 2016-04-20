@@ -49,13 +49,16 @@
 <?php
 	if(!empty($_POST) AND isset($_POST['correo']) AND isset($_POST['nick'])){
 
+
+
+function custom_login(){
+	
 		$aidi=$_POST["nick"];
 		$name=$_POST["nombre"];
 		$last=$_POST["apellido"];
 		$mail=$_POST["correo"];
 	 	$pass=$_POST["pass"];
 
-function custom_login(){
 
 		$usrdata = array(
 			'user_login'=>$aidi,

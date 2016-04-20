@@ -2,8 +2,10 @@
 
 
 <!--social Login buttons-->
-<div class="fb-login-button" data-max-rows="2" data-size="medium" data-show-faces="false" data-auto-logout-link="true" ></div>
-
+<!-- <div class="fb-login-button" data-max-rows="2" data-size="medium" data-show-faces="false" data-auto-logout-link="true" ></div>
+	<div > -->
+		<button type="submit">login con facebook</buttom>
+	</div>
 	<div class="twitter_button">
 		<img src="<?php echo THEMEPATH; ?>images/sign-in-with-twitter-gray.png">
 	</div>
