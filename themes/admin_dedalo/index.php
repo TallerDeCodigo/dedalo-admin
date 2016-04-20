@@ -85,7 +85,7 @@
 				<h4><a href=""><?php the_title(); ?></a></h4>
 				<p class="excerpt"><?php the_excerpt(); ?></p>
 			</article>
-		<?php endwhile; endforeach; wp_reset_postdata(); ?>
+		<?php endwhile; endif; wp_reset_postdata(); ?>
 		</section><!-- notas -->
 		<h3>MARCAS</h3>
 		<section class="notas seccion_home clearfix grid">

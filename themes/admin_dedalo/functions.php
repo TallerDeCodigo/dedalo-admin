@@ -154,14 +154,14 @@
 
 
 
-	/*add_filter('excerpt_length', function($length){
-		return 20;
-	});*/
+	add_filter('excerpt_length', function($length){
+		return 10;
+	});
 
 
-	/*add_filter('excerpt_more', function(){
+	add_filter('excerpt_more', function(){
 		return ' &raquo;';
-	});*/
+	});
 
 
 
