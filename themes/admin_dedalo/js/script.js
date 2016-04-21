@@ -37,7 +37,7 @@ $(document).ready(function(){
 						'json'
 					).done(function(response){
 						console.log(response);
-						top.location.href='http://localhost/dedalo'
+						top.location.href='http://localhost/dedalo' //*cambiar por http://localhost:8888/dedalo para que funcione en rizika-II*//
 					}).fail(function(error){
 						alert("error");
 						console.log(error);
@@ -82,7 +82,7 @@ $(document).ready(function(){
 				  )
 				  .done(function(response) {
 				  	console.log(response);
-				  	top.location.href='http://localhost/dedalo'
+				  	top.location.href='http://localhost/dedalo' //*cambiar por http://localhost:8888/dedalo para que funcione en rizika-II*//
 				  })
 				  .fail(function(error) {
 				    alert( "error" );
