@@ -281,7 +281,6 @@
 	 *
 	 */
 
-	
 	function createUser($params = NULL, $autologin = FALSE){
 		extract($params);
 
@@ -296,16 +295,21 @@
 		
 		$wpUser = get_user_by('email',$mail);
 
-
-		if ($wpUser) {
+		if ($wpUser) {				
 			wp_set_auth_cookie($wpUser->ID,0,0);
-			wp_set_current_user($wpUser->ID);		
-		}																				/*ESTO HACE LOGIN EN WP*/
-	}//end createUser 																	/*AQUI SE CREAN USUARIOS EN WP  */
+			wp_set_current_user($wpUser->ID);/*ESTO HACE LOGIN EN WP*/	
+		}
 
-	add_action( 'wp_ajax_dedalo_createuser', 'dedalo_createuser' );
-	add_action( 'wp_ajax_nopriv_dedalo_createuser', 'dedalo_createuser' );
+		if (!is_wp_error($user_id)) {
+			echo "not error";
+			envia_mail_registro($user_id,array('user_email'=>$mail, 'user_login'=>$alias));
+		}
 
+	}/* end createUser AQUI SE CREAN USUARIOS EN WP  */
+
+
+	add_action( 'wp_ajax_dedalo_createuser', 'dedalo_createuser' );			/*ACTION*/
+	add_action( 'wp_ajax_nopriv_dedalo_createuser', 'dedalo_createuser' );	/*HOOKS para dedalo_create_user*/
 	function dedalo_createuser() {
 	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error(); /*REGRESA A CREATEUSER PARA GENERAR UN NUEVO USUARIO*/
 			

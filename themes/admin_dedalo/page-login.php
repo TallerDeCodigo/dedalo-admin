@@ -49,13 +49,13 @@
 		.popup{background-color:#191919;width:40%;height:500px;border-radius:5px;padding:150px 60px;z-index:200;position:absolute;}
 		/*.close button{background-color:transparent;border-style: none;color:#606060; }*/
 		.fb_btn, .twitter_button{width:50%;}
-		.fb_btn button{width:100%;height:30px;border-style:none;padding-left:10px;border:1px solid white;border-radius:5px;margin-bottom:20px;margin-top:20px;background-color:transparent;color:#fff;text-align: left}
-		.twitter_button button{width:100%;height:30px;border-style:none;padding-left:10px;border:1px solid white;border-radius:5px;margin-bottom:20px;background-color:transparent;color:#fff;text-align: left}
+		.fb_btn button{width:100%;height:30px;border-style:none;padding-left:10px;border-bottom:1px solid white;margin-bottom:20px;margin-top:20px;background-color:transparent;color:#fff;text-align: left}
+		.twitter_button button{width:100%;height:30px;border-style:none;padding-left:10px;border-bottom:1px solid white;margin-bottom:20px;background-color:transparent;color:#fff;text-align: left}
 		.forma{float:right;margin-top:-100px;}
-		#registro input{border-style: none;text-align:left;padding-left:10px;border:1px solid #fff;border-radius: 5px;width:50%;height:30px;background-color: transparent;color:#fff;}
-		.login-username input{border-style: none;text-align:left;padding-left:10px;border:1px solid #fff;border-radius: 5px;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
-		.login-password input{border-style: none;text-align:left;padding-left:10px;border:1px solid #fff;border-radius: 5px;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
-		.login-submit input{border-style: none;text-align:left;padding-left:10px;border:1px solid #fff;border-radius: 5px;width:100%;height:30px;background-color: transparent;color:#fff;}
+		#registro input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:50%;height:30px;background-color: transparent;color:#fff;}
+		.login-username input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
+		.login-password input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
+		.login-submit input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;}
 	</style>
 <?php get_sidebar(); ?>
 <?php get_footer(); ?>
