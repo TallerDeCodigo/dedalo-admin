@@ -295,19 +295,19 @@
 		$user_id = wp_insert_user($usrdata);
 		
 		$wpUser = get_user_by('email',$mail);
-		
+
+
 		if ($wpUser) {
 			wp_set_auth_cookie($wpUser->ID,0,0);
-			wp_set_current_user($wpUser->ID);
-			
+			wp_set_current_user($wpUser->ID);		
 		}																				/*ESTO HACE LOGIN EN WP*/
-	}//end createUser aqui se crean los usuarios en wordpress
+	}//end createUser 																	/*AQUI SE CREAN USUARIOS EN WP  */
 
 	add_action( 'wp_ajax_dedalo_createuser', 'dedalo_createuser' );
 	add_action( 'wp_ajax_nopriv_dedalo_createuser', 'dedalo_createuser' );
 
 	function dedalo_createuser() {
-	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error();//ESTE CREA EL USUARIO EN WP
+	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error(); /*REGRESA A CREATEUSER PARA GENERAR UN NUEVO USUARIO*/
 			
 		//wp_signon($_POST);
 
@@ -332,20 +332,19 @@
 
 	}//end dedalo_create_user
 
-
-	function redirect(){
-		if (is_user_logged_in()) 
-
-			return '/dedalo'; 
-
-		die();
-
-	}//end redirect
-
-	add_action('$login_redirect', 'redirect',1);
-
 	function random_password( $length = 8 ) {
 	    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
 	    $password = substr( str_shuffle( $chars ), 0, $length );
 	    return $password;
 	}//end random_password
+
+
+	function envia_mail_registro($user_id, $args){
+		$mensaje   = "Hola {$args['user_login']},  \n\n Bienvenido a 3Dedalo, para confirmar tu registro haz click en el siguiente link: \n";
+		$link 	   = "http://localhost/dedalo/?conf=".get_user_meta($user_id, 'random-key', true);
+		$mensaje  .= "<a style='color: #fff; background-color: #48c; font-size: 14px; font-family: Helvetica,Arial,sans-serif; display: block; width: 120px; padding: 10px; margin: auto; text-align: center; text-decoration: none; letter-spacing: 0.6px; font-weight: 100; border-radius: 2px;' href='$link'>Ir a 3Dedalo</a>";
+		$mensaje  .= "<small style='display: block; margin 10px 0 0 0;'>Si no has registrado tu email en 3Dedalo o no identificas la razón de este correo, por favor ignóralo. Para mayor 	información por favor visita nuestro <a href='http://localhost/dedalo/aviso-de-privacidad/'>Aviso de privacidad</a></small>";
+		$headers[] = 'From: 3Dedalo <3dedalo@mail.com>';
+		wp_mail( $args['user_email'], '3Dedalo, por favor confirma tu email', $mensaje, $headers );
+	}
+
