@@ -1,6 +1,4 @@
 <?php get_header(); ?>
-
-
 <!--social Login buttons-->
 	<section id="centrar" class="popup">
 		<!-- <div class="close">

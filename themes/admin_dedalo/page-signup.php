@@ -2,7 +2,7 @@
 	if(!empty($_POST) AND isset($_POST['correo']) AND isset($_POST['nick'])){
 
 		custom_create_user();//ESTE CREA AL USUARIO DESDE LA FORMA
-		wp_redirect('http://localhost/dedalo/login'); //*cambiar por http://localhost:8888/dedalo para que funcione en rizika-II*//
+		wp_redirect('http://3dedalo.org/login'); //*cambiar por http://localhost:8888/dedalo para que funcione en rizika-II*//
 	}//end if
 
 function custom_create_user(){
