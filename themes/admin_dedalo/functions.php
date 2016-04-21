@@ -319,18 +319,19 @@
 			return 320;
 			//echo "ha ocurrido un error, por favor intentalo de nuevo";
 		}
-	}//end createUser AQUI SE CREA EL USUARIO DE WP
+	}//end createUser aqui se crean los usuarios en wordpress
 
 	add_action( 'wp_ajax_dedalo_createuser', 'dedalo_createuser' );
 	add_action( 'wp_ajax_nopriv_dedalo_createuser', 'dedalo_createuser' );
 
 	function dedalo_createuser() {
-	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error();//ESTE REGRESA A CREATEUSER 
+	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error();//ESTE CREA EL USUARIO EN WP
 		
 		//wp_signon($_POST);
 
 		switch (createUser($_POST, TRUE)) {
 			case TRUE:
+			redirect();
 				wp_send_json_success();
 				break;
 			case 300:
@@ -351,7 +352,7 @@
 
 
 	function redirect(){
-		if (is_user_logged_in()) return; header('location'.site_url());
+		if (is_user_logged_in()) return; header('Location:'.site_url());
 	}//end redirect
 
 	//redirect();

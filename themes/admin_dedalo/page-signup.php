@@ -1,44 +1,46 @@
-<?php get_header(); ?>
+
 <script>
-	$("#signupForm").validate({
-		debug:true,
-		rules:{
-			nick:"required",
-			nombre:"required",
-			correo:{
-				required: true,
-				email: true
-			},
-			pass:"required",
-			confirmPass:{
-				required: true,
-				equalTo: ".pass"
-			}
-		},
-		messages:{
-			nick:"required",
-			nombre:"Este campo es obligatorio",
-			correo:{
-				required:"Este campo es obligatorio",
-				email:"Por favor ingresa una dirección válida"
-			},
-			pass:"Debes especificar un password",
-			confirmPass:{
-				required: "Tu contraseña no es la misma",
-				equalTo: "Los passwords no coinciden"
-			}
-		},
-		submitHandler: function(form) {
-		    custom_login();
-		    form.submit();
-		}
-	});
+	// $("#signupForm").validate({
+	// 	debug:true,
+	// 	rules:{
+	// 		nick:"required",
+	// 		nombre:"required",
+	// 		correo:{
+	// 			required: true,
+	// 			email: true
+	// 		},
+	// 		pass:"required",
+	// 		confirmPass:{
+	// 			required: true,
+	// 			equalTo: ".pass"
+	// 		}
+	// 	},
+	// 	messages:{
+	// 		nick:"required",
+	// 		nombre:"Este campo es obligatorio",
+	// 		correo:{
+	// 			required:"Este campo es obligatorio",
+	// 			email:"Por favor ingresa una dirección válida"
+	// 		},
+	// 		pass:"Debes especificar un password",
+	// 		confirmPass:{
+	// 			required: "Tu contraseña no es la misma",
+	// 			equalTo: "Los passwords no coinciden"
+	// 		}
+	// 	},
+	// 	submitHandler: function(form) {
+	// 	    // do other things for a valid form
+	// 	    form.submit();
+	// 	}
+	// });
 </script><!--VALIDATE-->
 
 <?php
 	if(!empty($_POST) AND isset($_POST['correo']) AND isset($_POST['nick'])){
 
-function custom_login(){
+		custom_create_user();//ESTE CREA AL USUARIO DESDE LA FORMA
+	}
+function custom_create_user(){
 	
 		$aidi=$_POST["nick"];
 		$name=$_POST["nombre"];
@@ -57,27 +59,35 @@ function custom_login(){
 			);
 
 		$user_id = wp_insert_user($usrdata);
-		
 		$wpUser = get_user_by('email',$mail);
-
-		//print_r($wpUser);
+		
 
 
 		//wp_signon(,false);
 
-		if(!is_wp_error($user_id)){
- 		
-			echo "<div class='creado'>"."Usuario creado: ".$user_id . "</div>";
-		}else if(username_exists($aidi)){
-			echo "<div class='errorUser'>" . "error user" . "</div>";
-		}else if(email_exists($mail)){
-			echo "<div class='errorMail'>" . "error mail" . "</div>";
-			};
+		if(!is_wp_error($user_id)) {
+				echo "<div class='creado'>"."Usuario creado: ".$user_id . "</div>";
+
+			} else if(username_exists($aidi)) {
+				echo "<div class='errorUser'>" . "error user" . "</div>";
+			} else if(email_exists($mail)) {
+				echo "<div class='errorMail'>" . "error mail" . "</div>";
 		}
-		custom_login();
-	}
+}//termina FUNCION CUSTOM LOGIN	
+
+
+function auto_login($mail){
+	$wpUser = get_user_by('email',$mail);
+		if($wpUser){
+			wp_set_auth_cookie($wpUser->ID,0,0);
+			wp_set_current_user($wpUser->ID);
+		}
+
+}
 
 ?>
+
+<?php get_header(); ?>
 
 <form method="post" action="" id="signupForm">
 <!-- 	<button>close<button>
