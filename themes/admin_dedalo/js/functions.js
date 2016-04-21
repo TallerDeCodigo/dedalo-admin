@@ -89,6 +89,7 @@
 		$(".login-password input").attr("placeholder", "password").val();
 	});
 
+/*set height of invsible height*/
 	var header_height	= $(".header").height();
 	var footer_height 	= $("footer").height();
 	var total_height	= $(window).height();
