@@ -1,4 +1,4 @@
-
+<?php get_header(); ?>
 <script>
 	// $("#signupForm").validate({
 	// 	debug:true,
@@ -69,15 +69,18 @@ function custom_create_user(){
 		//wp_signon(,false);
 
 		if(!is_wp_error($user_id)) {
-				echo "<div class='creado'>"."Usuario creado: ".$user_id . "</div>";
-				
+				print_r("ususrio creado".$user_id);
+				//echo "<div class='creado boxalert'>"."Usuario creado satisfactoriamente: ".$user_id . "</div>";
+				wp_redirect('http://localhost:8888/dedalo');
 			} else if(username_exists($aidi)) {
-				echo "<div class='errorUser'>" . "error user" . "</div>";
+				print_r("el usuario existe");
+				//echo "<div class='errorUser boxalert'>" . "error user" . "</div>";
 			} else if(email_exists($mail)) {
-				echo "<div class='errorMail'>" . "error mail" . "</div>";
+				print_r("el correo existe");
+				//echo "<div class='errorMail boxalert'>" . "error mail" . "</div>";
 		}
 
-}//termina FUNCION CUSTOM LOGIN	
+}//termina FUNCION CUSTOM_CREATE_USER	
 
 
 
@@ -97,7 +100,7 @@ function auto_login($usrdata){
 
 ?>
 
-<?php get_header(); ?>
+
 
 <form method="post" action="" id="signupForm">
 <!-- 	<button>close<button>
@@ -111,6 +114,7 @@ function auto_login($usrdata){
 </form>
 
 	<style type="text/css">
+	.boxalert{width:40%;margin:0 auto;background-color:#727272;z-index: 20;color:#000;font-size:2em;text-align: center}
 		#signupForm{background-color:#191919;width:40%;height:500px;padding:150px 60px;z-index:200;position:absolute;text-align: center;border-radius: 5px}
 		#signupForm input{border-style: none;text-align:left;padding-left:10px;border:1px solid #fff;border-radius: 5px;width:40%;height:30px;background-color: transparent;color:#fff;margin-bottom:20px;}
 		#signupForm input:last-child{width:80.55%;}

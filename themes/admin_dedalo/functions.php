@@ -336,16 +336,13 @@
 	function redirect(){
 		if (is_user_logged_in()) 
 
-			return; 
-
-			header('Location:'.site_url());
+			return '/dedalo'; 
 
 		die();
-		$tag = wp_send_json_success();
-		do_action($tag);
+
 	}//end redirect
 
-	add_action('$tag', 'redirect',1);
+	add_action('$login_redirect', 'redirect',1);
 
 	function random_password( $length = 8 ) {
 	    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";

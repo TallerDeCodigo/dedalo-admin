@@ -37,7 +37,7 @@ $(document).ready(function(){
 						'json'
 					).done(function(response){
 						console.log(response);
-
+						top.location.href='http://localhost:8888/dedalo'
 					}).fail(function(error){
 						alert("error");
 						console.log(error);
@@ -82,7 +82,7 @@ $(document).ready(function(){
 				  )
 				  .done(function(response) {
 				  	console.log(response);
-				    //alert( "second success" );
+				  	top.location.href='http://localhost:8888/dedalo'
 				  })
 				  .fail(function(error) {
 				    alert( "error" );

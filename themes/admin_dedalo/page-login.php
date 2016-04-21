@@ -12,6 +12,7 @@
 		
 		<div class="twitter_button">
 			<button>Sign in with Twitter</button>
+			
 		</div>
 
 		<div class="forma">
