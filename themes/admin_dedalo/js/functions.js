@@ -60,11 +60,11 @@
 /*END LOGIN POPUP*/
 		
 
-/*
- *
- *
- *
- */
+		/*
+		 *
+		 *
+		 *
+		 */
 		function popSubscribe(){
 			$("#signupForm").slideDown("slow");
 		}
@@ -87,7 +87,13 @@
 /*SET INPUT ATTRIBUTES*/
 		$(".login-username input").attr("placeholder", "user name").val();
 		$(".login-password input").attr("placeholder", "password").val();
-
 	});
+
+	var header_height	= $(".header").height();
+	var footer_height 	= $("footer").height();
+	var total_height	= $(window).height();
+	var altodeldiv	 	= total_height-(header_height+footer_height)+"px";
+
+	$(".empty").css("height",altodeldiv);
 
 })(jQuery);

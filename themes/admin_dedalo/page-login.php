@@ -1,9 +1,9 @@
 <?php get_header(); ?>
-<!--social Login buttons-->
+<div class="empty">
+	<!--this div is empty-->
+</div>	
 	<section id="centrar" class="popup">
-		<!-- <div class="close">
-			<button>close</button>
-		</div>	 -->
+		
 		<div class="fb_btn">
 			<button type="submit">Sign in with Facebook</buttom>
 		</div>
@@ -43,6 +43,7 @@
 	<!--end centrar-->
 
 	<style>
+		/*.empty{height:600px;}*/
 		label{display:none;}
 		.popup{background-color:#191919;width:40%;height:500px;border-radius:5px;padding:150px 60px;z-index:200;position:absolute;}
 		/*.close button{background-color:transparent;border-style: none;color:#606060; }*/
