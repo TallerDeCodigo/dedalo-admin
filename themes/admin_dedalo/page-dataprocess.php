@@ -3,6 +3,10 @@
 
 
 		$result = createUser($_POST, TRUE);
+		function redirect(){
+			header('Location: ',site_url());
+		}
+		redirect();
 
 
 	}else if(!empty($_POST) AND !NULL=='mail' AND !NULL=='contra'){
@@ -26,4 +30,3 @@
 	// }
 }
 ?>
-

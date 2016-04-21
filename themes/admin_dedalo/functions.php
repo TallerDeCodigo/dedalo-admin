@@ -299,26 +299,8 @@
 		if ($wpUser) {
 			wp_set_auth_cookie($wpUser->ID,0,0);
 			wp_set_current_user($wpUser->ID);
-		}																						/*ESTO HACE LOGIN EN WP*/
-
-		if(!is_wp_error($user_id)){
-			$sign = wp_signon($usrdata, false);
-				if($sign){
-					return TRUE;
-				}else{
-					return FALSE;
-				}//end else
-
-		}else if(username_exists($aidi)){
-			return 300;
-			//echo "lo sentimos, ese nombre de usuario ya existe";
-		}else if(email_exists($mail)){
-			return 310;
-			//echo "esa dirección de correo ya existe";
-		}else{
-			return 320;
-			//echo "ha ocurrido un error, por favor intentalo de nuevo";
-		}
+			
+		}																				/*ESTO HACE LOGIN EN WP*/
 	}//end createUser aqui se crean los usuarios en wordpress
 
 	add_action( 'wp_ajax_dedalo_createuser', 'dedalo_createuser' );
@@ -326,13 +308,13 @@
 
 	function dedalo_createuser() {
 	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error();//ESTE CREA EL USUARIO EN WP
-		
+			
 		//wp_signon($_POST);
 
 		switch (createUser($_POST, TRUE)) {
 			case TRUE:
-			redirect();
 				wp_send_json_success();
+
 				break;
 			case 300:
 				wp_send_json_error("Lo sentimos, ese nombre de usuario ya existe");
@@ -352,10 +334,18 @@
 
 
 	function redirect(){
-		if (is_user_logged_in()) return; header('Location:'.site_url());
+		if (is_user_logged_in()) 
+
+			return; 
+
+			header('Location:'.site_url());
+
+		die();
+		$tag = wp_send_json_success();
+		do_action($tag);
 	}//end redirect
 
-	//redirect();
+	add_action('$tag', 'redirect',1);
 
 	function random_password( $length = 8 ) {
 	    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";

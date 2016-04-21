@@ -36,9 +36,13 @@
 </script><!--VALIDATE-->
 
 <?php
+	
+	
+
 	if(!empty($_POST) AND isset($_POST['correo']) AND isset($_POST['nick'])){
 
 		custom_create_user();//ESTE CREA AL USUARIO DESDE LA FORMA
+
 	}
 function custom_create_user(){
 	
@@ -61,27 +65,33 @@ function custom_create_user(){
 		$user_id = wp_insert_user($usrdata);
 		$wpUser = get_user_by('email',$mail);
 		
-
-
+		
 		//wp_signon(,false);
 
 		if(!is_wp_error($user_id)) {
 				echo "<div class='creado'>"."Usuario creado: ".$user_id . "</div>";
-
+				
 			} else if(username_exists($aidi)) {
 				echo "<div class='errorUser'>" . "error user" . "</div>";
 			} else if(email_exists($mail)) {
 				echo "<div class='errorMail'>" . "error mail" . "</div>";
 		}
+
 }//termina FUNCION CUSTOM LOGIN	
 
 
-function auto_login($mail){
-	$wpUser = get_user_by('email',$mail);
-		if($wpUser){
-			wp_set_auth_cookie($wpUser->ID,0,0);
-			wp_set_current_user($wpUser->ID);
-		}
+
+function auto_login($usrdata){
+	$mail = $usrdata['user_email'];
+	$test = get_user_by('email', $mail);
+	if($test){
+		wp_set_auth_cookie($test->ID,0,0);
+		wp_set_current_user($test->ID);
+	}
+	// $wpUser = get_user_by('email',$mail);
+	// 	if($wpUser){
+	// 		
+	// 	}
 
 }
 
