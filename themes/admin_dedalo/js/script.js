@@ -37,7 +37,7 @@ $(document).ready(function(){
 						'json'
 					).done(function(response){
 						console.log(response);
-						top.location.href='http://3dedalo.org' /*
+						top.location.href='http://3dedalo.org'; /*
 																*cambiar por http://localhost:8888/dedalo para que funcione en rizika-II
 																*cambiar por http://localhost/dedalo para que funcione en rogue 1
 																*cambiar por http://3dedalo.org para que funcione en 3dedalo.org 
@@ -89,7 +89,8 @@ $(document).ready(function(){
 																*cambiar por http://localhost/dedalo para que funcione en rogue 1
 																*cambiar por http://3dedalo.org para que funcione en 3dedalo.org 
 																*/
-				  .fail(function(error) {
+				
+				  }).fail(function(error) {
 				    alert( "error" );
 				    console.log(error)
 				  })
