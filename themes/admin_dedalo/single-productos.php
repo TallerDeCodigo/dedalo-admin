@@ -127,6 +127,9 @@
 								endforeach;
 							?>
 						</div><!-- tags -->
+						<div class="license_type">
+							
+						</div>
 
 						</section><!-- tags extra_info -->
 
