@@ -47,7 +47,7 @@
 					</div><!-- logo -->
 					<div class="login">
 						<?php if(is_user_logged_in()){ ?>
-							<a href="<?php echo wp_logout_url();?>">LOGOUT</a>
+							<a href="<?php echo wp_logout_url(home_url());?>">LOGOUT</a>
 							<?php } else { ?><a href="<?php echo bloginfo('url'); ?>/login">LOGIN</a><?php } ?>
 							<a class="profilepic" href=""><img src="<?php echo THEMEPATH; ?>/images/profilepic.png"></a>
 					</div><!-- login -->
