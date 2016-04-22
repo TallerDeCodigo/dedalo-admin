@@ -150,3 +150,38 @@ footer {width: 100%; background: #191919; padding-bottom: 40px;/*position:absolu
 .extra_info .tags i, .extra_info .dtools i {float: left; font-size: 22px; margin-right: 5px;}
 .extra_info .tags a, .extra_info .dtools a {display:block; float: left; font-size: 14px; margin-right: 5px; color: #fff; background: #90caf9; padding: 2px 5px; text-decoration: none; border-radius: 2px;}
 
+
+/*
+	 *
+	 	*
+	 		*	PAGE_LOGIN  
+	 	*
+	 *
+*/
+		label{display:none;}
+		.popup{background-color:#191919;width:40%;height:500px;border-radius:5px;padding:150px 60px;z-index:200;position:absolute;}
+		.fb_btn, .twitter_button{width:50%;}
+		.fb_btn button{width:100%;height:30px;border-style:none;padding-left:10px;border-bottom:1px solid white;margin-bottom:20px;margin-top:20px;background-color:transparent;color:#fff;text-align: left}
+		.twitter_button button{width:100%;height:30px;border-style:none;padding-left:10px;border-bottom:1px solid white;margin-bottom:20px;background-color:transparent;color:#fff;text-align: left}
+		.forma{float:right;margin-top:-100px;}
+		#registro input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:50%;height:30px;background-color: transparent;color:#fff;}
+		.login-username input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
+		.login-password input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
+		.login-submit input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;}
+
+/*
+	 *
+	 	*
+	 		*	PAGE_SIGNUP  
+	 	*
+	 *
+*/
+		#signupForm{background-color:#191919;width:40%;height:500px;padding:150px 60px;z-index:200;position:absolute;text-align: center;border-radius: 5px}
+		#signupForm input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:40%;height:30px;background-color: transparent;color:#fff;margin-bottom:20px;}
+		#signupForm input:last-child{width:80.55%;}
+		#confirm-Pass-error{color:red;z-index: 20;position:fixed;top:0;}
+		#correo-error{color:red;z-index: 20;width:200px;position:absolute;top:210px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+		#nick-error{color:red;z-index: 20;width:200px;position:absolute;top:120px;left:-110px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+		#nombre-error{color:red;z-index: 20;width:200px;position:absolute;top:120px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+		#pass-error{color:red;z-index: 20;width:200px;position:absolute;top:210px;left:-110px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+		#confirmPass-error{color:red;z-index: 20;width:200px;position:absolute;top:270px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}

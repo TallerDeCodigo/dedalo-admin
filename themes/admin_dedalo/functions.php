@@ -297,18 +297,20 @@
 
 		if ($wpUser) {				
 			wp_set_auth_cookie($wpUser->ID,0,0);
-			wp_set_current_user($wpUser->ID);/*ESTO HACE LOGIN EN WP*/	
+			wp_set_current_user($wpUser->ID);		/*ESTO HACE LOGIN EN WP*/	
+
+													/*enviar mail de confirmacion*/
+			//wp_new_user_notificartion($user_id,"user");
 		}
 
 		if (!is_wp_error($user_id)) {
 			echo "not error";
-			envia_mail_registro($user_id,array('user_email'=>$mail, 'user_login'=>$alias));
 		}
 
 	}/* end createUser AQUI SE CREAN USUARIOS EN WP  */
 
 
-	add_action( 'wp_ajax_dedalo_createuser', 'dedalo_createuser' );			/*ACTION*/
+	add_action( 'wp_ajax_dedalo_createuser', 'dedalo_createuser' );			/*ACTION 						*/
 	add_action( 'wp_ajax_nopriv_dedalo_createuser', 'dedalo_createuser' );	/*HOOKS para dedalo_create_user*/
 	function dedalo_createuser() {
 	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error(); /*REGRESA A CREATEUSER PARA GENERAR UN NUEVO USUARIO*/
@@ -318,16 +320,15 @@
 		switch (createUser($_POST, TRUE)) {
 			case TRUE:
 				wp_send_json_success();
-
 				break;
 			case 300:
-				wp_send_json_error("Lo sentimos, ese nombre de usuario ya existe");
+			echo	wp_send_json_error("Lo sentimos, ese nombre de usuario ya existe");
 				break;
 			case 310:
-				wp_send_json_error("Esa dirección de correo ya existe");
+			echo	wp_send_json_error("Esa dirección de correo ya existe");
 				break;
 			case 320:
-				wp_send_json_error("Ha ocurrido un error, intentalo de nuevo");
+			echo	wp_send_json_error("Ha ocurrido un error, intentalo de nuevo");
 				break;
 			default:
 				# code...
@@ -345,7 +346,7 @@
 
 	function envia_mail_registro($user_id, $args){
 		$mensaje   = "Hola {$args['user_login']},  \n\n Bienvenido a 3Dedalo, para confirmar tu registro haz click en el siguiente link: \n";
-		$link 	   = "http://localhost/dedalo/?conf=".get_user_meta($user_id, 'random-key', true);
+		$link 	   = "http://localhost/dedalo/?conf=".get_user_meta($user_id, 'user_pass', true);
 		$mensaje  .= "<a style='color: #fff; background-color: #48c; font-size: 14px; font-family: Helvetica,Arial,sans-serif; display: block; width: 120px; padding: 10px; margin: auto; text-align: center; text-decoration: none; letter-spacing: 0.6px; font-weight: 100; border-radius: 2px;' href='$link'>Ir a 3Dedalo</a>";
 		$mensaje  .= "<small style='display: block; margin 10px 0 0 0;'>Si no has registrado tu email en 3Dedalo o no identificas la razón de este correo, por favor ignóralo. Para mayor 	información por favor visita nuestro <a href='http://localhost/dedalo/aviso-de-privacidad/'>Aviso de privacidad</a></small>";
 		$headers[] = 'From: 3Dedalo <3dedalo@mail.com>';
