@@ -49,7 +49,12 @@ function custom_create_user(){
 		#signupForm{background-color:#191919;width:40%;height:500px;padding:150px 60px;z-index:200;position:absolute;text-align: center;border-radius: 5px}
 		#signupForm input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:40%;height:30px;background-color: transparent;color:#fff;margin-bottom:20px;}
 		#signupForm input:last-child{width:80.55%;}
-		.error{color:red;z-index: 20;position:fixed;}
+		#confirm-Pass-error{color:red;z-index: 20;position:fixed;top:0;}
+		#correo-error{color:red;z-index: 20;width:200px;position:absolute;top:210px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+		#nick-error{color:red;z-index: 20;width:200px;position:absolute;top:120px;left:-110px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+		#nombre-error{color:red;z-index: 20;width:200px;position:absolute;top:120px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+		#pass-error{color:red;z-index: 20;width:200px;position:absolute;top:210px;left:-110px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+		#confirmPass-error{color:red;z-index: 20;width:200px;position:absolute;top:270px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
 	</style>
 	<script>
 		$("#signupForm").validate({
