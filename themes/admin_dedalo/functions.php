@@ -296,16 +296,16 @@
 		$wpUser = get_user_by('email',$mail);
 
 		if ($wpUser) {				
-			wp_set_auth_cookie($wpUser->ID,0,0);
+			wp_set_auth_cookie($wpUser->ID,TRUE,0);
 			wp_set_current_user($wpUser->ID);		/*ESTO HACE LOGIN EN WP*/	
 
 													/*enviar mail de confirmacion*/
 			//wp_new_user_notificartion($user_id,"user");
 		}
 
-		if (!is_wp_error($user_id)) {
-			echo "not error";
-		}
+		// if (!is_wp_error($user_id)) {
+		// 	echo "not error";
+		// }
 
 	}/* end createUser AQUI SE CREAN USUARIOS EN WP  */
 
@@ -314,8 +314,6 @@
 	add_action( 'wp_ajax_nopriv_dedalo_createuser', 'dedalo_createuser' );	/*HOOKS para dedalo_create_user*/
 	function dedalo_createuser() {
 	    echo (createUser($_POST, TRUE) == TRUE) ? wp_send_json_success() : wp_send_json_error(); /*REGRESA A CREATEUSER PARA GENERAR UN NUEVO USUARIO*/
-			
-		//wp_signon($_POST);
 
 		switch (createUser($_POST, TRUE)) {
 			case TRUE:
@@ -352,4 +350,44 @@
 		$headers[] = 'From: 3Dedalo <3dedalo@mail.com>';
 		wp_mail( $args['user_email'], '3Dedalo, por favor confirma tu email', $mensaje, $headers );
 	}
+/*
+	 +
+		 +
+			 + CUNSTOM CREATE USER 	genera usuario a partir de forma en page-signup.php
+		 +
+	 +
+*/
+	function custom_create_user(){
+	
+		$aidi=$_POST["nick"];
+		$name=$_POST["nombre"];
+		$last=$_POST["apellido"];
+		$mail=$_POST["correo"];
+		$pass=$_POST["pass"];
+
+		$usrdata = array(
+			'user_login'=>$aidi,
+			'first_name'=>$name,
+			'last_name' =>$last,
+			'user_email'=>$mail,
+			'user_pass' =>$pass,
+			'remember'=> true
+			);
+
+		$user_id = wp_insert_user($usrdata);
+		$wpUser = get_user_by('email', $mail);
+		
+		if (!is_wp_error($user_id)) {
+			if (username_exists($_POST['nombre'])) {
+				return;
+				//$error1 = echo "That username already exists";
+			}else if (email_exists($_POST['correo'])) {
+				return; 
+				//$error2 = echo "That email already exists";
+			}else{
+				return; 
+				//$error3 = echo "Something went wrong, please try again";
+			}
+		}
+}//end FUNCION CUSTOM_CREATE_USER
 
