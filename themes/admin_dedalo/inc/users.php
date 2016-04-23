@@ -8,8 +8,11 @@
 	$administrator = get_role('administrator');
 	add_role( 'developer', 'Developer', $administrator->capabilities );
 
+	$administrator = get_role('administrator');
+	add_role( 'maker', 'Maker', $administrator->capabilities );
+
 	$editor = get_role('editor');
-	add_role( 'colaborador', 'Colaborador', $editor->capabilities );
+	add_role( 'dedalo_user', 'Dedalo_user', $editor->capabilities );
 
 
 	remove_action( 'admin_color_scheme_picker', 'admin_color_scheme_picker' );
@@ -123,3 +126,75 @@
 		}
 
 	}
+
+
+	function register_user_taxonomy(){
+ 
+	$labels = array(
+		'name' => 'User Category',
+		'singular_name' => 'User Category',
+		'search_items' => 'Search User Categories',
+		'all_items' => 'All User Categories',
+		'parent_item' => 'Parent User Category',
+		'parent_item_colon' => 'Parent User Category',
+		'edit_item' => 'Edit User Category',
+		'update_item' => 'Update User Category',
+		'add_new_item' => 'Add New User Category',
+		'new_item_name' => 'New User Category Name',
+		'menu_name' => 'User Category'
+	);
+ 
+	$args = array(
+		'hierarchical' => true,
+		'labels' => $labels,
+		'show_ui' => true,
+		'show_admin_column' => true,
+		'query_var' => true,
+		'rewrite' => array( 'slug' => 'user_category')
+	);
+ 
+	register_taxonomy( 'user_category' , 'user' , $args );
+}
+add_action( 'init', 'register_user_taxonomy' );
+
+function add_user_category_menu() {
+    add_submenu_page( 'users.php' , 'User Category', 'User Category' , 'add_users',  'edit-tags.php?taxonomy=user_category' );
+}
+add_action(  'admin_menu', 'add_user_category_menu' );
+
+add_action( 'show_user_profile', 'show_user_category' );
+add_action( 'edit_user_profile', 'show_user_category' );
+function show_user_category( $user ) {
+ 
+    //get the terms that the user is assigned to 
+    $assigned_terms = wp_get_object_terms( $user->ID, 'user_category' );
+    $assigned_term_ids = array();
+    foreach( $assigned_terms as $term ) {
+        $assigned_term_ids[] = $term->term_id;
+    }
+ 
+    //get all the terms we have
+    $user_cats = get_terms( 'user_category', array('hide_empty'=>false) );
+ 
+    echo "<h3>User Category</h3>";
+ 
+     //list the terms as checkbox, make sure the assigned terms are checked
+    foreach( $user_cats as $cat ) { ?>
+        <input type="checkbox" id="user-category-<?php echo $cat->term_id ?>" <?php if(in_array( $cat->term_id, $assigned_term_ids )) echo 'checked=checked';?> name="user_category[]"  value="<?php echo $cat->term_id;?>"/> 
+        <?php
+    	echo '<label for="user-category-'.$cat->term_id.'">'.$cat->name.'</label>';
+    	echo '<br />';
+    }
+}
+
+add_action( 'personal_options_update', 'save_user_category' );
+add_action( 'edit_user_profile_update', 'save_user_category' );
+function save_user_category( $user_id ) {
+ 
+	$user_terms = $_POST['user_category'];
+	$terms = array_unique( array_map( 'intval', $user_terms ) );
+	wp_set_object_terms( $user_id, $terms, 'user_category', false );
+ 
+	//make sure you clear the term cache
+	clean_object_term_cache($user_id, 'user_category');
+}
