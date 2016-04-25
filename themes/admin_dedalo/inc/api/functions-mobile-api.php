@@ -151,6 +151,133 @@ function mobile_login_check($user_id, $user_token){
 	wp_send_json_success();
 }
 
+// Feed
+function fetch_main_feed($filter = "all", $offset){
+
+	$entries_feed = array();
+	if($filter == "all"){
+		$filter_nice = "Cronológico";
+		$entries = filter_posts_by( "all" );
+	}
+	if($filter == "most_popular"){
+		$filter_nice = "Más populares";
+		$entries = filter_posts_by("popular");
+	}
+	if($filter == "boosted"){
+		$filter_nice = "Recomendados";
+		$entries = filter_posts_by("boosted");
+	}
+	if($filter == "ending"){
+		$filter_nice = "Por terminar";
+		$entries = filter_posts_by("ending");
+	}
+
+	foreach ($entries as $index => $entry) {
+
+		$product_price 			= (get_post_meta($entry->ID,'precio_producto', true) != '') ? get_post_meta($entry->ID,'precio_producto', true) : NULL;
+		$product_author 		= (get_user_by("id", $entry->post_author)) ? get_user_by("id", $entry->post_author) : NULL;
+
+		$designer_brand			= $post_author->data->display_name;
+		$trimmed_description 	= ($entry->post_content !== '') ? wp_trim_words( $entry->post_content, $num_words = 15, $more = '...' ) : NULL;
+		$post_thumbnail_id 		= get_post_thumbnail_id($entry->ID);
+		$post_thumbnail_url 	= wp_get_attachment_thumb_url( $post_thumbnail_id );
+		if(!$index){
+			$entries_feed['featured'][] = array(
+									'ID' 					=> $entry->ID,
+									'product_title' 		=> $entry->post_title,
+									'product_description' 	=> $trimmed_description,
+									'price'					=> $product_price,
+									'author'				=> $product_author,
+									'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
+									'designer_brand'		=> $designer_brand,
+									'tyoe'					=> $entry->post_type,
+								);
+		}else{
+			$entries_feed['pool'][] = array(
+									'ID' 					=> $entry->ID,
+									'product_title' 		=> $entry->post_title,
+									'product_description' 	=> $trimmed_description,
+									'price'					=> $product_price,
+									'author'				=> $product_author,
+									'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
+									'designer_brand'		=> $designer_brand,
+									'tyoe'					=> $entry->post_type,
+								);
+		}
+		
+	}
+	$entries_feed['filter_nice'] = $filter_nice;
+
+	return json_encode($entries_feed);
+}
+
+
+	/**
+	 * Get entries feed ordered chronologically
+	 * @param $offset
+	 */
+	function get_chronological($offset = 0){
+		
+		$today = date('Y-m-d');
+		$args = array(
+				'post_type'   		=> array('eventos', 'productos'),
+				'post_status' 		=> 'publish',
+				'paged'				=> $offset+1,
+				'posts_per_page' 	=> 15,
+            	'orderby'   		=> 'date',
+			);
+		$query = new WP_Query($args);
+		return $query->posts;
+	}
+
+	/**
+	 * Get filtered event feed
+	 * @param $filter
+	 * @param $offset
+	 */
+	function filter_posts_by($filter = "all", $offset = 0){
+		
+		switch ($filter) {
+				case 'all':
+					return get_chronological($offset);
+					break;
+				case 'near':
+					return get_near_events_array($offset);
+					break;
+				case 'boosted':
+					return get_boosted_events($offset);
+					break;
+				case 'popular':
+					return get_most_popular($offset);
+					break;
+				case 'visitors':
+					return get_most_visited($offset);
+					break;
+				case 'ending':
+					return get_ending_events($offset);
+					break;
+				
+				default:
+				return false;
+					break;
+			}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// -----------------------------------------------------------------------------------------------
 // CATEGORIES
 function follow_category($user_login){
 	
@@ -172,55 +299,7 @@ function unfollow_category($user_login){
 add_action('wp_ajax_unfollow_category', 'unfollow_category');
 add_action('wp_ajax_nopriv_unfollow_category', 'unfollow_category');
 
-// EVENTS
-function get_events_feed($user, $filter = "all", $offset){
 
-	$events_feed = array();
-	if($filter == "all"){
-		$filter_nice = "Cronológico";
-		$events = filter_posts_by( "all" );
-	}
-	if($filter == "most_popular"){
-		$filter_nice = "Más populares";
-		$events = filter_posts_by("popular");
-	}
-	if($filter == "boosted"){
-		$filter_nice = "Recomendados";
-		$events = filter_posts_by("boosted");
-	}
-	if($filter == "ending"){
-		$filter_nice = "Por terminar";
-		$events = filter_posts_by("ending");
-	}
-		
-	foreach ($events as $event) {
-		$ID_venue 		= get_post_meta($event->ID ,'mg_venue_id',true);
-		$thumb_url 		= museo_get_attachment_url( get_post_thumbnail_id($event->ID), 'eventos-feed' );
-		$type 			= wp_get_post_terms( $event->ID, 'tipo-de-evento' );
-		$latlong 		= (get_post_meta($event->ID,'mg_evento_latlong', true) != '') ? get_post_meta($event->ID,'mg_evento_latlong', true) : NULL;
-		$address 		= (get_post_meta($event->ID,'mg_evento_direccion', true) != '') ? get_post_meta($event->ID,'mg_evento_direccion', true) : NULL;
-		$trimmed_description = ($event->post_content !== '') ? wp_trim_words( $event->post_content, $num_words = 15, $more = '...' ) : NULL;
-		$events_feed['results'][] = array(
-								'ID' 				=> $event->ID,
-								'event_title' 		=> $event->post_title,
-								'event_description' => $trimmed_description,
-								'event_thumbnail' 	=> $thumb_url[0],
-								'event_type'	 	=> (!empty($type)) ? $type[0]->name : null,
-								'venue_id' 			=> $ID_venue,
-								'venue' 			=> get_the_author_meta( 'display_name', $ID_venue ),
-								'venue_avatar' 		=> museo_get_profilepic_url($ID_venue),
-								'date_start' 		=> (fecha_inicio_evento($event->ID) !== '') ? fecha_inicio_evento($event->ID) : NULL,
-								'date_end' 			=> (fecha_fin_evento($event->ID) !== '') ? fecha_fin_evento($event->ID) : NULL,
-								'latlong' 			=> $latlong,
-								'address' 			=> $address,
-								'scheduled' 		=> ( in_array( $event->ID, museografo_eventos_agendados($user) ) ) ? true : false,
-								'attended' 			=> ( in_array( $event->ID, get_attended_events($user) ) ) ? true : false
-							);
-		
-	}
-	$events_feed['filter_nice'] = $filter_nice;
-	return json_encode($events_feed);
-}
 /*
  * Get single event info
  * @param Int $event_id

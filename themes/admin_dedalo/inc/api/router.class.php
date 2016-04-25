@@ -219,6 +219,54 @@ class Router{
 			// 	exit;
 			// });
 
+
+
+		/*     __               _ 
+		 *    / _| ___  ___  __| |
+		 *   | |_ / _ \/ _ \/ _` |
+		 *   |  _|  __/  __/ (_| |
+		 *   |_|  \___|\___|\__,_|
+		 */      
+		
+			/*
+			 * Get home feed
+			 * @param String $user_login The user to retrieve timeline for
+			 * @param Int $offset Number of offsetted posts pages for pagination purposes
+			 * @param String $filter
+			 * @type ANNONYMOUS
+			 */
+			$slim->get('/rest/v1/feed(/:offset(/:filter))',function ( $offset = 0, $filter = "all"){
+				// TODO Use user information to cure feed
+				echo fetch_main_feed($filter, $offset);
+				exit;
+			});
+
+			/*
+			 * Get home feed for a logged user
+			 * @param String $user_login The user to retrieve timeline for
+			 * @param Int $offset Number of offsetted posts pages for pagination purposes
+			 * @param String $filter
+			 * @type LOGGED
+			 * 
+			 */
+			$slim->get('/rest/v1/:u_login/feed(/:offset(/:filter))',function ($user_login, $offset = 0, $filter = "all"){
+				// TODO Use user information to cure feed
+				echo fetch_main_feed($filter, $offset);
+				exit;
+			});
+
+			/*
+			 * Get user's timeline feed
+			 * @param String $user_login The user to retrieve timeline for
+			 * @param Int $offset Number of offsetted posts pages for pagination purposes
+			 * @important Timeline gets blocks of 10 activities, offset must be set according to the set of results. Ej. Page 1 is offset 0, page 2 is offset 1
+			 * 
+			 */
+			$slim->get('/rest/v1/:u_login/timeline/:offset',function ($user_login, $offset){
+				echo get_user_timeline($user_login, $offset);
+				exit;
+			});
+
 		/*
 		 *                     __ _ _           
 		 *    _ __  _ __ ___  / _(_) | ___  ___ 
@@ -515,24 +563,10 @@ class Router{
 			});
 		
 
-		/*     __               _ 
-		 *    / _| ___  ___  __| |
-		 *   | |_ / _ \/ _ \/ _` |
-		 *   |  _|  __/  __/ (_| |
-		 *   |_|  \___|\___|\__,_|
-		 */      
 		
-			/*
-			 * Get user's timeline feed
-			 * @param String $user_login The user to retrieve timeline for
-			 * @param Int $offset Number of offsetted posts pages for pagination purposes
-			 * @important Timeline gets blocks of 10 activities, offset must be set according to the set of results. Ej. Page 1 is offset 0, page 2 is offset 1
-			 * 
-			 */
-			$slim->get('/rest/v1/:u_login/timeline/:offset',function ($user_login, $offset){
-				echo get_user_timeline($user_login, $offset);
-				exit;
-			});
+
+
+
 			
 			/*
 			 * Get discover screen feed
