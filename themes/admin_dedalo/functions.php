@@ -133,7 +133,17 @@
 
 
 	require_once('inc/users.php');
-	
+
+	get_template_part( 'inc/api/functions', 'mobile-api' );
+
+	include_once( 'inc/api/router.class.php' );
+
+	include_once( 'inc/api/User.class.php' );
+
+
+
+	//INIT API ROUTER
+	$rest = new Router('My0$O/|/|T0k3nl0lD3d@l0.!3d');
 	
 // MODIFICAR EL MAIN QUERY ///////////////////////////////////////////////////////////
 
