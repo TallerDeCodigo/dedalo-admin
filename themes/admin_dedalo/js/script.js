@@ -10,7 +10,7 @@ $(document).ready(function(){
  +
  +
 */
-	$("button").click(function(){
+	$("#fb").click(function(){
 		OAuth.popup('facebook').done(function(result){
 		//	console.log(result);
 			result.me().done(function(data){

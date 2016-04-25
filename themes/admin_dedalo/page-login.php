@@ -2,10 +2,13 @@
 <div class="empty">
 	<!--this div is empty-->
 </div>	
+
+
+
 	<section id="centrar" class="popup">
 		
 		<div class="fb_btn">
-			<button type="submit">Sign in with Facebook</buttom>
+			<button type="submit" id="fb">Sign in with Facebook</button>
 		</div>
 		
 		<div class="twitter_button">
