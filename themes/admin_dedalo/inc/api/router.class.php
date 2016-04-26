@@ -267,6 +267,52 @@ class Router{
 				exit;
 			});
 
+
+
+		/*                          _     
+		*  ___  ___  __ _ _ __ ___| |__  
+		* / __|/ _ \/ _` | '__/ __| '_ \ 
+		* \__ \  __/ (_| | | | (__| | | |
+		* |___/\___|\__,_|_|  \___|_| |_|
+		*/
+
+			/*
+			 * Search website
+			 * @param String $s
+			 * TO DO: Divide search by: people, tag, events and accept the parameter as a filter
+			 */
+			$slim->get('/rest/v1/user/:logged/search/:s/:offset/',function($logged, $s, $offset) {
+				return search_museografo($s, $offset, $logged);
+				exit;
+			});
+
+			/**
+			 * Search usernames for autocomplete
+			 * @param String $s
+			 * @category GET Endpoint
+			 */
+			$slim->get('/rest/v1/:logged/search/:s',function($logged, $s) {
+				return search_usernames($logged, $s);
+				exit;
+			});
+
+			/**
+			 * Set user categories
+			 * @param String $s
+			 * @category PUT Endpoint
+			 */
+			$slim->put('/rest/v1/user/:logged/index/categories/', function($logged){
+				$app = \Slim\Slim::getInstance();
+				$values = array();
+				parse_str($app->request->getBody(), $values);
+				
+				if( update_index_categories($logged, $values) AND isset($values['_redirect']) )
+					wp_redirect($values['_redirect']);
+				exit;
+			});
+
+
+
 		/*
 		 *                     __ _ _           
 		 *    _ __  _ __ ___  / _(_) | ___  ___ 
@@ -837,47 +883,7 @@ class Router{
 			});
 
 
-	   /*                          _     
-		*  ___  ___  __ _ _ __ ___| |__  
-		* / __|/ _ \/ _` | '__/ __| '_ \ 
-		* \__ \  __/ (_| | | | (__| | | |
-		* |___/\___|\__,_|_|  \___|_| |_|
-		*/
-
-			/*
-			 * Search website
-			 * @param String $s
-			 * TO DO: Divide search by: people, tag, events and accept the parameter as a filter
-			 */
-			$slim->get('/rest/v1/user/:logged/search/:s/:offset/',function($logged, $s, $offset) {
-				return search_museografo($s, $offset, $logged);
-				exit;
-			});
-
-			/**
-			 * Search usernames for autocomplete
-			 * @param String $s
-			 * @category GET Endpoint
-			 */
-			$slim->get('/rest/v1/:logged/search/:s',function($logged, $s) {
-				return search_usernames($logged, $s);
-				exit;
-			});
-
-			/**
-			 * Set user categories
-			 * @param String $s
-			 * @category PUT Endpoint
-			 */
-			$slim->put('/rest/v1/user/:logged/index/categories/', function($logged){
-				$app = \Slim\Slim::getInstance();
-				$values = array();
-				parse_str($app->request->getBody(), $values);
-				
-				if( update_index_categories($logged, $values) AND isset($values['_redirect']) )
-					wp_redirect($values['_redirect']);
-				exit;
-			});
+	   
 
 		/*
 		 *    __ _ _                    _                 _ 
