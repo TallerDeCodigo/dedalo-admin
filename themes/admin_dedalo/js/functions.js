@@ -38,25 +38,51 @@
 		 *
 		 *
 		 */
-		
 
-		function poplogin(){
-			$(".popup").slideDown("slow");
-		}
-		var pop_w = $(".popup").width()+10;
-		var pop_h = $(".popup").height()+30;
-		
-		$(".popup").hide();
-		
-		var w = $(this).width();
-		var h = $(this).height();
+var login = document.getElementById("centrar");
+console.log(login);
+var btn = document.getElementById("btnTest");
+console.log(btn);
+btn.onclick = function(){
+	console.log("hizo click");
+	login.style.display = "block";
+}
 
-		w=(w/2) - (pop_w/1.5);
-		h=(h/3.2) - (pop_h/1.5);
-		$(".popup").css("left", w+"px");
-		$(".popup").css("top", h+"px");
+// window.onclick = function(event){
+// 	if (event.target == forma) {	
+// 	console.log("hizo click");	
+// 	forma.style.display = "none";	
+// 	}
+// }
 
-		setTimeout(poplogin(),500);
+var signup = document.getElementById("signupForm");
+console.log(signup);
+var btn_sign = document.getElementById("sign_up");
+console.log(btn_sign);
+btn_sign.onclick = function(){
+	console.log("hizo click");
+	signup.style.display = "block";
+	login.style.display = "none";
+}
+
+
+		// function poplogin(){
+		// 	$(".popup").slideDown("slow");
+		// }
+		// var pop_w = $(".popup").width()+10;
+		// var pop_h = $(".popup").height()+30;
+		
+		// $(".popup").hide();
+		
+		// var w = $(this).width();
+		// var h = $(this).height();
+
+		// w=(w/2) - (pop_w/1.5);
+		// h=(h/3.2) - (pop_h/1.5);
+		// $(".popup").css("left", w+"px");
+		// $(".popup").css("top", h+"px");
+
+		// setTimeout(poplogin(),500);
 /*END LOGIN POPUP*/
 		
 
@@ -65,23 +91,23 @@
 		 *
 		 *
 		 */
-		function popSubscribe(){
-			$("#signupForm").slideDown("slow");
-		}
-		var pop_w = $("#signupForm").width()+10;
-		var pop_h = $("#signupForm").height()+30;
+		// function popSubscribe(){
+		// 	$("#signupForm").slideDown("slow");
+		// }
+		// var pop_w = $("#signupForm").width()+10;
+		// var pop_h = $("#signupForm").height()+30;
 		
-		$("#signupForm").hide();
+		// $("#signupForm").hide();
 		
-		var w = $(this).width();
-		var h = $(this).height();
+		// var w = $(this).width();
+		// var h = $(this).height();
 
-		w=(w/2) - (pop_w/1.5);
-		h=(h/3.2) - (pop_h/1.5);
-		$("#signupForm").css("left", w+"px");
-		$("#signupForm").css("top", h+"px");
+		// w=(w/2) - (pop_w/1.5);
+		// h=(h/3.2) - (pop_h/1.5);
+		// $("#signupForm").css("left", w+"px");
+		// $("#signupForm").css("top", h+"px");
 
-		setTimeout(popSubscribe(),500);
+		// setTimeout(popSubscribe(),500);
 /*END SUBSCRIBE POPUP*/
 
 /*SET INPUT ATTRIBUTES*/

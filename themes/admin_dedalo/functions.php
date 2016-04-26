@@ -385,9 +385,15 @@
 			);
 
 		$user_id = wp_insert_user($usrdata);
+
+		if (is_wp_error($user_id) ) {
+
+			return $user_id->get_error_message();
+		}
 		$wpUser = get_user_by('email', $mail);
 		
 		if (!is_wp_error($user_id)) {
+
 			if (username_exists($_POST['nombre'])) {
 				return;
 				//$error1 = echo "That username already exists";
@@ -400,4 +406,3 @@
 			}
 		}
 }//end FUNCION CUSTOM_CREATE_USER
-

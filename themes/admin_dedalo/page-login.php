@@ -1,11 +1,10 @@
 <?php get_header(); ?>
-<div class="empty">
-	<!--this div is empty-->
-</div>	
+<!-- <div class="empty"></div>	
+
 	<section id="centrar" class="popup">
 		
 		<div class="fb_btn">
-			<button type="submit">Sign in with Facebook</buttom>
+			<button type="submit" id="fb">Sign in with Facebook</button>
 		</div>
 		
 		<div class="twitter_button">
@@ -34,12 +33,12 @@
 					);
 				wp_login_form($args);
 			?>
-		</div><!--end wp_login_form-->
+		</div>
 		
 		<form method="post" action="<?php echo bloginfo('url')?>/signup" id="registro">
 			<input type="submit" value="Register">
 		</form>
-	</section>
+	</section> -->
 	<!--end centrar-->
 <?php get_sidebar(); ?>
 <?php get_footer(); ?>

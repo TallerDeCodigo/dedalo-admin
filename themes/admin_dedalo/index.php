@@ -1,4 +1,4 @@
-	<?php get_header(); ?>
+<?php get_header(); ?>
 	
 	<div class="search">
 		<form id="searchform" role="search" method="get" class="search-form" action="<?php echo home_url( '/' ); ?>">
