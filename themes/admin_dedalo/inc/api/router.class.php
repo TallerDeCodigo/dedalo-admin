@@ -297,6 +297,24 @@ class Router{
 			});
 
 			/**
+			 * Get categories feed
+			 * @category GET Endpoint
+			 */
+			$slim->get('/rest/v1/content/enum/categories/', function(){
+				echo fetch_categories();
+				exit;
+			});
+
+			/**
+			 * Get search elements
+			 * @category GET Endpoint
+			 */
+			$slim->get('/rest/v1/content/search-composite/', function(){
+				echo fetch_categories();
+				exit;
+			});
+
+			/**
 			 * Set user categories
 			 * @param String $s
 			 * @category PUT Endpoint

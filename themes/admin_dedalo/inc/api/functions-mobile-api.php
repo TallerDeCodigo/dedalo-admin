@@ -177,7 +177,8 @@ function fetch_main_feed($filter = "all", $offset){
 		$product_price 			= (get_post_meta($entry->ID,'precio_producto', true) != '') ? get_post_meta($entry->ID,'precio_producto', true) : NULL;
 		$product_author 		= (get_user_by("id", $entry->post_author)) ? get_user_by("id", $entry->post_author) : NULL;
 
-		$designer_brand			= $post_author->data->display_name;
+		$designer_brand			= $product_author->data->display_name;
+
 		$trimmed_description 	= ($entry->post_content !== '') ? wp_trim_words( $entry->post_content, $num_words = 15, $more = '...' ) : NULL;
 		$post_thumbnail_id = get_post_thumbnail_id($entry->ID);
 		$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
@@ -189,10 +190,12 @@ function fetch_main_feed($filter = "all", $offset){
 									'product_title' 		=> $entry->post_title,
 									'product_description' 	=> $trimmed_description,
 									'price'					=> $product_price,
-									'author'				=> $product_author,
 									'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
-									'designer_brand'		=> $designer_brand,
-									'tyoe'					=> $entry->post_type,
+									'designer_brand'		=> array(
+																	"ID"   => $designer_brand->ID,
+																	"name" => $designer_brand->display_name
+																),
+									'type'					=> $entry->post_type,
 								);
 		}else{
 			$entries_feed['pool'][] = array(
@@ -200,10 +203,12 @@ function fetch_main_feed($filter = "all", $offset){
 									'product_title' 		=> $entry->post_title,
 									'product_description' 	=> $trimmed_description,
 									'price'					=> $product_price,
-									'author'				=> $product_author,
 									'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
-									'designer_brand'		=> $designer_brand,
-									'tyoe'					=> $entry->post_type,
+									'designer_brand'		=> array(
+																	"ID"   => $designer_brand->ID,
+																	"name" => $designer_brand->display_name
+																),
+									'type'					=> $entry->post_type,
 								);
 		}
 		
@@ -352,6 +357,32 @@ function search_dedalo($search_term, $offset, $user = NULL){
 	wp_send_json_success($results_array);
 
 }
+
+	/*
+	 * Fetch categories for feed
+	 * @param Int $limit = 5
+	 */
+	function fetch_categories($limit = 5){
+		$return_array = array();
+		$categories = get_categories( array(
+		    'orderby' => 'count',
+		    'order'   => 'DESC',
+		    'number'  => $limit,
+		    'hide_empty'  => FALSE,
+		    'parent'  => 0,
+		    'exclude' => 1
+		) );
+		foreach ($categories as $each_cat) {
+			$return_array['pool'][] = 	array(
+											"ID" 	=> $each_cat->term_id,
+											"name" 	=> $each_cat->name,
+											"slug" 	=> $each_cat->slug,
+											"count" => $each_cat->count
+										);
+		}
+		$return_array['count'] = count($return_array['pool']);
+		return wp_send_json($return_array);
+	}
 
 
 

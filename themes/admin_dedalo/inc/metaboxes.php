@@ -48,10 +48,16 @@
 	}
 
 	function show_general_info($post){
-		$precio_producto = get_post_meta($post->ID, 'precio_producto', true);
-		$file_type = get_post_meta($post->ID, 'file_type', true);
-		$file_for_download = get_post_meta($post->ID, 'file_for_download', true);
-		
+		$precio_producto 	= get_post_meta($post->ID, 'precio_producto', true);
+		$file_type 			= get_post_meta($post->ID, 'file_type', true);
+		$file_for_download 	= get_post_meta($post->ID, 'file_for_download', true);
+		$file_featured 		= get_post_meta($post->ID, 'file_featured', true);
+		// $file_featured_sel 	= get_post_meta($post->ID, 'file_featured', true);
+		file_put_contents(
+			'/logs/php.log',
+			var_export( $file_featured, true ) . PHP_EOL,
+			FILE_APPEND
+		);
 		wp_nonce_field(__FILE__, 'general_info_nonce');
 		echo "<p><label>Precio del producto: </label><br />";
 		echo "<input type='text' name='precio_producto' class='widefat' value='$precio_producto' /></p>";
@@ -59,8 +65,8 @@
 		echo "<input type='text' name='file_type' class='widefat' value='$file_type' /></p>";
 		echo "<p><label>Archivo de descarga: </label><br />";
 		echo "<input type='text' name='file_for_download' class='widefat' value='$file_for_download' /></p>";
-		
-		
+		echo "<input type='checkbox' name='file_featured' checked='$file_featured' />";
+		echo "<label>Featured product</label>";
 		
 	}
 
@@ -101,6 +107,11 @@
 			update_post_meta($post_id, 'precio_producto', $_POST['precio_producto']);
 			update_post_meta($post_id, 'file_type', $_POST['file_type']);
 			update_post_meta($post_id, 'file_for_download', $_POST['file_for_download']);
+			if ( isset($_POST['file_featured']) ){
+				update_post_meta($post_id, 'file_featured', $_POST['file_featured']);
+			} else if ( ! defined('DOING_AJAX') ){
+				delete_post_meta($post_id, 'file_featured');
+			}
 		}
 
 
