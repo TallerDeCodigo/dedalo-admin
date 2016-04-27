@@ -177,8 +177,7 @@ function fetch_main_feed($filter = "all", $offset){
 		$product_price 			= (get_post_meta($entry->ID,'precio_producto', true) != '') ? get_post_meta($entry->ID,'precio_producto', true) : NULL;
 		$product_author 		= (get_user_by("id", $entry->post_author)) ? get_user_by("id", $entry->post_author) : NULL;
 
-		$designer_brand			= $product_author->data->display_name;
-
+		$designer_brand			= $product_author->data;
 		$trimmed_description 	= ($entry->post_content !== '') ? wp_trim_words( $entry->post_content, $num_words = 15, $more = '...' ) : NULL;
 		$post_thumbnail_id = get_post_thumbnail_id($entry->ID);
 		$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
@@ -191,12 +190,13 @@ function fetch_main_feed($filter = "all", $offset){
 									'product_description' 	=> $trimmed_description,
 									'price'					=> $product_price,
 									'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
-									'designer_brand'		=> array(
+									'designer_brand'		=> 	array(
 																	"ID"   => $designer_brand->ID,
 																	"name" => $designer_brand->display_name
 																),
 									'type'					=> $entry->post_type,
 								);
+			$entries_feed['featured'][$index]['designer_brand'] = (!$designer_brand) ? null :  $entries_feed['featured'][$index]['designer_brand'];
 		}else{
 			$entries_feed['pool'][] = array(
 									'ID' 					=> $entry->ID,
@@ -210,6 +210,7 @@ function fetch_main_feed($filter = "all", $offset){
 																),
 									'type'					=> $entry->post_type,
 								);
+			$entries_feed['pool'][$index-1]['designer_brand'] = (!$designer_brand) ? null :  $entries_feed['pool'][$index-1]['designer_brand'];
 		}
 		
 	}
@@ -384,7 +385,54 @@ function search_dedalo($search_term, $offset, $user = NULL){
 		return wp_send_json($return_array);
 	}
 
+	/*
+	 * Fetch featured products
+	 * @param Int $limit
+	 */
+	function fetch_featured_products($limit = 4){
+		$return_array = array("pool" => array(), "count" => 0);
+		$args = array(
+						"post_type" 		=> "productos",
+						"post_status" 		=> "publish",
+						'meta_query' 		=> array(
+												array(
+													'key'     => 'file_featured',
+													'value'   => 'on'
+												),
+											),
+						"posts_per_page" 	=> $limit,
+					);
+		$posts = get_posts($args);
+		if($posts){
+			foreach ($posts as $index => $each_post) {
+				$product_price 			= (get_post_meta($each_post->ID,'precio_producto', true) != '') ? get_post_meta($each_post->ID,'precio_producto', true) : NULL;
+				$product_author 		= (get_user_by("id", $each_post->post_author)) ? get_user_by("id", $each_post->post_author) : NULL;
 
+				$designer_brand			= $product_author->data;
+
+				$trimmed_description 	= ($each_post->post_content !== '') ? wp_trim_words( $each_post->post_content, $num_words = 15, $more = '...' ) : NULL;
+				$post_thumbnail_id = get_post_thumbnail_id($each_post->ID);
+				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
+				$post_thumbnail_url = $post_thumbnail_url[0];
+				$return_array['pool'][] = 	array(
+												"ID" 	=> $each_post->ID,
+												"product_title" 		=> $each_post->post_title,
+												'product_description' 	=> $trimmed_description,
+												"slug" 					=> $each_post->slug,
+												'price'					=> $product_price,
+												'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
+												'designer_brand'		=> array(
+																				"ID"   => $designer_brand->ID,
+																				"name" => $designer_brand->display_name
+																			),
+												'type'					=> $each_post->post_type,
+											);
+				$return_array['pool'][$index]['designer_brand']= (empty($return_array['pool'][$index]['designer_brand'])) ? null :  $return_array['pool'][$index]['designer_brand'];
+			}
+			$return_array['count'] = count($return_array['pool']);
+		}
+		return wp_send_json($return_array);
+	}
 
 
 

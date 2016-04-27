@@ -219,7 +219,7 @@ class Router{
 			// 	exit;
 			// });
 
-
+			// remove_role( "Venue" );
 
 		/*     __               _ 
 		 *    / _| ___  ___  __| |
@@ -326,6 +326,26 @@ class Router{
 				
 				if( update_index_categories($logged, $values) AND isset($values['_redirect']) )
 					wp_redirect($values['_redirect']);
+				exit;
+			});
+
+			/**
+			 * Set user categories
+			 * @param String $s
+			 * @category GET Endpoint
+			 */
+			$slim->get('/rest/v1/products/featured/', function(){
+				echo fetch_featured_products();
+				exit;
+			});
+
+			/**
+			 * Set user categories
+			 * @param String $s
+			 * @category GET Endpoint
+			 */
+			$slim->get('/rest/v1/products/featured/', function(){
+				echo fetch_featured_products();
 				exit;
 			});
 
