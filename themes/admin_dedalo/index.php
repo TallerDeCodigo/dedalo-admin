@@ -43,7 +43,7 @@
 						<a href=""><img src="<?php echo THEMEPATH; ?>/images/profilepic.png"> </a>
 					<?php } ?>
 					<h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-					<h5><a href=""><?php echo get_the_author(); ?></a></h5>
+					<h5><a href="<?php echo $userURL; ?>"><?php echo get_the_author(); ?></a></h5>
 				</div>
 				<?php the_excerpt(); ?>
 				<?php if(get_post_meta($post->ID, 'precio_producto', true)){ ?>
