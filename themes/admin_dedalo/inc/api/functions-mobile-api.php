@@ -451,6 +451,23 @@ function search_dedalo($search_term, $offset, $user = NULL){
 		return wp_send_json($return_array);
 	}
 
+	/**
+	 * Fetch ME information
+	 * @param String $user_login
+	 * @return Array
+	 */
+	function fetch_me_information($user_login  = NULL){
+		$user = get_user_by("login", $user_login);
+		return array(
+					"ID" 			=> $user->data->ID,
+					"login" 		=> $user->data->user_login,
+					"display_name" 	=> $user->data->display_name,
+					"role" 			=> $user->roles[0],
+					"categories" 	=> array(),
+				);
+		
+	}
+
 
 
 

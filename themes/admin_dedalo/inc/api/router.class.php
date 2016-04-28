@@ -301,9 +301,6 @@ class Router{
 				exit;
 			});
 
-			
-
-
 			/**
 			 * Get products marked as featured
 			 * @param Int $limit
@@ -314,30 +311,6 @@ class Router{
 				exit;
 			});
 
-			/**
-			 * Set user categories
-			 * @param String $s
-			 * @category GET Endpoint
-			 */
-			$slim->get('/rest/v1/products/featured/', function(){
-				echo fetch_featured_products();
-				exit;
-			});
-
-			// /**
-			//  * Set user categories
-			//  * @param String $s
-			//  * @category PUT Endpoint
-			//  */
-			// $slim->put('/rest/v1/user/:logged/index/categories/', function($logged){
-			// 	$app = \Slim\Slim::getInstance();
-			// 	$values = array();
-			// 	parse_str($app->request->getBody(), $values);
-				
-			// 	if( update_index_categories($logged, $values) AND isset($values['_redirect']) )
-			// 		wp_redirect($values['_redirect']);
-			// 	exit;
-			// });
 
 
 		/*
@@ -348,6 +321,18 @@ class Router{
 		 *   | .__/|_|  \___/|_| |_|_|\___||___/
 		 *   |_|                                
 		 */
+
+
+			/** 
+			 * Get user basic info
+			 * User ME
+			 * @return JSON formatted user basic info
+			 * TO DO: Check data sent by this endpoint and activate it
+			 */
+			$slim->get('/rest/v1/:logged/me', function ($logged = NULL) {
+			  	echo fetch_me_information($logged);
+			  	exit;
+			});
 		
 			/* Get user profile
 			 * @param String $logged User requesting the profile
@@ -376,13 +361,7 @@ class Router{
 				exit;
 			});
 
-			/* Get user basic info
-			 * @return JSON formatted user basic info
-			 * TO DO: Check data sent by this endpoint and activate it
-			 */
-			$slim->get('/rest/v1/auth/user/me', function () {
-			  	return (method_exists($this, 'getInfo')) ? wp_send_json_success(array("request_token" => $this->getInfo())) : wp_send_json_error('Couldn\'t execute method') ;
-			});
+			
 
 			/*
 			 * Get attachments uploaded by user
