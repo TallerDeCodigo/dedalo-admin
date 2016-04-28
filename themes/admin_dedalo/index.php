@@ -22,7 +22,7 @@
 			$productos = get_posts($args);
 			if($productos):
 		?>
-		<h3>DESTACADOS</h3>
+		<h3>FEATURED</h3>
 		<section class="destacados seccion_home clearfix grid">
 		<?php 
 			foreach($productos as $post): setup_postdata($post);
@@ -55,7 +55,7 @@
 		</section>
 		<?php endif; ?>
 		
-		<h3>NOTICIAS</h3>
+		<h3>NEWS</h3>
 
 		<section class="notas seccion_home 	clearfix grid">
 		<?php 
@@ -71,8 +71,8 @@
 		<?php endwhile; endif; wp_reset_postdata(); ?>
 		</section><!-- notas -->
 		
-		<?php /*
-		<h3>MARCAS</h3>
+	
+		<h3>SELECTED DESIGNERS AND BRANDS</h3>
 		<section class="notas seccion_home clearfix grid">
 			<article class="producto clearfix">
 				<a href=""><img src="<?php echo THEMEPATH; ?>/images/brand.png"></a>
@@ -92,7 +92,7 @@
 			</article>
 		</section><!-- notas -->
 	
-		*/ ?>
+	
 	</div>
 
 	
