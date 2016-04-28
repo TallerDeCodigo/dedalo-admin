@@ -103,6 +103,7 @@
 		
 		add_image_size( 'dedalo_full', 900, 700, true );
 		add_image_size( 'dedalo_thumb', 705, 540, true );
+		add_image_size( 'dedalo_thumb_feed', 300, 200, true );
 		
 		// cambiar el tamaño del thumbnail
 		/*
@@ -149,8 +150,8 @@
 
 	add_action( 'pre_get_posts', function($query){
 
-		if ( $query->is_main_query() and ! is_admin() ) {
-
+		if ( $query->is_main_query() and is_home() ) {
+			$query->set( 'posts_per_page', 6 );
 		}
 		return $query;
 
