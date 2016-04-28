@@ -194,6 +194,7 @@ function fetch_main_feed($filter = "all", $offset){
 		$post_thumbnail_id = get_post_thumbnail_id($entry->ID);
 		$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
 		$post_thumbnail_url = $post_thumbnail_url[0];
+		$foto_user = get_user_meta( $designer_brand->ID, 'foto_user', TRUE );
 
 		if(!$index){
 			$entries_feed['featured'][] = array(
@@ -204,7 +205,8 @@ function fetch_main_feed($filter = "all", $offset){
 									'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
 									'designer_brand'		=> 	array(
 																	"ID"   => $designer_brand->ID,
-																	"name" => $designer_brand->display_name
+																	"name" => $designer_brand->display_name,
+																	"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 																),
 									'type'					=> $entry->post_type,
 									$entry->post_type		=> true,
@@ -220,7 +222,8 @@ function fetch_main_feed($filter = "all", $offset){
 									'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
 									'designer_brand'		=> array(
 																	"ID"   => $designer_brand->ID,
-																	"name" => $designer_brand->display_name
+																	"name" => $designer_brand->display_name,
+																	"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 																),
 									'type'					=> $entry->post_type,
 									$entry->post_type		=> true,
@@ -431,6 +434,7 @@ function search_dedalo($search_term, $offset, $user = NULL){
 				$post_thumbnail_id = get_post_thumbnail_id($each_post->ID);
 				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
 				$post_thumbnail_url = $post_thumbnail_url[0];
+				$foto_user = get_user_meta( $designer_brand->ID, 'foto_user', TRUE );
 				$return_array['pool'][] = 	array(
 												"ID" 	=> $each_post->ID,
 												"product_title" 		=> $each_post->post_title,
@@ -440,7 +444,8 @@ function search_dedalo($search_term, $offset, $user = NULL){
 												'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
 												'designer_brand'		=> array(
 																				"ID"   => $designer_brand->ID,
-																				"name" => $designer_brand->display_name
+																				"name" => $designer_brand->display_name,
+																				"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 																			),
 												'type'					=> $each_post->post_type,
 											);
@@ -448,24 +453,62 @@ function search_dedalo($search_term, $offset, $user = NULL){
 			}
 			$return_array['count'] = count($return_array['pool']);
 		}
-		return wp_send_json($return_array);
+		return $return_array;
 	}
 
 	/**
 	 * Fetch ME information
 	 * @param String $user_login
-	 * @return Array
+	 * @return JSON Object
 	 */
 	function fetch_me_information($user_login  = NULL){
 		$user = get_user_by("login", $user_login);
-		return array(
-					"ID" 			=> $user->data->ID,
+		$assigned_terms = wp_get_object_terms( $user->ID, 'user_category' );
+		$foto_user = get_user_meta( $user->ID, 'foto_user', TRUE );
+		$me =   array(
+					"ID" 			=> $user->ID,
 					"login" 		=> $user->data->user_login,
 					"display_name" 	=> $user->data->display_name,
+					"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 					"role" 			=> $user->roles[0],
+					"valid_token"	=> "HFJEUUSNNSODJJEHHAGADMNDHS&$86324",
 					"categories" 	=> array(),
 				);
+		foreach ($assigned_terms as $each_term) 
+			$me['categories'][] =   array(
+										"ID" => $each_term->term_id,
+										"name" => $each_term->name,
+										"slug" => $each_term->slug
+									);
+		return wp_send_json($me);
 		
+	}
+
+
+	/**
+	 * Fetch search page composite layout
+	 * @param String $user_logged
+	 * @return JSON Object
+	 */
+	function fetch_search_composite($user_logged = NULL){
+
+		$previous = array("pool" => array(), "count" => 0);
+		/* Get categories from another endpoint */
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/'));
+		$categories = json_decode($categories);
+		/* Fetch 4 featured products */
+		$featured 	= fetch_featured_products();
+		/* Get previous searches */
+		if($logged){
+			// $previous 	= fetch_previous_searches();
+		}
+		$composite = array(
+									"featured" => $featured,
+									"previous" => $previous,
+									"categories" => $categories,
+							);
+
+		return json_encode($composite);
 	}
 
 
