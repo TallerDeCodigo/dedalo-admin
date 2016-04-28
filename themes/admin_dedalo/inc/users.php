@@ -201,4 +201,13 @@ function save_user_category( $user_id ) {
  	if(isset($_POST['_bio_es']))
  		update_user_meta($user_id, '_bio_es', $_POST['_bio_es']);
 
+ 	if(isset($_POST['user_category'])){
+ 		$user_terms = $_POST['user_category'];
+		$terms = array_unique( array_map( 'intval', $user_terms ) );
+		wp_set_object_terms( $user_id, $terms, 'user_category', false );
+	 
+		//make sure you clear the term cache
+		clean_object_term_cache($user_id, 'user_category');
+ 	}
+ 	
 }
