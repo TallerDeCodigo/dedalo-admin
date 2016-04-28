@@ -6,7 +6,18 @@
 			<article <?php echo post_class('clearfix'); ?>>
 				<div class="head_producto clearfix">
 					<h2><?php the_title(); ?></h2>
-					 <img src="<?php echo THEMEPATH; ?>/images/profilepic.png"> <h3 class="author"><?php echo get_the_author(); ?></h3>
+					<?php
+						$userID = $post->post_author;
+						$userURL = get_author_posts_url($userID);
+
+						if(get_the_author_meta('foto_user', $userID) != ''){
+					?>
+						<a href="<?php echo $userURL; ?>"><img src="<?php echo get_the_author_meta('foto_user', $userID); ?>"><h3 class="author"><?php echo get_the_author(); ?></h3></a>
+					<?php
+						} else {
+					?>
+						<a href=""><img src="<?php echo THEMEPATH; ?>/images/profilepic.png"> <h3 class="author"><?php echo get_the_author(); ?></h3></a>
+					<?php } ?>
 				</div>
 
 				<section class="clearfix">

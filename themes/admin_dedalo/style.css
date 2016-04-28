@@ -74,7 +74,7 @@ h1   { font-size: 24px; font-size: 2.4rem; } /* =24px */
 html {background: #f0f9ff;}
 body {font-family: 'roboto'; color: #7a7a7a;}
 .container {width: 100%;}
-.contenedor {width: 1024px; margin: 0 auto;}
+.contenedor {width: 960px; margin: 0 auto;}
 .header {width: 100%; background: #1e88e5;}
 .header .contenedor { }
 
@@ -82,22 +82,31 @@ h1 {display: block; float: left; text-indent: -10000px; width: 270px; height: 10
 .flavtext {width: 30%; margin: 0 auto; color: #fff; font-size:18px; font-weight: normal; float: left;}
 .login {float: right; color: #fff; text-decoration: none; font-size: 14px; padding-top: 40px;}
 .login a {color: #fff; text-decoration: none; font-size: 18px; display: block; margin-left: 10px; float: left; }
-.profilepic img {width: 50px; height: auto; margin-top: -15px;}
+.profilepic img {width: 50px; height: auto; margin-top: -15px; border-radius: 50px;}
 
 
 .search {width: 100%; background: url('images/back.png') no-repeat center #1e88e5; height: 400px; background-size: cover;}
-.search #searchform {width: 50%; margin: 0 auto; height: 50px; }
+.search #searchform {width: 50%; max-width: 960px; margin: 0 auto; height: 50px; }
 .search #searchform input {width: 100%; height: 50px!important; padding: 0 30px; margin-top: 20%;}
 
 .seccion_home {margin-top: 40px; border-bottom: 1px solid #1e88e5;}
 .seccion_home:last-child {border-bottom: 0px;}
 h3 {font-size: 30px; margin: 0 0 30px 0; font-weight: normal; color: #1e88e5; margin-top: 30px;}
-.grid .producto {width: 235px; float: left; margin-right: 28px; position: relative; margin-bottom: 32px; min-height: 350px;}
-.grid article:nth-child(4n) {margin-right: 0px!important;}
-.grid .producto img{width:100%; height: auto; background: #f9f9f9; margin-bottom: 10px; }
-.grid .producto h4 a {color: #1e88e5; text-decoration: none; font-size: 16px; font-weight: normal; margin-bottom: 5px; display: block; }
-.grid .producto h5 a {color: #1e88e5; text-decoration: none; font-size: 14px; font-weight: normal; margin-bottom: 5px; display: block;}
-.grid .producto span {background: #90caf9; padding: 5px 10px; color: #1e88e5; border-radius: 5px;}
+.grid .producto {width: 300px; float: left; margin-right: 30px; position: relative; margin-bottom: 40px; min-height: 350px;}
+.grid article:nth-child(3n) {margin-right: 0px!important;}
+.grid .producto img.thumb{width:100%; height: auto; background: #f9f9f9; margin-bottom: 15px; vertical-align: top;}
+.grid .producto .post_info_feed img{width:50px; border-radius: 50px; height: auto; float: left; margin-right: 15px; }
+.grid .producto h4 a {color: #1e88e5; text-decoration: none; font-size: 20px; font-weight: 500; margin-bottom: 5px; display: block; }
+.grid .producto h5 a {color: #1e88e5; text-decoration: none; font-size: 18px; font-weight: normal; margin-bottom: 10px; display: block;}
+.grid .producto p {font-size: 18px; font-weight: normal; margin-bottom: 15px; }
+.grid .producto span {font-size: 14px; font-weight: bold; background: #90caf9; padding: 5px 10px; color: #1e88e5; border-radius: 5px;}
+
+.grid .noticia {width: 300px; float: left; margin-right: 30px; position: relative; margin-bottom: 42px; min-height: 330px;}
+.grid article:nth-child(3n) {margin-right: 0px!important;}
+.grid .noticia img.thumb{width:100%; height: auto; background: #f9f9f9; margin-bottom: 15px; }
+.grid .noticia h4 a {color: #1e88e5; text-decoration: none; font-size: 20px; font-weight: 500; margin-bottom: 5px; display: block; }
+.grid .noticia h5 a {color: #1e88e5; text-decoration: none; font-size: 14px; font-weight: normal; margin-bottom: 5px; display: block;}
+.grid .noticia span {background: #90caf9; padding: 5px 10px; color: #1e88e5; border-radius: 5px;}
 
 
 footer {width: 100%; background: #191919; padding-bottom: 40px;/*position:absolute;bottom:0;*/}
@@ -119,7 +128,7 @@ footer {width: 100%; background: #191919; padding-bottom: 40px;/*position:absolu
 .productos .head_producto {width: 100%; }
 .productos .head_producto h2{font-size: 32px; color: #1e88e5; margin-bottom: 15px;}
 .productos .head_producto h3 {font-size: 18px; color: #1e88e5; float: left; margin:5px 0 30px 5px;}
-.productos .head_producto img {width: 35px; height: auto; float: left;}
+.productos .head_producto img {width: 35px; height: auto; float: left; border-radius: 20px;}
 .productos .slider_producto {width: 80%; float: left; margin-right: 2%; margin-bottom: 30px;}
 .productos .slider_producto .slide {width: 100%;}
 .productos .slider_producto .slide img {width: 100%; height: auto;}
