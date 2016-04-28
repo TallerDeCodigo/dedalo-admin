@@ -86,18 +86,18 @@ h1 {display: block; float: left; text-indent: -10000px; width: 270px; height: 10
 
 
 .search {width: 100%; background: url('images/back.png') no-repeat center #1e88e5; height: 400px; background-size: cover;}
-.search #searchform {width: 50%; margin: 0 auto; height: 50px;}
+.search #searchform {width: 50%; margin: 0 auto; height: 50px; }
 .search #searchform input {width: 100%; height: 50px!important; padding: 0 30px; margin-top: 20%;}
 
 .seccion_home {margin-top: 40px; border-bottom: 1px solid #1e88e5;}
 .seccion_home:last-child {border-bottom: 0px;}
 h3 {font-size: 30px; margin: 0 0 30px 0; font-weight: normal; color: #1e88e5; margin-top: 30px;}
-.grid .producto {width: 235px; float: left; margin-right: 28px; position: relative; margin-bottom: 32px; min-height: 310px;}
+.grid .producto {width: 235px; float: left; margin-right: 28px; position: relative; margin-bottom: 32px; min-height: 350px;}
 .grid article:nth-child(4n) {margin-right: 0px!important;}
 .grid .producto img{width:100%; height: auto; background: #f9f9f9; margin-bottom: 10px; }
 .grid .producto h4 a {color: #1e88e5; text-decoration: none; font-size: 16px; font-weight: normal; margin-bottom: 5px; display: block; }
 .grid .producto h5 a {color: #1e88e5; text-decoration: none; font-size: 14px; font-weight: normal; margin-bottom: 5px; display: block;}
-.grid .producto span {background: #1e88e5; padding: 5px 10px; color: #fff;}
+.grid .producto span {background: #90caf9; padding: 5px 10px; color: #1e88e5; border-radius: 5px;}
 
 
 footer {width: 100%; background: #191919; padding-bottom: 40px;/*position:absolute;bottom:0;*/}
@@ -151,39 +151,33 @@ footer {width: 100%; background: #191919; padding-bottom: 40px;/*position:absolu
 .extra_info .tags a, .extra_info .dtools a {display:block; float: left; font-size: 14px; margin-right: 5px; color: #fff; background: #90caf9; padding: 2px 5px; text-decoration: none; border-radius: 2px;}
 
 
-/*
-	 *
-	 	*
-	 		*	PAGE_LOGIN  
-	 	*
-	 *
-*/
-		label{display:none;}
-		#centrar{display:none;position:absolute;top:20%;left:30%;}
-		.popup{background-color:rgba(25,25,25,0.9);width:40%;height:500px;border-radius:5px;padding:150px 60px;z-index:200;}
-		.fb_btn, .twitter_button{width:50%;}
-		.fb_btn button{width:100%;height:30px;border-style:none;padding-left:10px;border-bottom:1px solid white;margin-bottom:20px;margin-top:20px;background-color:transparent;color:#fff;text-align: left}
-		.twitter_button button{width:100%;height:30px;border-style:none;padding-left:10px;border-bottom:1px solid white;margin-bottom:20px;background-color:transparent;color:#fff;text-align: left}
-		.forma{float:right;margin-top:-100px;}
-		#registro input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:50%;height:30px;background-color: transparent;color:#fff;}
-		.login-username input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
-		.login-password input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
-		.login-submit input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;}
+/*** Page LOGIN ***/
 
-/*
-	 *
-	 	*
-	 		*	PAGE_SIGNUP  
-	 	*
-	 *
-*/
-		#sign_up{border-style:none;border-bottom:1px solid #fff;width:50%;text-align:left;background:none;color:#fff;margin-top:10px;padding-left:10px;}
-		#signupForm{background-color:rgba(25,25,25,0.9);width:40%;height:500px;padding:150px 60px;z-index:200;position:absolute;top:20%;left:30%;text-align: center;border-radius: 5px;display:none;}
-		#signupForm input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:40%;height:30px;background-color: transparent;color:#fff;margin-bottom:20px;}
-		#signupForm input:last-child{width:80.55%;}
-		#confirm-Pass-error{color:red;z-index: 20;position:fixed;top:0;}
-		#correo-error{color:red;z-index: 20;width:200px;position:absolute;top:210px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
-		#nick-error{color:red;z-index: 20;width:200px;position:absolute;top:120px;left:-110px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
-		#nombre-error{color:red;z-index: 20;width:200px;position:absolute;top:120px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
-		#pass-error{color:red;z-index: 20;width:200px;position:absolute;top:210px;left:-110px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
-		#confirmPass-error{color:red;z-index: 20;width:200px;position:absolute;top:270px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+label{display:none;}
+#centrar{display:none;position:absolute;top:20%;left:30%;}
+.popup{background-color:rgba(25,25,25,0.9);width:40%;height:500px;border-radius:5px;padding:150px 60px;z-index:200;}
+.fb_btn, .twitter_button{width:50%;}
+.fb_btn button{width:100%;height:30px;border-style:none;padding-left:10px;border-bottom:1px solid white;margin-bottom:20px;margin-top:20px;background-color:transparent;color:#fff;text-align: left}
+.twitter_button button{width:100%;height:30px;border-style:none;padding-left:10px;border-bottom:1px solid white;margin-bottom:20px;background-color:transparent;color:#fff;text-align: left}
+.forma{float:right;margin-top:-100px;}
+#registro input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:50%;height:30px;background-color: transparent;color:#fff;}
+.login-username input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
+.login-password input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;margin-bottom:6px;}
+.login-submit input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:100%;height:30px;background-color: transparent;color:#fff;}
+
+/*** PAGE SIGNUP ***/
+
+#sign_up{border-style:none;border-bottom:1px solid #fff;width:50%;text-align:left;background:none;color:#fff;margin-top:10px;padding-left:10px;}
+#signupForm{background-color:rgba(25,25,25,0.9);width:40%;height:500px;padding:150px 60px;z-index:200;position:absolute;top:20%;left:30%;text-align: center;border-radius: 5px;display:none;}
+#signupForm input{border-style: none;text-align:left;padding-left:10px;border-bottom:1px solid #fff;width:40%;height:30px;background-color: transparent;color:#fff;margin-bottom:20px;}
+#signupForm input:last-child{width:80.55%;}
+#confirm-Pass-error{color:red;z-index: 20;position:fixed;top:0;}
+#correo-error{color:red;z-index: 20;width:200px;position:absolute;top:210px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+#nick-error{color:red;z-index: 20;width:200px;position:absolute;top:120px;left:-110px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+#nombre-error{color:red;z-index: 20;width:200px;position:absolute;top:120px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+#pass-error{color:red;z-index: 20;width:200px;position:absolute;top:210px;left:-110px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+#confirmPass-error{color:red;z-index: 20;width:200px;position:absolute;top:270px;text-align: left;background:rgba(0,0,0,0.3);padding:10px;border-radius: 5px}
+
+
+
+
