@@ -127,10 +127,25 @@
 					</div><!-- logo -->
 					<div class="login">
 						<!-- <button id="btnTest">testbtn</button> -->
-						<?php if(is_user_logged_in()){ ?>
-							<a href="<?php echo wp_logout_url(home_url());?>">LOGOUT</a>
-							<?php } else { ?><a href="#"id="btnTest">LOGIN</a><?php } ?>
+						<?php 
+							if(is_user_logged_in()){ 
+								$userID = get_current_user_id();
+						?>
+							<a href="">Welcome, <?php echo get_user_meta($userID, 'first_name', true);?></a>
+						<?php 
+							
+							if(get_user_meta($userID, 'foto_user', true)){
+						?>
+							<a class="profilepic" href=""><img src="<?php echo get_user_meta($userID, 'foto_user', true); ?>"></a>
+						<?php } else { ?>
 							<a class="profilepic" href=""><img src="<?php echo THEMEPATH; ?>/images/profilepic.png"></a>
+						<?php 
+							} 
+						} else { 
+						?>
+							<a href="#"id="btnTest">LOGIN</a>
+							<a class="profilepic" href=""><img src="<?php echo THEMEPATH; ?>/images/profilepic.png"></a>
+						<?php } ?>
 					</div><!-- login -->
 				</div><!-- contenedor -->
 			</div><!--header-->

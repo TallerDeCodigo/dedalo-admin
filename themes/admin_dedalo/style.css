@@ -82,7 +82,7 @@ h1 {display: block; float: left; text-indent: -10000px; width: 270px; height: 10
 .flavtext {width: 30%; margin: 0 auto; color: #fff; font-size:18px; font-weight: normal; float: left;}
 .login {float: right; color: #fff; text-decoration: none; font-size: 14px; padding-top: 40px;}
 .login a {color: #fff; text-decoration: none; font-size: 18px; display: block; margin-left: 10px; float: left; }
-.profilepic img {width: 50px; height: auto; margin-top: -15px;}
+.profilepic img {width: 50px; height: auto; margin-top: -15px; border-radius: 50px;}
 
 
 .search {width: 100%; background: url('images/back.png') no-repeat center #1e88e5; height: 400px; background-size: cover;}
@@ -98,6 +98,13 @@ h3 {font-size: 30px; margin: 0 0 30px 0; font-weight: normal; color: #1e88e5; ma
 .grid .producto h4 a {color: #1e88e5; text-decoration: none; font-size: 16px; font-weight: normal; margin-bottom: 5px; display: block; }
 .grid .producto h5 a {color: #1e88e5; text-decoration: none; font-size: 14px; font-weight: normal; margin-bottom: 5px; display: block;}
 .grid .producto span {background: #90caf9; padding: 5px 10px; color: #1e88e5; border-radius: 5px;}
+
+.grid .noticia {width: 235px; float: left; margin-right: 28px; position: relative; margin-bottom: 32px; min-height: 300px;}
+.grid article:nth-child(4n) {margin-right: 0px!important;}
+.grid .noticia img{width:100%; height: auto; background: #f9f9f9; margin-bottom: 10px; }
+.grid .noticia h4 a {color: #1e88e5; text-decoration: none; font-size: 16px; font-weight: normal; margin-bottom: 5px; display: block; }
+.grid .noticia h5 a {color: #1e88e5; text-decoration: none; font-size: 14px; font-weight: normal; margin-bottom: 5px; display: block;}
+.grid .noticia span {background: #90caf9; padding: 5px 10px; color: #1e88e5; border-radius: 5px;}
 
 
 footer {width: 100%; background: #191919; padding-bottom: 40px;/*position:absolute;bottom:0;*/}
@@ -119,7 +126,7 @@ footer {width: 100%; background: #191919; padding-bottom: 40px;/*position:absolu
 .productos .head_producto {width: 100%; }
 .productos .head_producto h2{font-size: 32px; color: #1e88e5; margin-bottom: 15px;}
 .productos .head_producto h3 {font-size: 18px; color: #1e88e5; float: left; margin:5px 0 30px 5px;}
-.productos .head_producto img {width: 35px; height: auto; float: left;}
+.productos .head_producto img {width: 35px; height: auto; float: left; border-radius: 20px;}
 .productos .slider_producto {width: 80%; float: left; margin-right: 2%; margin-bottom: 30px;}
 .productos .slider_producto .slide {width: 100%;}
 .productos .slider_producto .slide img {width: 100%; height: auto;}

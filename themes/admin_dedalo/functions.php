@@ -163,7 +163,7 @@
 
 
 	add_filter('excerpt_length', function($length){
-		return 6;
+		return 10;
 	});
 
 
