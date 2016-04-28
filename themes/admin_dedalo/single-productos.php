@@ -6,7 +6,7 @@
 			<article <?php echo post_class('clearfix'); ?>>
 				<div class="head_producto clearfix">
 					<h2><?php the_title(); ?></h2>
-					 <img src="<?php echo THEMEPATH; ?>/images/profilepic.png"> <h3 class="author"><?php echo the_author(); ?></h3>
+					 <img src="<?php echo THEMEPATH; ?>/images/profilepic.png"> <h3 class="author"><?php echo get_the_author(); ?></h3>
 				</div>
 
 				<section class="clearfix">
@@ -120,11 +120,13 @@
 							<i class="material-icons">build</i><h5>Design Tools</h5>
 							<?php 
 								$dtools = get_the_terms($post->ID, 'design-tools');
-								foreach($dtools as $term):
-									$term_link = get_term_link( $term );
-									//print_r($term);
-									echo '<a href="'.$term_link.'">'.$term->name.'</a>';
-								endforeach;
+								if($dtools){
+									foreach($dtools as $term):
+										$term_link = get_term_link( $term );
+										//print_r($term);
+										echo '<a href="'.$term_link.'">'.$term->name.'</a>';
+									endforeach;
+								}
 							?>
 						</div><!-- tags -->
 						<div class="license_type">
