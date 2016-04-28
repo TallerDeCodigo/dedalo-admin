@@ -26,17 +26,29 @@ add_action('switch_theme', 'create_tokenTable');
  * @see get User basic data
  */
 function mobile_pseudo_login() {
-	
-	if(!isset($_POST['user_login']) && !isset($_POST['user_password'])) return wp_send_json_error();
+
+	if(!isset($_POST['user_email']) && !isset($_POST['user_password'])) 
+		return wp_send_json_error(array('error_code' => '401', 'error_message' => 'Data sent to server is not well formatted'));
 	
 	global $rest;
 	extract($_POST);
+	$user = get_user_by("email", $user_email);
+
 	$creds = array();
-	$creds['user_login'] = $user_login;
+	$creds['user_login'] = $user->data->user_login;
 	$creds['user_password'] = $user_password;
 	$creds['remember'] = true;
+	// file_put_contents(
+	// 	'/logs/php.log',
+	// 	var_export( $creds, true ) . PHP_EOL,
+	// 	FILE_APPEND
+	// );
 	$SignTry = wp_signon( $creds, false );
-
+	// file_put_contents(
+	// 	'/logs/php.log',
+	// 	var_export( $SignTry, true ) . PHP_EOL,
+	// 	FILE_APPEND
+	// );
 	if( !is_wp_error($SignTry)){
 		
 		$user_id 	= $SignTry->ID;
@@ -65,7 +77,7 @@ function mobile_pseudo_login() {
 		}
 	}
 	/* There was an error processing auth request */
-	wp_send_json_error("Couldn't sign in using the data provided");
+	wp_send_json_error(array('error_code' => '400', 'error_message' => 'Couldn\'t sign in using the data provided'));
 }
 
 /* Check login data matches, activate token and return user data
@@ -195,6 +207,8 @@ function fetch_main_feed($filter = "all", $offset){
 																	"name" => $designer_brand->display_name
 																),
 									'type'					=> $entry->post_type,
+									$entry->post_type		=> true,
+									'link_base'				=> ($entry->post_type == 'productos') ? 'detail' : 'post',
 								);
 			$entries_feed['featured'][$index]['designer_brand'] = (!$designer_brand) ? null :  $entries_feed['featured'][$index]['designer_brand'];
 		}else{
@@ -209,6 +223,8 @@ function fetch_main_feed($filter = "all", $offset){
 																	"name" => $designer_brand->display_name
 																),
 									'type'					=> $entry->post_type,
+									$entry->post_type		=> true,
+									'link_base'				=> ($entry->post_type == 'productos') ? 'detail' : 'post',
 								);
 			$entries_feed['pool'][$index-1]['designer_brand'] = (!$designer_brand) ? null :  $entries_feed['pool'][$index-1]['designer_brand'];
 		}
@@ -366,13 +382,13 @@ function search_dedalo($search_term, $offset, $user = NULL){
 	function fetch_categories($limit = 5){
 		$return_array = array();
 		$categories = get_categories( array(
-		    'orderby' => 'count',
-		    'order'   => 'DESC',
-		    'number'  => $limit,
-		    'hide_empty'  => FALSE,
-		    'parent'  => 0,
-		    'exclude' => 1
-		) );
+									    'orderby' 		=> 'count',
+									    'order'   		=> 'DESC',
+									    'number'  		=> $limit,
+									    'hide_empty'  	=> FALSE,
+									    'parent'  		=> 0,
+									    'exclude' 		=> 1
+									) );
 		foreach ($categories as $each_cat) {
 			$return_array['pool'][] = 	array(
 											"ID" 	=> $each_cat->term_id,
@@ -385,21 +401,22 @@ function search_dedalo($search_term, $offset, $user = NULL){
 		return wp_send_json($return_array);
 	}
 
-	/*
+	/**
 	 * Fetch featured products
 	 * @param Int $limit
+	 * @return Array Pool/Count array
 	 */
 	function fetch_featured_products($limit = 4){
 		$return_array = array("pool" => array(), "count" => 0);
 		$args = array(
 						"post_type" 		=> "productos",
 						"post_status" 		=> "publish",
-						'meta_query' 		=> array(
-												array(
-													'key'     => 'file_featured',
-													'value'   => 'on'
+						'meta_query' 		=> 	array(
+													array(
+														'key'     => 'file_featured',
+														'value'   => 'on'
+													),
 												),
-											),
 						"posts_per_page" 	=> $limit,
 					);
 		$posts = get_posts($args);

@@ -3,8 +3,6 @@
 
 // DEFINIR LOS PATHS A LOS DIRECTORIOS DE JAVASCRIPT Y CSS ///////////////////////////
 
-
-
 	define( 'JSPATH', get_template_directory_uri() . '/js/' );
 
 	define( 'CSSPATH', get_template_directory_uri() . '/css/' );

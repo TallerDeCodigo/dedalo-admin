@@ -219,7 +219,6 @@ class Router{
 			// 	exit;
 			// });
 
-			// remove_role( "Venue" );
 
 		/*     __               _ 
 		 *    / _| ___  ___  __| |
@@ -255,15 +254,12 @@ class Router{
 				exit;
 			});
 
-			/*
-			 * Get user's timeline feed
-			 * @param String $user_login The user to retrieve timeline for
-			 * @param Int $offset Number of offsetted posts pages for pagination purposes
-			 * @important Timeline gets blocks of 10 activities, offset must be set according to the set of results. Ej. Page 1 is offset 0, page 2 is offset 1
-			 * 
+			/**
+			 * Get categories feed
+			 * @category GET Endpoint
 			 */
-			$slim->get('/rest/v1/:u_login/timeline/:offset',function ($user_login, $offset){
-				echo get_user_timeline($user_login, $offset);
+			$slim->get('/rest/v1/content/enum/categories/', function(){
+				echo fetch_categories(10);
 				exit;
 			});
 
@@ -275,6 +271,15 @@ class Router{
 		* \__ \  __/ (_| | | | (__| | | |
 		* |___/\___|\__,_|_|  \___|_| |_|
 		*/
+			
+			/**
+			 * Get search elements
+			 * @category GET Endpoint
+			 */
+			$slim->get('/rest/v1/content/search-composite/', function(){
+				echo fetch_categories();
+				exit;
+			});
 
 			/*
 			 * Search website
@@ -296,59 +301,43 @@ class Router{
 				exit;
 			});
 
-			/**
-			 * Get categories feed
-			 * @category GET Endpoint
-			 */
-			$slim->get('/rest/v1/content/enum/categories/', function(){
-				echo fetch_categories();
-				exit;
-			});
+			
+
 
 			/**
-			 * Get search elements
+			 * Get products marked as featured
+			 * @param Int $limit
 			 * @category GET Endpoint
 			 */
-			$slim->get('/rest/v1/content/search-composite/', function(){
-				echo fetch_categories();
+			$slim->get('/rest/v1/products/featured(/:limit)', function($limit = 4){
+				echo fetch_featured_products($limit);
 				exit;
 			});
 
 			/**
 			 * Set user categories
 			 * @param String $s
-			 * @category PUT Endpoint
+			 * @category GET Endpoint
 			 */
-			$slim->put('/rest/v1/user/:logged/index/categories/', function($logged){
-				$app = \Slim\Slim::getInstance();
-				$values = array();
-				parse_str($app->request->getBody(), $values);
+			$slim->get('/rest/v1/products/featured/', function(){
+				echo fetch_featured_products();
+				exit;
+			});
+
+			// /**
+			//  * Set user categories
+			//  * @param String $s
+			//  * @category PUT Endpoint
+			//  */
+			// $slim->put('/rest/v1/user/:logged/index/categories/', function($logged){
+			// 	$app = \Slim\Slim::getInstance();
+			// 	$values = array();
+			// 	parse_str($app->request->getBody(), $values);
 				
-				if( update_index_categories($logged, $values) AND isset($values['_redirect']) )
-					wp_redirect($values['_redirect']);
-				exit;
-			});
-
-			/**
-			 * Set user categories
-			 * @param String $s
-			 * @category GET Endpoint
-			 */
-			$slim->get('/rest/v1/products/featured/', function(){
-				echo fetch_featured_products();
-				exit;
-			});
-
-			/**
-			 * Set user categories
-			 * @param String $s
-			 * @category GET Endpoint
-			 */
-			$slim->get('/rest/v1/products/featured/', function(){
-				echo fetch_featured_products();
-				exit;
-			});
-
+			// 	if( update_index_categories($logged, $values) AND isset($values['_redirect']) )
+			// 		wp_redirect($values['_redirect']);
+			// 	exit;
+			// });
 
 
 		/*
