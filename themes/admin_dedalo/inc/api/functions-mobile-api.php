@@ -194,6 +194,7 @@ function fetch_main_feed($filter = "all", $offset){
 		$post_thumbnail_id = get_post_thumbnail_id($entry->ID);
 		$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
 		$post_thumbnail_url = $post_thumbnail_url[0];
+		$foto_user = get_user_meta( $designer_brand->ID, 'foto_user', TRUE );
 
 		if(!$index){
 			$entries_feed['featured'][] = array(
@@ -204,7 +205,8 @@ function fetch_main_feed($filter = "all", $offset){
 									'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
 									'designer_brand'		=> 	array(
 																	"ID"   => $designer_brand->ID,
-																	"name" => $designer_brand->display_name
+																	"name" => $designer_brand->display_name,
+																	"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 																),
 									'type'					=> $entry->post_type,
 									$entry->post_type		=> true,
@@ -220,7 +222,8 @@ function fetch_main_feed($filter = "all", $offset){
 									'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
 									'designer_brand'		=> array(
 																	"ID"   => $designer_brand->ID,
-																	"name" => $designer_brand->display_name
+																	"name" => $designer_brand->display_name,
+																	"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 																),
 									'type'					=> $entry->post_type,
 									$entry->post_type		=> true,
@@ -431,6 +434,7 @@ function search_dedalo($search_term, $offset, $user = NULL){
 				$post_thumbnail_id = get_post_thumbnail_id($each_post->ID);
 				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
 				$post_thumbnail_url = $post_thumbnail_url[0];
+				$foto_user = get_user_meta( $designer_brand->ID, 'foto_user', TRUE );
 				$return_array['pool'][] = 	array(
 												"ID" 	=> $each_post->ID,
 												"product_title" 		=> $each_post->post_title,
@@ -440,7 +444,8 @@ function search_dedalo($search_term, $offset, $user = NULL){
 												'thumb_url'				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
 												'designer_brand'		=> array(
 																				"ID"   => $designer_brand->ID,
-																				"name" => $designer_brand->display_name
+																				"name" => $designer_brand->display_name,
+																				"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 																			),
 												'type'					=> $each_post->post_type,
 											);
@@ -448,26 +453,170 @@ function search_dedalo($search_term, $offset, $user = NULL){
 			}
 			$return_array['count'] = count($return_array['pool']);
 		}
-		return wp_send_json($return_array);
+		return $return_array;
 	}
 
 	/**
 	 * Fetch ME information
 	 * @param String $user_login
-	 * @return Array
+	 * @return JSON Object
 	 */
 	function fetch_me_information($user_login  = NULL){
 		$user = get_user_by("login", $user_login);
-		return array(
-					"ID" 			=> $user->data->ID,
+		$assigned_terms = wp_get_object_terms( $user->ID, 'user_category' );
+		$foto_user = get_user_meta( $user->ID, 'foto_user', TRUE );
+		$me =   array(
+					"ID" 			=> $user->ID,
 					"login" 		=> $user->data->user_login,
 					"display_name" 	=> $user->data->display_name,
+					"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 					"role" 			=> $user->roles[0],
+					"valid_token"	=> "HFJEUUSNNSODJJEHHAGADMNDHS&$86324",
 					"categories" 	=> array(),
 				);
+		foreach ($assigned_terms as $each_term) 
+			$me['categories'][] =   array(
+										"ID" => $each_term->term_id,
+										"name" => $each_term->name,
+										"slug" => $each_term->slug
+									);
+		return wp_send_json($me);
 		
 	}
 
+
+	/**
+	 * Fetch search page composite layout
+	 * @param String $user_logged
+	 * @return JSON Object
+	 */
+	function fetch_search_composite($user_logged = NULL){
+
+		$previous = array("pool" => array(), "count" => 0);
+		/* Get categories from another endpoint */
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/'));
+		$categories = json_decode($categories);
+		/* Fetch 4 featured products */
+		$featured 	= fetch_featured_products();
+		/* Get previous searches */
+		if($logged){
+			// $previous 	= fetch_previous_searches();
+		}
+		$composite = array(
+									"featured" => $featured,
+									"previous" => $previous,
+									"categories" => $categories,
+							);
+
+		return json_encode($composite);
+	}
+
+	/**
+	 * Fetch product detail information
+	 * @param Int $product_id
+	 * @return JSON Object
+	 */
+	function fetch_product_detail($product_id = NULL){
+		if(!$product_id)
+			return NULL;
+		$post =  get_post($product_id);
+		
+		$product_author 		= (get_user_by("id", $post->post_author)) ? get_user_by("id", $post->post_author) : NULL;
+		$designer_brand			= $product_author->data;
+
+		$trimmed_description 	= ($post->post_content !== '') ? wp_trim_words( $post->post_content, $num_words = 15, $more = '...' ) : NULL;
+		$post_thumbnail_id 	= get_post_thumbnail_id($post->ID);
+		$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
+		$post_thumbnail_url = $post_thumbnail_url[0];
+		$foto_user 			= get_user_meta( $designer_brand->ID, 'foto_user', TRUE );
+		$product_price 		= (get_post_meta($post->ID,'precio_producto', true) != '') ? get_post_meta($post->ID,'precio_producto', true) : NULL;
+		$info_tecninca		= get_post_meta($post->ID, 'info_tecninca', TRUE);
+		$notas_tecnicas		= get_post_meta($post->ID, 'notas_tecnicas', TRUE);
+		$printer_type		= get_post_meta($post->ID, 'printer_type', TRUE);
+		$supports_rafts		= get_post_meta($post->ID, 'supports_rafts', TRUE);
+		$infill				= get_post_meta($post->ID, 'infill', TRUE);
+		$resolution			= get_post_meta($post->ID, 'resolution', TRUE);
+
+		$tags = wp_get_post_tags( $post->ID );
+		
+		$design_tools = get_the_terms( $post->ID, 'design-tools' );
+		
+		$final_array = array(
+								"product_title" 	=> $post->post_title,
+								"product_description" => $post->post_content,
+								"product_price" 	=> $product_price,
+								"slug" 				=> $post->post_name,
+								"type" 				=> $post->post_type,
+								"thumb_url" 		=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
+								"gallery" 			=> array(),
+								"by_same_maker"		=> array(),
+								"tags"				=> array(),
+								"design_toos"		=> array(),
+								$post->post_type 	=> true,
+								"designer_brand" 	=>  array(
+															"ID"   => $designer_brand->ID,
+															"name" => $designer_brand->display_name,
+															"profile_pic" 	=> ($foto_user) ? $foto_user : null,
+														),
+								"technical"			=> array(
+															"info" 	=> wpautop($info_tecninca),
+															"notes" => $notas_tecnicas,
+														),
+								"printer"			=> array(
+															"type" 	=> ($printer_type !== '') ? $printer_type : NULL,
+															"rafts" => ($supports_rafts !== '') ? $supports_rafts : NULL,
+															"infill" => ($notas_tecnicas !== '') ? $notas_tecnicas : NULL,
+															"resolution" => ($resolution !== '') ? $resolution : NULL,
+														),
+							);
+
+		$media = get_attached_media( 'image', $post->ID );
+		foreach ($media as $each_image) {
+			$medium = wp_get_attachment_image_src($each_image->ID, 'large');
+			$final_array['gallery']['pool'][]['url'] = $medium[0];
+		}
+		$same_maker = get_posts(array(
+									"author" 			=> $designer_brand->ID,
+									"post_type" 		=> "productos",
+									"post_status" 		=> "publish",
+									"posts_per_page" 	=> 5,
+									"orderby" 			=> "date",
+								));
+
+		if($same_maker)
+			foreach ($same_maker as $each_related) {
+				$post_thumbnail_id 	= get_post_thumbnail_id($each_related->ID);
+				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'medium');
+				$post_thumbnail_url = $post_thumbnail_url[0];
+				$final_array['by_same_maker']['pool'][] = array( 
+																"ID"			=> $each_related->ID,
+																"product_title" => $each_related->post_title,
+																"thumb_url"		=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
+															);
+			}
+		if($tags)
+			foreach ($tags as $each_tag) {
+				$final_array['tags']['pool'][] = array( 
+																"ID"		=> $each_tag->term_id,
+																"name" 		=> $each_tag->name,
+																"slug"		=> $each_tag->slug,
+															);
+			}
+		if($design_tools)
+			foreach ($design_tools as $each_dt) {
+				$final_array['design_tools']['pool'][] = array( 
+																"ID"		=> $each_dt->term_id,
+																"name" 		=> $each_dt->name,
+																"slug"		=> $each_dt->slug,
+															);
+			}
+
+		$final_array['gallery']['count'] = count($final_array['gallery']['pool']);
+		$final_array['by_same_maker']['count'] = count($final_array['by_same_maker']['pool']);
+		$final_array['tags']['count'] = count($final_array['tags']['pool']);
+		$final_array['design_tools']['count'] = count($final_array['design_tools']['pool']);
+		return json_encode($final_array);
+	} 
 
 
 

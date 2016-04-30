@@ -133,35 +133,6 @@
 	}
 
 
-	function register_user_taxonomy(){
- 
-	$labels = array(
-		'name' => 'User Category',
-		'singular_name' => 'User Category',
-		'search_items' => 'Search User Categories',
-		'all_items' => 'All User Categories',
-		'parent_item' => 'Parent User Category',
-		'parent_item_colon' => 'Parent User Category',
-		'edit_item' => 'Edit User Category',
-		'update_item' => 'Update User Category',
-		'add_new_item' => 'Add New User Category',
-		'new_item_name' => 'New User Category Name',
-		'menu_name' => 'User Category'
-	);
- 
-	$args = array(
-		'hierarchical' => true,
-		'labels' => $labels,
-		'show_ui' => true,
-		'show_admin_column' => true,
-		'query_var' => true,
-		'rewrite' => array( 'slug' => 'user_category')
-	);
- 
-	register_taxonomy( 'user_category' , 'user' , $args );
-}
-add_action( 'init', 'register_user_taxonomy' );
-
 function add_user_category_menu() {
     add_submenu_page( 'users.php' , 'User Category', 'User Category' , 'add_users',  'edit-tags.php?taxonomy=user_category' );
 }

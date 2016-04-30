@@ -263,6 +263,15 @@ class Router{
 				exit;
 			});
 
+			/**
+			 * Fetch product detail
+			 * @category GET Endpoint
+			 */
+			$slim->get('/rest/v1/products/:product_id/', function($product_id){
+				echo fetch_product_detail($product_id);
+				exit;
+			});
+
 
 
 		/*                          _     
@@ -276,8 +285,9 @@ class Router{
 			 * Get search elements
 			 * @category GET Endpoint
 			 */
-			$slim->get('/rest/v1/content/search-composite/', function(){
-				echo fetch_categories();
+			$slim->get('/rest/v1(/:logged)/content/search-composite/', function($logged = NULL){
+
+				echo fetch_search_composite( $logged );
 				exit;
 			});
 
@@ -329,7 +339,7 @@ class Router{
 			 * @return JSON formatted user basic info
 			 * TO DO: Check data sent by this endpoint and activate it
 			 */
-			$slim->get('/rest/v1/:logged/me', function ($logged = NULL) {
+			$slim->get('/rest/v1/:logged/me/', function ($logged = NULL) {
 			  	echo fetch_me_information($logged);
 			  	exit;
 			});
