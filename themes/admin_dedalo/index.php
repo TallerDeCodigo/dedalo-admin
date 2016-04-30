@@ -73,6 +73,7 @@
 		
 	
 		<h3>SELECTED DESIGNERS AND BRANDS</h3>
+		<?php /*
 		<section class="notas seccion_home clearfix grid">
 			<article class="producto clearfix">
 				<a href=""><img src="<?php echo THEMEPATH; ?>/images/brand.png"></a>
@@ -91,7 +92,7 @@
 				<h4><a href="">Nombre marca</a></h4>
 			</article>
 		</section><!-- notas -->
-	
+		*/?>
 	
 	</div>
 
