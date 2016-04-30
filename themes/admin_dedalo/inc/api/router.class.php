@@ -259,7 +259,16 @@ class Router{
 			 * @category GET Endpoint
 			 */
 			$slim->get('/rest/v1/content/enum/categories/', function(){
-				return fetch_categories(10);
+				echo fetch_categories(10);
+				exit;
+			});
+
+			/**
+			 * Fetch product detail
+			 * @category GET Endpoint
+			 */
+			$slim->get('/rest/v1/products/:product_id/', function($product_id){
+				echo fetch_product_detail($product_id);
 				exit;
 			});
 
