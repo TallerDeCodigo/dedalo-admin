@@ -73,26 +73,36 @@
 		
 	
 		<h3>SELECTED DESIGNERS AND BRANDS</h3>
-		<?php /*
-		<section class="notas seccion_home clearfix grid">
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/brand.png"></a>
-				<h4><a href="">Nombre marca</a></h4>
+		<section class="brands seccion_home clearfix grid">
+		<?php 
+			$args = array(
+					'fields' => 'display_name',
+				);
+			$users = get_users($args);
+			foreach ($users as $userID):
+				$user = get_user_by('id', $userID);
+				// echo '<pre>';
+				// print_r($user);
+				// echo '</pre>';
+		?>
+			<article class="brand clearfix">
+				<a href="<?php echo site_url('maker').'/'.$user->user_nicename; ?>">
+				<?php 
+					if(get_the_author_meta('foto_user', $userID) != ''){
+					?>
+						<img src="<?php echo get_the_author_meta('foto_user', $userID); ?>">
+					<?php
+						} else {
+					?>
+						<img src="<?php echo THEMEPATH; ?>/images/profilepic.png">
+				<?php } ?>
+
+				</a>
+				<h4><a href="<?php echo site_url('maker').'/'.$user->user_nicename; ?>"><?php echo $user->display_name;?></a></h4>
 			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/brand.png"></a>
-				<h4><a href="">Nombre marca</a></h4>
-			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/brand.png"></a>
-				<h4><a href="">Nombre marca</a></h4>
-			</article>
-			<article class="producto clearfix">
-				<a href=""><img src="<?php echo THEMEPATH; ?>/images/brand.png"></a>
-				<h4><a href="">Nombre marca</a></h4>
-			</article>
+		<?php endforeach; ?>
 		</section><!-- notas -->
-		*/?>
+		
 	
 	</div>
 

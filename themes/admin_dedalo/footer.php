@@ -2,13 +2,13 @@
 	<footer>
 		<div class="contenedor clearfix">
 			<div class="clearfix top_footer">
-				<section class="foot_section">
+				<section class="foot_section logo_foot">
 					<a href="<?php echo bloginfo('url'); ?>"><img src="<?php echo THEMEPATH; ?>/images/monograma.png"></a>
 				</section>
 				<section class="foot_section">
 					<span>App</span>
-					<a href="">Android</a>
-					<a href="">iOS</a>
+					<a href=""><img src="<?php echo THEMEPATH; ?>/images/android.png"></a>
+					<a href=""><img src="<?php echo THEMEPATH; ?>/images/ios.png"></a>
 				</section>
 				<section class="foot_section">
 					<span>About 3Dedalo</span>
@@ -20,11 +20,11 @@
 					<a href="">Join</a>
 					<a href="">Plans</a>
 				</section>
-				<section class="foot_section">
+				<section class="foot_section social_foot">
 					<span>Follow us</span>
-					<a href="">Twitter</a>
-					<a href="">Facebook</a>
-					<a href="">Instagram</a>
+					<a href=""><img src="<?php echo THEMEPATH; ?>/images/fb.png"></a>
+					<a href=""><img src="<?php echo THEMEPATH; ?>/images/inst.png"></a>
+					<a href=""><img src="<?php echo THEMEPATH; ?>/images/tw.png"></a>
 				</section>
 			</div><!-- top_footer -->
 			<div class="clearfix bottom_footer">

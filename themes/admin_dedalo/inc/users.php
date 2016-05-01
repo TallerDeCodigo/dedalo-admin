@@ -39,7 +39,7 @@
 // CUSTOM BASE URL FOR USERS //////////////////////////////////////////////////////////
 
 	global $wp_rewrite;
-	$wp_rewrite->author_base = ''; // or whatever
+	$wp_rewrite->author_base = 'maker';
 	$wp_rewrite->flush_rules();
 
 // CREATE DEFAULT USERS ///////////////////////////////////////////////////////////////
