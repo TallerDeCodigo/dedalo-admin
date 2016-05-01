@@ -40,6 +40,9 @@
 	</footer>
 		<?php wp_footer(); ?>
 		</div><!-- container -->
+
+		<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4dd43084644b4d2b"></script>
+
 	</body>
 
 </html>
