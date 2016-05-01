@@ -213,14 +213,24 @@ label{display:none;}
 #main_sidebar .grid .producto h5 a {color: #1e88e5; text-decoration: none; font-size: 14px; font-weight: normal; margin-bottom: 10px; display: block;}
 #main_sidebar .grid .producto span {font-size: 14px; font-weight: bold; background: #90caf9; padding: 2px 5px; color: #1e88e5; border-radius: 5px;}
 
+#main_sidebar .grid .brand {border-radius: 100px; float: left; width: 65px; height: 65px; margin-right: 10px; margin-bottom: 10px; position: relative;}
+#main_sidebar .grid .brand:nth-child(4n) {margin-right: 0px;}
+#main_sidebar .grid .brand img {width: 100%; height: auto;  vertical-align: top; border-radius: 100px; }
+
+/*** SEARCH ***/
+
+.search_results {margin-top: 30px;}
+.search_left {width: 300px; float: left;}
+.search_right {float: right; width: 633px; }
+
 /*** FOOTER ***/
 
 footer {width: 100%; background: #191919; padding-bottom: 40px;/*position:absolute;bottom:0;*/}
 .top_footer, .bottom_footer {width: 100%;}
 .top_footer {border-bottom: 1px solid #606060; padding-bottom: 50px;}
 .foot_section {width: 20%; float: left; padding-top: 5%; color: #606060;}
-.foot_section.logo_foot img {width: 80%; height: auto;}
-.foot_section  img {width: 80%; height: auto;}
+.foot_section.logo_foot img {width: 60%; height: auto;}
+.foot_section  img {width: 60%; height: auto;}
 .foot_section span {display: block; font-size: 18px; margin-bottom: 20px;}
 .foot_section a {display: block; font-size: 14px; margin-bottom: 5px; color: #606060; text-decoration: none;}
 .foot_section.social_foot a {display: block; float: left; margin-right: 5px; width: 30px;}

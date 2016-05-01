@@ -72,7 +72,7 @@
 		</section><!-- notas -->
 		
 	
-		<h3>SELECTED DESIGNERS AND BRANDS</h3>
+		<h3>SELECTED MAKERS AND BRANDS</h3>
 		<section class="brands seccion_home clearfix grid">
 		<?php 
 			$args = array(
@@ -107,5 +107,5 @@
 	</div>
 
 	
-	<?php get_sidebar(); ?>
+
 	<?php get_footer(); ?>
