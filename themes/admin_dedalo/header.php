@@ -28,7 +28,7 @@
 		<link rel="shortcut icon" href="<?php echo THEMEPATH; ?>images/favicon.ico">
 		<meta name="description" content="<?php bloginfo('description'); ?>">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
 		<meta http-equiv="cleartype" content="on">
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 		<link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,300italic,300' rel='stylesheet' type='text/css'>
@@ -37,9 +37,7 @@
 		<script src="<?php echo THEMEPATH; ?>oauthio/dist/oauth.js"></script>
 		<script type="text/javascript" src="<?php echo THEMEPATH; ?>js/script.js"></script>
 		<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-		<!-- Go to www.addthis.com/dashboard to customize your tools -->
-		<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4dd43084644b4d2b"></script>
-
+		
 		<?php wp_head(); ?>
 	</head>
 
