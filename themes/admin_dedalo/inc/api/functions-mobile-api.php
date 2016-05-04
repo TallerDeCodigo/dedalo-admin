@@ -627,16 +627,15 @@ function search_dedalo($search_term, $offset, $user = NULL){
 	function fetch_post_detail($product_id = NULL){
 		if(!$product_id)
 			return NULL;
-		$post =  get_post($product_id);
-		
-		
-		$post_author			= $product_author->data;
+		$post 					= get_post($product_id);
+		$post_author 			= (get_user_by("id", $post->post_author)) ? get_user_by("id", $post->post_author) : NULL;
+		$post_editor			= $post_author->data;
 
 		$trimmed_description 	= ($post->post_content !== '') ? wp_trim_words( $post->post_content, $num_words = 15, $more = '...' ) : NULL;
-		$post_thumbnail_id 	= get_post_thumbnail_id($post->ID);
-		$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
-		$post_thumbnail_url = $post_thumbnail_url[0];
-		$post_date 			= get_the_date( 'l, F j, Y' , $post->ID);
+		$post_thumbnail_id 		= get_post_thumbnail_id($post->ID);
+		$post_thumbnail_url 	= wp_get_attachment_image_src($post_thumbnail_id,'large');
+		$post_thumbnail_url 	= $post_thumbnail_url[0];
+		$post_date 				= get_the_date('Y-m-d', $post->ID);
 		
 		
 		$final_array = array(
@@ -647,9 +646,9 @@ function search_dedalo($search_term, $offset, $user = NULL){
 								"type" 				=> $post->post_type,
 								"thumb_url" 		=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
 								$post->post_type 	=> true,
-								"post_author" 	=>  array(
-															"ID"   => $post_author->ID,
-															"name" => $post_author->display_name,
+								"post_editor" 	=>  array(
+															"ID"   => $post_editor->ID,
+															"name" => $post_editor->display_name,
 														),
 							);
 		
