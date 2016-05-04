@@ -624,10 +624,10 @@ function search_dedalo($search_term, $offset, $user = NULL){
 	 * @param Int $product_id
 	 * @return JSON Object
 	 */
-	function fetch_post_detail($product_id = NULL){
-		if(!$product_id)
+	function fetch_post_detail($post_id = NULL){
+		if(!$post_id)
 			return NULL;
-		$post 					= get_post($product_id);
+		$post 					= get_post($post_id);
 		$post_author 			= (get_user_by("id", $post->post_author)) ? get_user_by("id", $post->post_author) : NULL;
 		$post_editor			= $post_author->data;
 
@@ -635,20 +635,22 @@ function search_dedalo($search_term, $offset, $user = NULL){
 		$post_thumbnail_id 		= get_post_thumbnail_id($post->ID);
 		$post_thumbnail_url 	= wp_get_attachment_image_src($post_thumbnail_id,'large');
 		$post_thumbnail_url 	= $post_thumbnail_url[0];
+		$foto_user 				= get_user_meta( $post_editor->ID, 'foto_user', TRUE );
 		$post_date 				= get_the_date('Y-m-d', $post->ID);
 		
 		
 		$final_array = array(
-								"post_title" 		=> $post->post_title,
-								"post_content" 		=> $post->post_content,
-								"post_date" 		=> $post->post_date,
-								"slug" 				=> $post->post_name,
-								"type" 				=> $post->post_type,
-								"thumb_url" 		=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
-								$post->post_type 	=> true,
-								"post_editor" 	=>  array(
-															"ID"   => $post_editor->ID,
-															"name" => $post_editor->display_name,
+								"post_title" 		=> 	$post->post_title,
+								"post_content" 		=> 	$post->post_content,
+								"post_date" 		=> 	date( "F j, Y", strtotime($post->post_date) ),
+								"slug" 				=> 	$post->post_name,
+								"type" 				=> 	$post->post_type,
+								"thumb_url" 		=> 	($post_thumbnail_url) ? $post_thumbnail_url : "",
+								$post->post_type 	=> 	true,
+								"post_editor" 		=>  array(
+															"ID"   	=> $post_editor->ID,
+															"name" 	=> $post_editor->display_name,
+															"profile_pic"	=> ($foto_user) ? $foto_user : "",
 														),
 							);
 		

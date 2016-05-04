@@ -276,8 +276,8 @@ class Router{
 			 * Fetch post detail
 			 * @category GET Endpoint
 			 */
-			$slim->get('/rest/v1/:product_id/', function($product_id){
-				echo fetch_post_detail($product_id);
+			$slim->get('/rest/v1/content/:post_id/', function($post_id){
+				echo fetch_post_detail($post_id);
 				exit;
 			});
 
