@@ -636,11 +636,13 @@ function search_dedalo($search_term, $offset, $user = NULL){
 		$post_thumbnail_id 	= get_post_thumbnail_id($post->ID);
 		$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
 		$post_thumbnail_url = $post_thumbnail_url[0];
+		$post_date 			= get_the_date( 'l, F j, Y' , $post->ID);
 		
 		
 		$final_array = array(
-								"post_title" 	=> $post->post_title,
-								"post_content" => $post->post_content,
+								"post_title" 		=> $post->post_title,
+								"post_content" 		=> $post->post_content,
+								"post_date" 		=> $post->post_date,
 								"slug" 				=> $post->post_name,
 								"type" 				=> $post->post_type,
 								"thumb_url" 		=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
