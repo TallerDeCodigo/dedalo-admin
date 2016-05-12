@@ -28,7 +28,19 @@ class User{
 			$password,
 			$email
 		);
-		
+
+		$first_name = (isset($attrs['name'])) 		? $attrs['name'] 	  : "" ;
+		$last_name 	= (isset($attrs['last_name'])) 	? $attrs['last_name'] : "" ;
+		$userdata = array(
+							"ID" 			=> $response,
+							"first_name" 	=> $first_name,
+							"last_name" 	=> $last_name,
+							"display_name" 	=> $first_name." ".$last_name,
+							"nickname"		=> $first_name." ".$last_name,
+							"role" 			=> "maker"
+						);
+		$update = wp_update_user( $userdata );
+
 		if(isset($attrs['twitter_username']))
 			$this->set_tw_username($response, $attrs['twitter_username']);
 		if(isset($attrs['gplus_username']))
@@ -79,6 +91,7 @@ class User{
 			$password = isset($attrs['password']) ? $attrs['password'] : wp_generate_password();
 			$user_id = $this->create($username,  $password, $email, $attrs);
 			$data_created = array('username' => $username, 'user_id' => $user_id);
+
 			if($autologin){
 				$this->login_if__Exists($username);
 				return;

@@ -132,9 +132,13 @@ class Router{
 			 * @see 	User.class.php
 			 */
 			$slim->post('/rest/v1/auth/user/', function () {
-
+				file_put_contents(
+					'/logs/php.log',
+					var_export( $_POST, true ) . PHP_EOL,
+					FILE_APPEND
+				);
 				extract($_POST);
-				if (!isset($username))wp_send_json_error('Please provide a username');
+				if (!isset($username)) wp_send_json_error('Please provide a username');
 				
 				/* Create user object */
 				$User 	= new User();
