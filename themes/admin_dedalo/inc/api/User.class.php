@@ -22,7 +22,11 @@ class User{
 	 * TO DO: Create user object from login and fill attributes
 	 */
 	public function create($nombre, $password, $email, $attrs = array()){
-
+		file_put_contents(
+			'/logs/php.log',
+			var_export( $attrs, true ) . PHP_EOL,
+			FILE_APPEND
+		);
 		$response =  wp_create_user(
 			$nombre,
 			$password,
@@ -31,6 +35,12 @@ class User{
 
 		$first_name = (isset($attrs['name'])) 		? $attrs['name'] 	  : "" ;
 		$last_name 	= (isset($attrs['last_name'])) 	? $attrs['last_name'] : "" ;
+		
+		if(isset($attrs['fbId']))
+			update_user_meta($response, 'fbId', $attrs['fbId']);
+		if(isset($attrs['avatar']))
+			update_user_meta( $response, 'foto_user', $attrs['avatar'] );
+		
 		$userdata = array(
 							"ID" 			=> $response,
 							"first_name" 	=> $first_name,
@@ -39,12 +49,13 @@ class User{
 							"nickname"		=> $first_name." ".$last_name,
 							"role" 			=> "maker"
 						);
+		file_put_contents(
+			'/logs/php.log',
+			var_export( $userdata, true ) . PHP_EOL,
+			FILE_APPEND
+		);
 		$update = wp_update_user( $userdata );
 
-		if(isset($attrs['twitter_username']))
-			$this->set_tw_username($response, $attrs['twitter_username']);
-		if(isset($attrs['gplus_username']))
-			$this->set_gp_username($response, $attrs['gplus_username']);
 		return $response;
 	}
 
