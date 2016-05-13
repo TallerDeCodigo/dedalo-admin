@@ -456,12 +456,22 @@ function search_dedalo($search_term, $offset, $user = NULL){
 	 */
 	function fetch_me_information($user_login  = NULL){
 		$user = get_user_by("login", $user_login);
+		$userData = get_userdata( $user->ID );
+
 		$assigned_terms = wp_get_object_terms( $user->ID, 'user_category' );
 		$foto_user = get_user_meta( $user->ID, 'foto_user', TRUE );
+		$first_name = get_user_meta( $user->ID, 'first_name', TRUE );
+		$last_name = get_user_meta( $user->ID, 'last_name', TRUE );
+		$bio = get_user_meta( $user->ID, 'bio_es', TRUE );
+
 		$me =   array(
 					"ID" 			=> $user->ID,
-					"login" 		=> $user->data->user_login,
-					"display_name" 	=> $user->data->display_name,
+					"login" 		=> $userData->data->user_login,
+					"first_name" 	=> $first_name,
+					"last_name" 	=> $last_name,
+					"email" 		=> $userData->data->user_email,
+					"bio" 			=> $bio,
+					"display_name" 	=> $userData->data->display_name,
 					"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 					"role" 			=> $user->roles[0],
 					"valid_token"	=> "HFJEUUSNNSODJJEHHAGADMNDHS&$86324",

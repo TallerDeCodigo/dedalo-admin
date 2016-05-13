@@ -36,6 +36,8 @@ class User{
 			update_user_meta($response, 'fbId', $attrs['fbId']);
 		if(isset($attrs['avatar']))
 			update_user_meta( $response, 'foto_user', $attrs['avatar'] );
+		if(isset($attrs['bio']))
+			update_user_meta( $response, 'bio_es', $attrs['bio'] );
 		
 		$userdata = array(
 							"ID" 			=> $response,
