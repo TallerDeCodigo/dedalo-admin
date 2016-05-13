@@ -38,23 +38,16 @@ function mobile_pseudo_login() {
 	$creds['user_login'] = $user->data->user_login;
 	$creds['user_password'] = $user_password;
 	$creds['remember'] = true;
-	// file_put_contents(
-	// 	'/logs/php.log',
-	// 	var_export( $creds, true ) . PHP_EOL,
-	// 	FILE_APPEND
-	// );
+
 	$SignTry = wp_signon( $creds, false );
-	// file_put_contents(
-	// 	'/logs/php.log',
-	// 	var_export( $SignTry, true ) . PHP_EOL,
-	// 	FILE_APPEND
-	// );
+
 	if( !is_wp_error($SignTry)){
 		
 		$user_id 	= $SignTry->ID;
 		$user_login = $SignTry->user_login;
 		$role 		= $SignTry->roles[0];
 		$user_name 	= $SignTry->display_name;
+
 
 		/* Validate token before sending response */
 		if(!$rest->check_token_valid('none', $request_token)){
@@ -136,13 +129,13 @@ function _mobile_pseudo_login($user_login, $user_password, $request_token) {
  */
 function mobile_pseudo_logout($logged){
 	$user = get_user_by('slug', $logged);
+	
 	if(!isset($_POST['request_token']) || !$user) return wp_send_json_error();
 
 	global $rest;
 	/* Validate token before sending response */
 	if($rest->check_token_valid($user->ID, $_POST['request_token'])){
 		$response = $rest->update_tokenStatus($_POST['request_token'], $user->ID, 0);
-		
 		/* Return user info to store client side */
 		if($response){
 			wp_send_json_success();

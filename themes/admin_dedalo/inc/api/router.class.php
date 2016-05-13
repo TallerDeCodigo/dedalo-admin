@@ -132,11 +132,7 @@ class Router{
 			 * @see 	User.class.php
 			 */
 			$slim->post('/rest/v1/auth/user/', function () {
-				file_put_contents(
-					'/logs/php.log',
-					var_export( $_POST, true ) . PHP_EOL,
-					FILE_APPEND
-				);
+
 				extract($_POST);
 				if (!isset($username)) wp_send_json_error('Please provide a username');
 				
@@ -168,7 +164,12 @@ class Router{
 				$User = new User();
 				/* Create user */
 				if($User->_username_exists($username)){
-					$json_response = array('user_id' => $User->_username_exists($username), 'username' => $username);
+					$user = get_user_by("id", $user_id);
+					$json_response = array(
+											'user_id' => $User->_username_exists($username), 
+											'username' => $username,
+											'user_login' => $username
+										);
 					wp_send_json_success($json_response);
 				}
 				wp_send_json_error();
@@ -204,6 +205,7 @@ class Router{
 			 * @return JSON success
 			 */
 			$slim->post('/rest/v1/auth/:logged/logout/', function($logged) {
+
 				return mobile_pseudo_logout($logged);
 				exit;
 			});
