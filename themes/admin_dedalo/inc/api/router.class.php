@@ -210,21 +210,6 @@ class Router{
 				exit;
 			});
 
-			/*
-			 * DEPRECATED!!!!!
-			 * DEPRECATED!!!!!
-			 * DEPRECATED!!!!!
-			 * CHECK USER LOGIN IMPORTANT USE BEFORE EVERY CALL TO THE API
-			 * DEPRECATED!!!!! 
-			 * DEPRECATED!!!!! 
-			 * DEPRECATED!!!!! (use checkToken endpoint instead)
-			 */
-			// $slim->get('/rest/v1/login/:user_id',function($user_id) {
-			// 	wp_send_json_error('deprecated');
-			// 	// wp_send_json_success(mobile_login_check($user_id, $user_token));
-			// 	exit;
-			// });
-
 
 		/*     __               _ 
 		 *    / _| ___  ___  __| |
@@ -299,6 +284,7 @@ class Router{
 			/**
 			 * Get search elements
 			 * @category GET Endpoint
+			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1(/:logged)/content/search-composite/', function($logged = NULL){
 
@@ -310,9 +296,10 @@ class Router{
 			 * Search website
 			 * @param String $s
 			 * TO DO: Divide search by: people, tag, events and accept the parameter as a filter
+			 * Dedalo approved
 			 */
-			$slim->get('/rest/v1/user/:logged/search/:s/:offset/',function($logged, $s, $offset) {
-				return search_museografo($s, $offset, $logged);
+			$slim->get('/rest/v1/content/search/:s/:offset/',function( $s, $offset) {
+				return search_dedalo($s, $offset);
 				exit;
 			});
 
@@ -353,11 +340,22 @@ class Router{
 			 * User ME
 			 * @return JSON formatted user basic info
 			 * TO DO: Check data sent by this endpoint and activate it
+			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/:logged/me/', function ($logged = NULL) {
 			  	echo fetch_me_information($logged);
 			  	exit;
 			});
+
+			/* Get user dashboard
+			 * @param String $logged User requesting the profile
+			 * @return JSON formatted dashboard information
+			 */
+			$slim->get('/rest/v1/:logged/dashboard/', function ($logged){
+				echo fetch_user_dashboard($queried_login, $logged);
+				exit;
+			});
+	
 		
 			/* Get user profile
 			 * @param String $logged User requesting the profile
@@ -368,25 +366,7 @@ class Router{
 				echo get_user_profile($queried_login, $logged);
 				exit;
 			});
-
-			/* Update user profile
-			 * @param String $ulogin User whose profile is being updated
-			 * @return JSON formatted user profile info
-			 * TO DO: Use PUT method instead with the same endpoint
-			 * DEPRECATED
-			 * DEPRECATED
-			 * DEPRECATED
-			 * DEPRECATED, USE PUT METHOD INSTEAD
-			 * DEPRECATED
-			 * DEPRECATED
-			 */
-			$slim->post('/rest/v1/user/update/:ulogin', function($ulogin){
-				wp_send_json_error('deprecated');
-				// echo update_user_profile($user);
-				exit;
-			});
-
-			
+	
 
 			/*
 			 * Get attachments uploaded by user
@@ -480,6 +460,7 @@ class Router{
 			 * @param Int $who The user ID to follow
 			 * @param String $type The type of user who is following
 			 * @return JSON success
+			 * Dedalo approved
 			 */
 			$slim->post('/rest/v1/:who_follows/follow',function($who_follows) {
 
@@ -496,6 +477,7 @@ class Router{
 			 * @param Int $who_follows The active logged user
 			 * @param Int $who The user ID to unfollow
 			 * @return JSON success
+			 * Dedalo approved
 			 */
 			$slim->post('/rest/v1/:who_follows/unfollow',function($who_follows) {
 				
@@ -506,6 +488,35 @@ class Router{
 				wp_send_json_error();
 				exit;
 			});
+
+			/* Follow Category
+			 * @param String $user_login Who follows
+			 * @param $cat_id via $_POST
+			 * Dedalo approved
+			 */
+			$slim->post('/rest/v1/:user_login/categories/follow/', function($user_login) {
+				file_put_contents(
+					'/logs/php.log',
+					var_export( $_POST, true ) . PHP_EOL,
+					FILE_APPEND
+				);
+				$cat_id = (!empty($_POST) AND isset($_POST['cat_id'])) ? $_POST['cat_id'] : NULL ; 
+				return (dedalo_follow_category($user_login, $cat_id)) ? wp_send_json_success() : wp_send_json_error("Error following category");
+				exit;
+			});
+
+			/* Unfollow Cateogry
+			 * @param String $user_login Who follows
+			 * @param $cat_id via $_POST
+			 * Dedalo approved
+			 */
+			$slim->post('/rest/v1/:user_login/categories/unfollow/',function($user_login) {
+				$cat_id = (!empty($_POST) AND isset($_POST['cat_id'])) ? $_POST['cat_id'] : NULL ; 
+				return (dedalo_unfollow_category($user_login, $cat_id)) ? wp_send_json_success() : wp_send_json_error("Error following category");
+				exit();
+			});
+
+
 
 			/* Get categories feed by parent level
 			 * @param String $user_login The active logged user
@@ -555,23 +566,6 @@ class Router{
 				exit;
 			});
 
-			/* Follow Category
-			 * @param Int $user_login The active logged user
-			 * @param Int $who The category ID to follow
-			 */
-			$slim->post('/rest/v1/:user_login/categories/follow/', function($user_login) {
-				return follow_category($user_login);
-				exit;
-			});
-
-			/* Unfollow Cateogry
-			 * @param Int $who_follows The active logged user
-			 * @param Int $who The cateogory ID to unfollow
-			 */
-			$slim->post('/rest/v1/:user_login/categories/unfollow/',function($user_login) {
-				return unfollow_category($user_login);
-				exit();
-			});
 
 			/* Get user follower count with user role filter
 			 * @param String $user_login The user whose followers are being queried

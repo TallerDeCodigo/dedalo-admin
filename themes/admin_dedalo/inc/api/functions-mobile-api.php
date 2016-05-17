@@ -17,6 +17,12 @@ function create_tokenTable(){
 }
 add_action('switch_theme', 'create_tokenTable');
 
+function encode_response($response_data = NULL, $encoding = "JSON", $success = TRUE){
+	if($encoding == "JSON"){
+		$response = array();
+	}
+}
+
 /* Via POST 
  * Check login data matches, activate token and return user data
  * DISABLING TOKEN RESULTS IN DENIED PROTECTED REQUESTS BUT CAN STILL BE USED AS A PASSIVE TOKEN
@@ -290,7 +296,7 @@ function fetch_main_feed($filter = "all", $offset){
  * @param Int @offset
  * @return associative Array of the results by type
  */
-function search_dedalo($search_term, $offset, $user = NULL){
+function search_dedalo($search_term, $offset){
 	if(!$user){
 		global $current_user;
 	}else{
@@ -622,7 +628,7 @@ function search_dedalo($search_term, $offset, $user = NULL){
 	} 
 
 
-/**
+	/**
 	 * Fetch post detail information
 	 * @param Int $product_id
 	 * @return JSON Object
@@ -660,7 +666,45 @@ function search_dedalo($search_term, $offset, $user = NULL){
 		return json_encode($final_array);
 	} 
 
+	/*** CATEGORIES ***/
+	function follow_category($user_login){
+		
+		$user = get_user_by('login', $user_login);
+		if(dedalo_follow_category($user, $cat_id)) 
+			wp_send_json_success();
+		wp_send_json_error('Problem while following category');
+	}
+	// add_action('wp_ajax_follow_category', 'follow_category');
+	// add_action('wp_ajax_nopriv_follow_category', 'follow_category');
 
+	function unfollow_category($user_login){
+		
+		$user = get_user_by('login', $user_login);
+		if(dedalo_unfollow_category($user, $cat_id)) 
+			wp_send_json_success();
+		wp_send_json_error('Problem while following category');
+	}
+	// add_action('wp_ajax_unfollow_category', 'unfollow_category');
+	// add_action('wp_ajax_nopriv_unfollow_category', 'unfollow_category');
+
+	/**
+	 * Fetch user dashboard
+	 * Contains categories and users available to follow marked according status
+	 * @param String $user_login
+	 * @return JSON Object
+	 */
+	function fetch_user_dashboard($user_login = NULL){
+		$final_array = array();
+		/* Get categories from another endpoint */
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/'));
+		$categories = json_decode($categories);
+
+		foreach ($categories as $each_cat) {
+			
+		}
+
+		return json_encode($final_array);
+	}
 
 
 
@@ -668,26 +712,6 @@ function search_dedalo($search_term, $offset, $user = NULL){
 
 
 // -----------------------------------------------------------------------------------------------
-// CATEGORIES
-function follow_category($user_login){
-	
-	$user = get_user_by('login', $user_login);
-	if(museografo_follow_category($user)) 
-		wp_send_json_success();
-	wp_send_json_error('Problem while following category');
-}
-add_action('wp_ajax_follow_category', 'follow_category');
-add_action('wp_ajax_nopriv_follow_category', 'follow_category');
-
-function unfollow_category($user_login){
-	
-	$user = get_user_by('login', $user_login);
-	if(museografo_unfollow_category($user)) 
-		wp_send_json_success();
-	wp_send_json_error('Problem while following category');
-}
-add_action('wp_ajax_unfollow_category', 'unfollow_category');
-add_action('wp_ajax_nopriv_unfollow_category', 'unfollow_category');
 
 
 /*
