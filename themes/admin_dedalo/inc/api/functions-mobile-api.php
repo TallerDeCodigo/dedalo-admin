@@ -388,7 +388,6 @@ function search_dedalo($search_term, $offset){
 									    'order'   		=> 'DESC',
 									    'number'  		=> $limit,
 									    'hide_empty'  	=> FALSE,
-									    'parent'  		=> 0,
 									    'exclude' 		=> 1
 									) );
 		foreach ($categories as $each_cat) {
@@ -503,7 +502,7 @@ function search_dedalo($search_term, $offset){
 
 		$previous = array("pool" => array(), "count" => 0);
 		/* Get categories from another endpoint */
-		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/'));
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/0'));
 		$categories = json_decode($categories);
 		/* Fetch 4 featured products */
 		$featured 	= fetch_featured_products();
@@ -696,7 +695,7 @@ function search_dedalo($search_term, $offset){
 	function fetch_user_dashboard($user_login = NULL){
 		$final_array = array();
 		/* Get categories from another endpoint */
-		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/'));
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/0'));
 		$categories = json_decode($categories);
 
 		if($categories->count)

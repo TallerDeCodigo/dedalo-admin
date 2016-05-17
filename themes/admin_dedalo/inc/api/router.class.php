@@ -250,8 +250,8 @@ class Router{
 			 * @category GET Endpoint
 			 * Dedalo approved
 			 */
-			$slim->get('/rest/v1/content/enum/categories/', function(){
-				echo fetch_categories(10);
+			$slim->get('/rest/v1/content/enum/categories/:limit/', function($limit){
+				echo fetch_categories($limit);
 				exit;
 			});
 
@@ -500,11 +500,6 @@ class Router{
 			 * Dedalo approved
 			 */
 			$slim->post('/rest/v1/:user_login/categories/follow/', function($user_login) {
-				file_put_contents(
-					'/logs/php.log',
-					var_export( $_POST, true ) . PHP_EOL,
-					FILE_APPEND
-				);
 				$cat_id = (!empty($_POST) AND isset($_POST['cat_id'])) ? $_POST['cat_id'] : NULL ; 
 				return (dedalo_follow_category($user_login, $cat_id)) ? wp_send_json_success() : wp_send_json_error("Error following category");
 				exit;
