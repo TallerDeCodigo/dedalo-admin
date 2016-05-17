@@ -218,12 +218,13 @@ class Router{
 		 *   |_|  \___|\___|\__,_|
 		 */      
 		
-			/*
+			/**
 			 * Get home feed
 			 * @param String $user_login The user to retrieve timeline for
 			 * @param Int $offset Number of offsetted posts pages for pagination purposes
 			 * @param String $filter
 			 * @type ANNONYMOUS
+			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/feed(/:offset(/:filter))',function ( $offset = 0, $filter = "all"){
 				// TODO Use user information to cure feed
@@ -231,13 +232,12 @@ class Router{
 				exit;
 			});
 
-			/*
+			/**
 			 * Get home feed for a logged user
 			 * @param String $user_login The user to retrieve timeline for
 			 * @param Int $offset Number of offsetted posts pages for pagination purposes
 			 * @param String $filter
 			 * @type LOGGED
-			 * 
 			 */
 			$slim->get('/rest/v1/:u_login/feed(/:offset(/:filter))',function ($user_login, $offset = 0, $filter = "all"){
 				// TODO Use user information to cure feed
@@ -248,6 +248,7 @@ class Router{
 			/**
 			 * Get categories feed
 			 * @category GET Endpoint
+			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/content/enum/categories/', function(){
 				echo fetch_categories(10);
@@ -257,6 +258,7 @@ class Router{
 			/**
 			 * Fetch product detail
 			 * @category GET Endpoint
+			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/products/:product_id/', function($product_id){
 				echo fetch_product_detail($product_id);
@@ -266,6 +268,7 @@ class Router{
 			/**
 			 * Fetch post detail
 			 * @category GET Endpoint
+			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/content/:post_id/', function($post_id){
 				echo fetch_post_detail($post_id);
@@ -292,10 +295,10 @@ class Router{
 				exit;
 			});
 
-			/*
+			/**
 			 * Search website
 			 * @param String $s
-			 * TO DO: Divide search by: people, tag, events and accept the parameter as a filter
+			 * @todo Divide search by: people, tag, events and accept the parameter as a filter
 			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/content/search/:s/:offset/',function( $s, $offset) {
@@ -347,12 +350,14 @@ class Router{
 			  	exit;
 			});
 
-			/* Get user dashboard
+			/**
+			 * Get user dashboard
 			 * @param String $logged User requesting the profile
 			 * @return JSON formatted dashboard information
+			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/:logged/dashboard/', function ($logged){
-				echo fetch_user_dashboard($queried_login, $logged);
+				echo fetch_user_dashboard($logged);
 				exit;
 			});
 	

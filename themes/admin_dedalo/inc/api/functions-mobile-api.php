@@ -699,10 +699,12 @@ function search_dedalo($search_term, $offset){
 		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/'));
 		$categories = json_decode($categories);
 
-		foreach ($categories as $each_cat) {
-			
-		}
-
+		if($categories->count)
+			foreach ($categories->pool as $index => $each_cat) {
+				$final_array['categories']['pool'][] = $each_cat;
+				$final_array['categories']['pool'][$index]->followed = is_following_cat($user_login, $each_cat->ID);
+			}
+		$final_array['categories']['count'] = $categories->count;
 		return json_encode($final_array);
 	}
 

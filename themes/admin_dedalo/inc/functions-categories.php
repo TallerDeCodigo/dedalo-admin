@@ -121,6 +121,7 @@
 	function is_following_cat($user_login = NULL, $cat_id = NULL){
 		global $wpdb;
 		$user = get_user_by('login', $user_login);
+		
 		$exists = 	$wpdb->get_results(
 						$wpdb->prepare(	"SELECT count(*) as _exists 
 										 FROM {$wpdb->prefix}3d_categories 
