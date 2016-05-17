@@ -512,11 +512,19 @@ class Router{
 			 */
 			$slim->post('/rest/v1/:user_login/categories/unfollow/',function($user_login) {
 				$cat_id = (!empty($_POST) AND isset($_POST['cat_id'])) ? $_POST['cat_id'] : NULL ; 
-				return (dedalo_unfollow_category($user_login, $cat_id)) ? wp_send_json_success() : wp_send_json_error("Error following category");
+				return (dedalo_unfollow_category($user_login, $cat_id)) ? wp_send_json_success() : wp_send_json_error("Error unfollowing category");
 				exit();
 			});
 
-
+			/* Check if user is following category
+			 * @param String $user_login Who
+			 * @param Integer $cat_id Which
+			 * Dedalo approved
+			 */
+			$slim->get('/rest/v1/:user_login/categories/is_following/:cat_id/',function($user_login, $cat_id) {
+				echo (is_following_cat($user_login, $cat_id)) ? "true" : "false";
+				exit();
+			});
 
 			/* Get categories feed by parent level
 			 * @param String $user_login The active logged user

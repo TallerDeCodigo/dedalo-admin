@@ -93,7 +93,11 @@
 		return FALSE;
 	}
 
-
+	/** 
+	 * Update user status first time a category is followed
+	 * @param Integer $user_id
+	 * @return Boolean $updated
+	 */
 	function update_user_status_cat($user_id){
 		global $wpdb;
 
@@ -106,4 +110,24 @@
 		))
 			return TRUE;
 		return FALSE;
+	}
+
+	/** 
+	 * Check if user is following category
+	 * @param String $user_login
+	 * @param Integer $cat_id
+	 * @return Boolean $is_following
+	 */
+	function is_following_cat($user_login = NULL, $cat_id = NULL){
+		global $wpdb;
+		$user = get_user_by('login', $user_login);
+		$exists = 	$wpdb->get_results(
+						$wpdb->prepare(	"SELECT count(*) as _exists 
+										 FROM {$wpdb->prefix}3d_categories 
+										 WHERE user_id=%d AND cat_id = %d", 
+										 $user->ID, 
+										 $cat_id
+										)
+					);
+		return (!empty($exists) AND $exists[0]->_exists) ? TRUE : FALSE; 
 	}
