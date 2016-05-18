@@ -675,10 +675,11 @@ function search_dedalo($search_term, $offset){
 	function fetch_user_dashboard($user_login = NULL){
 		$final_array = array();
 		/* Get categories and random makers from another endpoint */
-		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/0'));
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/14/'));
 		$categories = json_decode($categories);
-		$makers = file_get_contents(site_url('rest/v1/content/users/maker'));
+		$makers = file_get_contents(site_url("rest/v1/{$user_login}/content/users/maker/10/"));
 		$makers = json_decode($makers);
+		$user = get_user_by("slug", $user_login);
 
 		if($categories->count)
 			foreach ($categories->pool as $index => $each_cat) {
@@ -690,7 +691,7 @@ function search_dedalo($search_term, $offset){
 		if($makers->count)
 			foreach ($makers->pool as $index => $each_user) {
 				$final_array['makers']['pool'][] = $each_user;
-				$final_array['makers']['pool'][$index]->followed = is_following_user($user_login, $each_user->ID);
+				$final_array['makers']['pool'][$index]->followed = is_following_user($user->ID, $each_user->ID);
 			}
 		$final_array['makers']['count'] = $makers->count;
 
@@ -700,20 +701,23 @@ function search_dedalo($search_term, $offset){
 	/**
 	 * Get a number of random users
 	 * @param String $role User role to retrieve
-	 * @param Int $number Number of users to retrieve
+	 * @param Integer $number Number of users to retrieve
+	 * @param Integer $exclude User ID to exclude
 	 * @return JSON encoded pool-count array 
 	 */
-	function fetch_randomUsers($role = "maker", $number = 5){
+	function fetch_randomUsers($role = "maker", $number = 5, $exclude = NULL){
 
 		global $wpdb;
+		$exclude_query = ($exclude) ?  " AND users.ID != {$exclude}" : "";
 		$users = $wpdb->get_results(
 					$wpdb->prepare( 
 						"SELECT ID , user_login
-							FROM wp_users
+							FROM wp_users users
 							 INNER JOIN wp_usermeta AS wm on user_id = ID
 							   AND wm.meta_key = 'wp_capabilities'
 							   AND wm.meta_value LIKE %s
-							   	ORDER BY rand() LIMIT %d
+							   {$exclude_query}
+							ORDER BY rand() LIMIT %d
 						;"
 						, '%'.$role.'%'
 						, $number

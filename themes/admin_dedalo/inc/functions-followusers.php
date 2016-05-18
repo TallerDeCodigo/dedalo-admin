@@ -7,7 +7,7 @@
 			"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}3d_following (
 				ID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 				user_id bigint(20) NOT NULL,
-				siguiendo_id bigint(20) NOT NULL,
+				following_id bigint(20) NOT NULL,
 				tipo VARCHAR(40) NOT NULL DEFAULT '',
 				PRIMARY KEY (ID	),
 				KEY posicion_name (tipo)
@@ -31,7 +31,7 @@
 				$table_name,
 				array(
 					'user_id'      => $user_id,
-					'siguiendo_id' => $follow_id,
+					'following_id' => $follow_id,
 					'tipo'         => $type,
 				),
 				array(
@@ -67,12 +67,11 @@
 						$wpdb->prepare( 
 								"DELETE FROM {$table_name}
 								 WHERE user_id = %d
-									AND siguiendo_id = %d
+									AND following_id = %d
 								;
 								"
 								, $user_id
 								, $follow_id
-								, $type
 					        )
 					))
 		{
@@ -94,13 +93,14 @@
 	 * @param Int $is_following The user being followed
 	 * @return Bool
 	 */
-	function is_user_following($user_ID, $is_following){
+	function is_following_user($user_ID, $is_following){
 		global $wpdb;
-		$resultCount = $wpdb->get_var( $wpdb->prepare(
-											"SELECT COUNT(ID) FROM wp_mg_siguiendo WHERE user_id = %d AND siguiendo_id = %d;",
+		$resultCount = $wpdb->get_results( $wpdb->prepare(
+											"SELECT COUNT(ID) _isfollow FROM wp_3d_following WHERE user_id = %d AND following_id = %d;",
 											$user_ID, $is_following
 										));
-		if($resultCount > 0) 
+
+		if(!empty($resultCount) AND $resultCount[0]->_isfollow > 0) 
 			return TRUE;
 		return FALSE;
 	}

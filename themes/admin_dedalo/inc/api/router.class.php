@@ -276,12 +276,27 @@ class Router{
 			});
 			
 			/**
-			 * Fetch post detail
+			 * Fetch a limited set of random users
+			 * @param String $filter
+			 * @param Integer $limit defaults to 5
 			 * @category GET Endpoint
 			 * Dedalo approved
 			 */
-			$slim->get('/rest/v1/content/users/:filter(/:limit)', function($filter, $limit = 5){
+			$slim->get('/rest/v1/content/users/:filter(/:limit)/', function($filter, $limit = 5){
 				echo fetch_randomUsers($filter, $limit);
+				exit;
+			});
+
+			/**
+			 * Fetch a limited set of random users excluding logged user
+			 * @param String $filter
+			 * @param Integer $limit defaults to 5
+			 * @category GET Endpoint
+			 * Dedalo approved
+			 */
+			$slim->get('/rest/v1/:logged_user/content/users/:filter(/:limit)/', function($logged_user, $filter, $limit = 5){
+				$user = get_user_by("slug", $logged_user);
+				echo fetch_randomUsers($filter, $limit, $user->ID);
 				exit;
 			});
 
@@ -480,9 +495,8 @@ class Router{
 			$slim->post('/rest/v1/:who_follows/follow',function($who_follows) {
 
 				$who 	= isset($_POST['user_id']) 	? $_POST['user_id'] :  NULL;
-				$type 	= isset($_POST['type']) 	? $_POST['type'] 	: 'suscriptor';
 				$user  	= get_user_by('login', $who_follows);
-				if( siguiendo( $who, $type, $user))
+				if( follow_user( $user->ID, $who))
 					wp_send_json_success();
 				wp_send_json_error();
 				exit;
@@ -498,7 +512,7 @@ class Router{
 				
 				$who = isset($_POST['user_id']) ? $_POST['user_id'] : NULL;
 				$user = get_user_by('login', $who_follows);
-				if( dejar_de_seguir($who, $user))
+				if( unfollow_user($user->ID, $who))
 					wp_send_json_success();
 				wp_send_json_error();
 				exit;
