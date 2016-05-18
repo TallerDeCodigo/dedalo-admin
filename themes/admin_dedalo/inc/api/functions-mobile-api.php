@@ -665,27 +665,7 @@ function search_dedalo($search_term, $offset){
 		return json_encode($final_array);
 	} 
 
-	/*** CATEGORIES ***/
-	function follow_category($user_login){
-		
-		$user = get_user_by('login', $user_login);
-		if(dedalo_follow_category($user, $cat_id)) 
-			wp_send_json_success();
-		wp_send_json_error('Problem while following category');
-	}
-	// add_action('wp_ajax_follow_category', 'follow_category');
-	// add_action('wp_ajax_nopriv_follow_category', 'follow_category');
-
-	function unfollow_category($user_login){
-		
-		$user = get_user_by('login', $user_login);
-		if(dedalo_unfollow_category($user, $cat_id)) 
-			wp_send_json_success();
-		wp_send_json_error('Problem while following category');
-	}
-	// add_action('wp_ajax_unfollow_category', 'unfollow_category');
-	// add_action('wp_ajax_nopriv_unfollow_category', 'unfollow_category');
-
+	
 	/**
 	 * Fetch user dashboard
 	 * Contains categories and users available to follow marked according status
@@ -694,9 +674,11 @@ function search_dedalo($search_term, $offset){
 	 */
 	function fetch_user_dashboard($user_login = NULL){
 		$final_array = array();
-		/* Get categories from another endpoint */
+		/* Get categories and random makers from another endpoint */
 		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/0'));
 		$categories = json_decode($categories);
+		$makers = file_get_contents(site_url('rest/v1/content/users/maker'));
+		$makers = json_decode($makers);
 
 		if($categories->count)
 			foreach ($categories->pool as $index => $each_cat) {
@@ -704,10 +686,48 @@ function search_dedalo($search_term, $offset){
 				$final_array['categories']['pool'][$index]->followed = is_following_cat($user_login, $each_cat->ID);
 			}
 		$final_array['categories']['count'] = $categories->count;
+
+		if($makers->count)
+			foreach ($makers->pool as $index => $each_user) {
+				$final_array['makers']['pool'][] = $each_user;
+				$final_array['makers']['pool'][$index]->followed = is_following_user($user_login, $each_user->ID);
+			}
+		$final_array['makers']['count'] = $makers->count;
+
 		return json_encode($final_array);
 	}
 
+	/**
+	 * Get a number of random users
+	 * @param String $role User role to retrieve
+	 * @param Int $number Number of users to retrieve
+	 * @return JSON encoded pool-count array 
+	 */
+	function fetch_randomUsers($role = "maker", $number = 5){
 
+		global $wpdb;
+		$users = $wpdb->get_results(
+					$wpdb->prepare( 
+						"SELECT ID , user_login
+							FROM wp_users
+							 INNER JOIN wp_usermeta AS wm on user_id = ID
+							   AND wm.meta_key = 'wp_capabilities'
+							   AND wm.meta_value LIKE %s
+							   	ORDER BY rand() LIMIT %d
+						;"
+						, '%'.$role.'%'
+						, $number
+					), ARRAY_A
+				);
+		foreach ($users as &$each_maker) {
+			$each_maker['profile_pic'] = NULL;
+			$user_profile = get_user_meta( intval($each_maker['ID']), 'foto_user', TRUE);
+			
+			if($user_profile != '')
+				$each_maker['profile_pic'] = $user_profile;
+		}
+		return json_encode(array("pool" => $users, "count" => count($users)));
+	}
 
 
 

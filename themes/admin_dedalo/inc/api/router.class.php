@@ -274,6 +274,16 @@ class Router{
 				echo fetch_post_detail($post_id);
 				exit;
 			});
+			
+			/**
+			 * Fetch post detail
+			 * @category GET Endpoint
+			 * Dedalo approved
+			 */
+			$slim->get('/rest/v1/content/users/:filter(/:limit)', function($filter, $limit = 5){
+				echo fetch_randomUsers($filter, $limit);
+				exit;
+			});
 
 
 

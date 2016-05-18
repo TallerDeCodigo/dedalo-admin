@@ -135,6 +135,8 @@
 
 	require_once('inc/functions-categories.php');
 
+	require_once('inc/functions-followusers.php');
+
 	get_template_part( 'inc/api/functions', 'mobile-api' );
 
 	include_once( 'inc/api/router.class.php' );
