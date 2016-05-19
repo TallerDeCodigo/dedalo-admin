@@ -326,7 +326,7 @@ class Router{
 			 * @todo Divide search by: people, tag, events and accept the parameter as a filter
 			 * Dedalo approved
 			 */
-			$slim->get('/rest/v1/content/search/:s(/:offset)/',function( $s, $offset) {
+			$slim->get('/rest/v1/content/search/:s(/:offset)/',function( $s, $offset = 0) {
 				return search_dedalo($s, $offset);
 				exit;
 			});

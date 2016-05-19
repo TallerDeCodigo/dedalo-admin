@@ -296,85 +296,63 @@ function fetch_main_feed($filter = "all", $offset){
  * @param Int @offset
  * @return associative Array of the results by type
  */
-function search_dedalo($search_term, $offset){
-	if(!$user){
-		global $current_user;
-	}else{
-		$current_user = get_user_by('slug', $user);
+function search_dedalo($search_term, $offset = 0){
+	global $wpdb;
+	$final_array = array();
+	$results = $wpdb->get_results(
+								"SELECT wpp.ID  post_id, wpp.post_type  type, wpp.post_title name, post_date  fecha,
+									wpm2.post_id attachment_id, u.display_name maker_name, u.ID maker_id
+								  FROM wp_posts AS wpp 
+								  INNER JOIN wp_users AS u  
+								   ON wpp.post_author = u.ID
+								  LEFT JOIN wp_postmeta wpm1
+								   ON wpm1.meta_key = '_thumbnail_id' AND wpm1.post_id = wpp.ID
+								  LEFT JOIN wp_postmeta wpm2
+								   ON wpm2.meta_key = '_wp_attached_file' AND wpm2.post_id = wpm1.meta_value
+								 WHERE (post_title LIKE '%{$search_term}%' 
+								  OR  post_content LIKE '%{$search_term}%') 
+								  AND (post_type = 'productos' OR post_type = 'post')
+								  AND post_status = 'publish'
+								 ORDER BY fecha DESC LIMIT 0, 10
+								;
+								", OBJECT
+	);
+	foreach ($results as $each_result) {
+		$profile_pic = get_user_meta($each_result->maker_id, "foto_user", TRUE);
+		$attachment_url = wp_get_attachment_image_src( $each_result->attachment_id, "large");
+		$final_array['pool'][] = array(
+										"ID" 		=> $each_result->post_id,
+										"name" 		=> $each_result->name,
+										"type" 		=> $each_result->type,
+										"thumb_url" => $attachment_url[0],
+										"designer_brand" => array(
+																"ID" => $each_result->maker_id,
+																"name" => $each_result->maker_name,
+																"profile_pic" => ($profile_pic != '') ? $profile_pic : NULL
+															),
+										$each_result->type	=> TRUE,
+									);
 	}
-	$results_array = array();
-	if($search_term === '') wp_send_json_error();
-	$resultados = get_search_museo($search_term, $offset*10);
-	$results_categories = search_museografo_categories($search_term);
-	$new_full_array = array_merge($results_categories, $resultados);
-	
-	foreach ($new_full_array as $index => $each_result) {
-		if($each_result->tipo == 'user'){
-			
-			/* If result is a User, an artist or a venue */
-			$user_object = get_user_by('id', $each_result->user_id);
-			$user_thumb = museo_get_profilepic_url($each_result->user_id);
-			$user_role = ($user_object->roles[0] == 'suscriptor' 
-							OR $user_object->roles[0] == 'subscriber'
-							OR $user_object->roles[0] == 'administrador'
-							OR $user_object->roles[0] == 'administrator') ? 'usuario' : $user_object->roles[0];
-			$role_prefix = $user_object->roles[0];
-			if($role_prefix !== 'venue' AND $role_prefix !== 'artista')
-				$role_prefix = 'suscriptor';
-			$results_array['results'][] = array(
-											'display_user' 		=> TRUE,
-											'ID' 				=> $each_result->user_id,
-											'user_login' 		=> get_clean_userlogin($each_result->user_id),
-											'user_nicename' 	=> $user_object->user_nicename,
-											'user_display_name' => $user_object->display_name,
-											'user_role' 		=> $user_role,
-											"is_".$user_role 	=> TRUE,
-											'user_thumbnail' 	=> ( isset($user_thumb) AND $user_thumb !== '') ? $user_thumb : NULL,
-											'is_following'		=> ($current_user) ? intval(checa_si_sigue_el_usuario($current_user->ID , $each_result->user_id)) : 'undefined',
-											'user_followers'	=> checa_total_followers($each_result->user_id),
-											'role_prefix'		=> $role_prefix
-										);
-		}elseif($each_result->tipo == 'post'){
-			
-			/* If result is an Event */
-			$event 	= get_post($each_result->post_id);
-			$event_thumbnail = museo_get_attachment_url( get_post_thumbnail_id($each_result->post_id), 'gallery_mobile' );
-			$venue_object 	= get_user_by('id', $each_result->user_id);
-			$venue_name 	= $venue_object->display_name;
-			$venue_slug 	= $venue_object->user_login;
-			$venue_thumb 	= museo_get_profilepic_url($each_result->user_id);
+	$final_array['count'] = count($final_array['pool']);
+	wp_send_json_success($final_array);
+}
 
-			$results_array['results'][] = array(
-											'display_event' 	=> TRUE,
-											'event_title' 		=> $event->post_title,
-											'event_author'  	=> $event->post_author,
-											'event_slug' 		=> $event->post_name,
-											'event_content' 	=> $event->post_content,
-											'event_thumbnail' 	=> !empty($event_thumbnail) ? $event_thumbnail[0] : NULL,
-											'venue' 			=> get_the_author_meta( 'display_name', $venue_object->ID ),
-											'venue_avatar' 		=> museo_get_profilepic_url($venue_object->ID),
-											'venue_latlong'		=> get_user_meta($venue_object->ID, 'latlong', true),
-											'date_start' 		=> fecha_inicio_evento($event->ID),
-											'date_end' 			=> fecha_fin_evento($event->ID),
-											'costo' 			=> get_post_meta($event->ID,'mg_costo',true),
-											'address' 			=> get_post_meta($event->ID,'mg_evento_direccion', true),
-											'scheduled' 		=> ( in_array( $each_result->post_id, museografo_eventos_agendados($current_user) ) ) ? true : false
-										);
-		}elseif($each_result->tipo == 'category'){
-			$results_array['results'][] = array(
-											'display_category' 	=> TRUE,
-											'ID' 				=> $each_result->ID,
-											'cat_title' 		=> $each_result->name,
-											'cat_slug' 			=> $each_result->slug,
-											'has_description' 	=> $each_result->has_description,
-											'description' 		=> $each_result->description,
-											'thumbnail' 		=> $each_result->thumbnail
-										);
-		}
 
-	}
-	wp_send_json_success($results_array);
+function search_makers($search_term = NULL){
+	global $wpdb;
+	$results = $wpdb->get_results(
+								"SELECT u.ID AS post_id, u.ID AS user_id, 'user' AS tipo, user_registered AS fecha 
+								 FROM wp_users AS u INNER JOIN wp_usermeta AS um ON u.ID = um.user_id 
+								WHERE (u.display_name LIKE '%$search_term%' OR user_login LIKE '%$search_term%'
+								 OR (meta_key =  'first_name' AND meta_value LIKE  '%$search_term%') 
+								 OR (meta_key =  'last_name' AND meta_value LIKE  '%$search_term%'))
+								AND (meta_key =  'wp_capabilities' AND meta_value LIKE '%maker%')
+								GROUP BY ID LIMIT 0, 10
+								;
+								", OBJECT
+	);
 
+	wp_send_json_success($results);
 }
 
 	/*
