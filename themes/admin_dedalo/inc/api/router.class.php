@@ -326,7 +326,7 @@ class Router{
 			 * @todo Divide search by: people, tag, events and accept the parameter as a filter
 			 * Dedalo approved
 			 */
-			$slim->get('/rest/v1/content/search/:s/:offset/',function( $s, $offset) {
+			$slim->get('/rest/v1/content/search/:s(/:offset)/',function( $s, $offset) {
 				return search_dedalo($s, $offset);
 				exit;
 			});
@@ -396,6 +396,44 @@ class Router{
 				echo get_user_profile($queried_login, $logged);
 				exit;
 			});
+
+
+			/**
+			 * Update user profile
+			 * @param String $ulogin User whose profile is being updated
+			 * @see update_user_profile
+			 * @see museografo_completar_perfil
+			 * @return JSON formatted user profile info
+			 * @todo Make this endpoint a PATCH
+			 * Dedalo approved
+			 */
+			$slim->post('/rest/v1/user/:user_login/', function($user_login){
+				// $app = \Slim\Slim::getInstance();
+				// $app->add(new \Slim\Middleware\ContentTypes());
+				
+				// $var_array = json_decode($app->request->getBody());
+				$var_array = (object) $_POST;
+				return update_user_profile($user_login, $var_array);
+				exit;
+			});
+
+			/**
+			 * Update user password
+			 * @param String $ulogin User whose password is being updated
+			 * @see PUT endpoint "/rest/v1/user/:ulogin"
+			 * @return JSON formatted success response
+			 * @todo Make this endpoint a PATCH
+			 */
+			$slim->post('/rest/v1/user/:ulogin/password/', function($ulogin){
+				// $app = \Slim\Slim::getInstance();
+				// $app->add(new \Slim\Middleware\ContentTypes());
+				// $var_array = array();
+				// parse_str($app->request->getBody(), $var_array);
+				$var_array = $_POST;
+				$new_password = $var_array['password_nuevo'];
+				return update_user_password($ulogin, $var_array['password_nuevo']);
+				exit;
+			});
 	
 
 			/*
@@ -408,18 +446,7 @@ class Router{
 				echo get_user_gallery($user_login, $limit, $size);
 				exit;
 			});
-			
-			/*
-			 * Get projects uploaded by artist
-			 * @param String $user_login
-			 * @param Int $limit
-			 * @param String optional $Size
-			 */
-			$slim->get('/rest/v1/user/:artist_login/projects/:limit/(:size)/', function($artist_login, $limit = 5, $size = 'gallery_mobile') {	
-				$user_obj = get_user_by('login', $artist_login);
-				echo get_artist_projects( get_clean_userlogin($user_obj->ID), $limit );
-				exit;
-			});
+
 
 			/* Get user followers
 			 * @param String $logged The log in name of the logged user making the call
@@ -441,40 +468,7 @@ class Router{
 			  	return retrieve_user_followees($queried_login, $logged, $type);
 			});
 
-			/* Update user profile (PUT)
-			 * @param String $ulogin User whose profile is being updated
-			 * @see update_user_profile
-			 * @see museografo_completar_perfil
-			 * @return JSON formatted user profile info
-			 */
-			$slim->put('/rest/v1/user/:ulogin/', function($ulogin){
-				$app = \Slim\Slim::getInstance();
-				$app->add(new \Slim\Middleware\ContentTypes());
-				
-				$var_array = array();
-				parse_str($app->request->getBody(), $var_array);
-				$var_array['return'] = 	FALSE;		
-				
-				return update_user_profile($ulogin, $var_array);
-				exit;
-			});
-
-			/* Update user password (PUT)
-			 * @param String $ulogin User whose password is being updated
-			 * @see PUT endpoint "/rest/v1/user/:ulogin"
-			 * @return JSON formatted success response
-			 * TO DO: Create a POST endpoint to set password first time.
-			 */
-			$slim->put('/rest/v1/user/:ulogin/password/', function($ulogin){
-				$app = \Slim\Slim::getInstance();
-				$app->add(new \Slim\Middleware\ContentTypes());
-				$var_array = array();
-				parse_str($app->request->getBody(), $var_array);
-				
-				$new_password = $var_array['password_nuevo'];
-				return update_user_password($ulogin, $var_array['password_nuevo']);
-				exit;
-			});
+			
 
 
 		/*     __       _ _                   

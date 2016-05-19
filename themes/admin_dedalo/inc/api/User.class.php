@@ -37,7 +37,7 @@ class User{
 		if(isset($attrs['avatar']))
 			update_user_meta( $response, 'foto_user', $attrs['avatar'] );
 		if(isset($attrs['bio']))
-			update_user_meta( $response, 'bio_es', $attrs['bio'] );
+			update_user_meta( $response, 'user_3dbio', $attrs['bio'] );
 		
 		$userdata = array(
 							"ID" 			=> $response,

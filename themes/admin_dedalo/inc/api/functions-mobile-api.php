@@ -467,7 +467,7 @@ function search_dedalo($search_term, $offset){
 		$foto_user = get_user_meta( $user->ID, 'foto_user', TRUE );
 		$first_name = get_user_meta( $user->ID, 'first_name', TRUE );
 		$last_name = get_user_meta( $user->ID, 'last_name', TRUE );
-		$bio = get_user_meta( $user->ID, 'bio_es', TRUE );
+		$bio = get_user_meta( $user->ID, 'user_3dbio', TRUE );
 
 		$me =   array(
 					"ID" 			=> $user->ID,
@@ -1374,8 +1374,22 @@ function recomend_event_to_user($user){
 }
 
 function update_user_profile($user_login, $args){
-	if(museografo_completar_perfil($user_login, $args)) 
+	$user = get_user_by("slug", $user_login);
+	
+	if(!$user)
+		wp_send_json_error();
+
+	$userdata = array(
+						"ID" 			=> $user->ID,
+						"first_name" 	=> $args->user_first_name,
+						"last_name" 	=> $args->user_last_name,
+						"user_email" 	=> $args->user_email,
+				);
+	if($user_updated = wp_update_user($userdata)){
+		/*** Updating extra meta information ***/
+		update_user_meta( $user_updated, 'user_3dbio', $args->user_bio );
 		wp_send_json_success();
+	}
 	wp_send_json_error();
 }
 

@@ -107,7 +107,7 @@
 			<tr>
 				<th><label for="bio_en">Semblanza Biográfica</label></th>
 				<td>
-					<textarea rows="3" id="bio_es" name="_bio_es"><?php echo esc_attr( get_the_author_meta( '_bio_es', $user->ID ) ); ?></textarea>
+					<textarea rows="3" id="user_3dbio" name="user_3dbio"><?php echo esc_attr( get_the_author_meta( 'user_3dbio', $user->ID ) ); ?></textarea>
 
 				</td>
 			</tr>
@@ -122,8 +122,8 @@
 		if ( !current_user_can( 'edit_user', $user_id ) )
 			return false;
 
-		if ( isset($_POST['_bio_es']) ){
-			update_user_meta( $user_id, '_bio_es', $_POST['_bio_es'] );
+		if ( isset($_POST['user_3dbio']) ){
+			update_user_meta( $user_id, 'user_3dbio', $_POST['user_3dbio'] );
 		}
 
 		if ( isset($_POST['foto_colaborador']) ){
@@ -169,8 +169,8 @@ function save_user_category( $user_id ) {
 
  	if(isset($_POST['foto_user']))
  		update_user_meta($user_id, 'foto_user', $_POST['foto_user']);
- 	if(isset($_POST['_bio_es']))
- 		update_user_meta($user_id, '_bio_es', $_POST['_bio_es']);
+ 	if(isset($_POST['user_3dbio']))
+ 		update_user_meta($user_id, 'user_3dbio', $_POST['user_3dbio']);
 
  	if(isset($_POST['user_category'])){
  		$user_terms = $_POST['user_category'];
