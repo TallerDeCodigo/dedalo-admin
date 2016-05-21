@@ -17,12 +17,6 @@ function create_tokenTable(){
 }
 add_action('switch_theme', 'create_tokenTable');
 
-function encode_response($response_data = NULL, $encoding = "JSON", $success = TRUE){
-	if($encoding == "JSON"){
-		$response = array();
-	}
-}
-
 /* Via POST 
  * Check login data matches, activate token and return user data
  * DISABLING TOKEN RESULTS IN DENIED PROTECTED REQUESTS BUT CAN STILL BE USED AS A PASSIVE TOKEN
@@ -44,16 +38,23 @@ function mobile_pseudo_login() {
 	$creds['user_login'] = $user->data->user_login;
 	$creds['user_password'] = $user_password;
 	$creds['remember'] = true;
-
+	// file_put_contents(
+	// 	'/logs/php.log',
+	// 	var_export( $creds, true ) . PHP_EOL,
+	// 	FILE_APPEND
+	// );
 	$SignTry = wp_signon( $creds, false );
-
+	// file_put_contents(
+	// 	'/logs/php.log',
+	// 	var_export( $SignTry, true ) . PHP_EOL,
+	// 	FILE_APPEND
+	// );
 	if( !is_wp_error($SignTry)){
 		
 		$user_id 	= $SignTry->ID;
 		$user_login = $SignTry->user_login;
 		$role 		= $SignTry->roles[0];
 		$user_name 	= $SignTry->display_name;
-
 
 		/* Validate token before sending response */
 		if(!$rest->check_token_valid('none', $request_token)){
@@ -135,13 +136,13 @@ function _mobile_pseudo_login($user_login, $user_password, $request_token) {
  */
 function mobile_pseudo_logout($logged){
 	$user = get_user_by('slug', $logged);
-	
 	if(!isset($_POST['request_token']) || !$user) return wp_send_json_error();
 
 	global $rest;
 	/* Validate token before sending response */
 	if($rest->check_token_valid($user->ID, $_POST['request_token'])){
 		$response = $rest->update_tokenStatus($_POST['request_token'], $user->ID, 0);
+		
 		/* Return user info to store client side */
 		if($response){
 			wp_send_json_success();
@@ -296,63 +297,85 @@ function fetch_main_feed($filter = "all", $offset){
  * @param Int @offset
  * @return associative Array of the results by type
  */
-function search_dedalo($search_term, $offset = 0){
-	global $wpdb;
-	$final_array = array();
-	$results = $wpdb->get_results(
-								"SELECT wpp.ID  post_id, wpp.post_type  type, wpp.post_title name, post_date  fecha,
-									wpm2.post_id attachment_id, u.display_name maker_name, u.ID maker_id
-								  FROM wp_posts AS wpp 
-								  INNER JOIN wp_users AS u  
-								   ON wpp.post_author = u.ID
-								  LEFT JOIN wp_postmeta wpm1
-								   ON wpm1.meta_key = '_thumbnail_id' AND wpm1.post_id = wpp.ID
-								  LEFT JOIN wp_postmeta wpm2
-								   ON wpm2.meta_key = '_wp_attached_file' AND wpm2.post_id = wpm1.meta_value
-								 WHERE (post_title LIKE '%{$search_term}%' 
-								  OR  post_content LIKE '%{$search_term}%') 
-								  AND (post_type = 'productos' OR post_type = 'post')
-								  AND post_status = 'publish'
-								 ORDER BY fecha DESC LIMIT 0, 10
-								;
-								", OBJECT
-	);
-	foreach ($results as $each_result) {
-		$profile_pic = get_user_meta($each_result->maker_id, "foto_user", TRUE);
-		$attachment_url = wp_get_attachment_image_src( $each_result->attachment_id, "large");
-		$final_array['pool'][] = array(
-										"ID" 		=> $each_result->post_id,
-										"name" 		=> $each_result->name,
-										"type" 		=> $each_result->type,
-										"thumb_url" => $attachment_url[0],
-										"designer_brand" => array(
-																"ID" => $each_result->maker_id,
-																"name" => $each_result->maker_name,
-																"profile_pic" => ($profile_pic != '') ? $profile_pic : NULL
-															),
-										$each_result->type	=> TRUE,
-									);
+function search_dedalo($search_term, $offset, $user = NULL){
+	if(!$user){
+		global $current_user;
+	}else{
+		$current_user = get_user_by('slug', $user);
 	}
-	$final_array['count'] = count($final_array['pool']);
-	wp_send_json_success($final_array);
-}
+	$results_array = array();
+	if($search_term === '') wp_send_json_error();
+	$resultados = get_search_museo($search_term, $offset*10);
+	$results_categories = search_museografo_categories($search_term);
+	$new_full_array = array_merge($results_categories, $resultados);
+	
+	foreach ($new_full_array as $index => $each_result) {
+		if($each_result->tipo == 'user'){
+			
+			/* If result is a User, an artist or a venue */
+			$user_object = get_user_by('id', $each_result->user_id);
+			$user_thumb = museo_get_profilepic_url($each_result->user_id);
+			$user_role = ($user_object->roles[0] == 'suscriptor' 
+							OR $user_object->roles[0] == 'subscriber'
+							OR $user_object->roles[0] == 'administrador'
+							OR $user_object->roles[0] == 'administrator') ? 'usuario' : $user_object->roles[0];
+			$role_prefix = $user_object->roles[0];
+			if($role_prefix !== 'venue' AND $role_prefix !== 'artista')
+				$role_prefix = 'suscriptor';
+			$results_array['results'][] = array(
+											'display_user' 		=> TRUE,
+											'ID' 				=> $each_result->user_id,
+											'user_login' 		=> get_clean_userlogin($each_result->user_id),
+											'user_nicename' 	=> $user_object->user_nicename,
+											'user_display_name' => $user_object->display_name,
+											'user_role' 		=> $user_role,
+											"is_".$user_role 	=> TRUE,
+											'user_thumbnail' 	=> ( isset($user_thumb) AND $user_thumb !== '') ? $user_thumb : NULL,
+											'is_following'		=> ($current_user) ? intval(checa_si_sigue_el_usuario($current_user->ID , $each_result->user_id)) : 'undefined',
+											'user_followers'	=> checa_total_followers($each_result->user_id),
+											'role_prefix'		=> $role_prefix
+										);
+		}elseif($each_result->tipo == 'post'){
+			
+			/* If result is an Event */
+			$event 	= get_post($each_result->post_id);
+			$event_thumbnail = museo_get_attachment_url( get_post_thumbnail_id($each_result->post_id), 'gallery_mobile' );
+			$venue_object 	= get_user_by('id', $each_result->user_id);
+			$venue_name 	= $venue_object->display_name;
+			$venue_slug 	= $venue_object->user_login;
+			$venue_thumb 	= museo_get_profilepic_url($each_result->user_id);
 
+			$results_array['results'][] = array(
+											'display_event' 	=> TRUE,
+											'event_title' 		=> $event->post_title,
+											'event_author'  	=> $event->post_author,
+											'event_slug' 		=> $event->post_name,
+											'event_content' 	=> $event->post_content,
+											'event_thumbnail' 	=> !empty($event_thumbnail) ? $event_thumbnail[0] : NULL,
+											'venue' 			=> get_the_author_meta( 'display_name', $venue_object->ID ),
+											'venue_avatar' 		=> museo_get_profilepic_url($venue_object->ID),
+											'venue_latlong'		=> get_user_meta($venue_object->ID, 'latlong', true),
+											'date_start' 		=> fecha_inicio_evento($event->ID),
+											'date_end' 			=> fecha_fin_evento($event->ID),
+											'costo' 			=> get_post_meta($event->ID,'mg_costo',true),
+											'address' 			=> get_post_meta($event->ID,'mg_evento_direccion', true),
+											'scheduled' 		=> ( in_array( $each_result->post_id, museografo_eventos_agendados($current_user) ) ) ? true : false
+										);
+		}elseif($each_result->tipo == 'category'){
+			$results_array['results'][] = array(
+											'display_category' 	=> TRUE,
+											'ID' 				=> $each_result->ID,
+											'cat_title' 		=> $each_result->name,
+											'cat_slug' 			=> $each_result->slug,
+											'has_description' 	=> $each_result->has_description,
+											'description' 		=> $each_result->description,
+											'thumbnail' 		=> $each_result->thumbnail
+										);
+		}
 
-function search_makers($search_term = NULL){
-	global $wpdb;
-	$results = $wpdb->get_results(
-								"SELECT u.ID AS post_id, u.ID AS user_id, 'user' AS tipo, user_registered AS fecha 
-								 FROM wp_users AS u INNER JOIN wp_usermeta AS um ON u.ID = um.user_id 
-								WHERE (u.display_name LIKE '%$search_term%' OR user_login LIKE '%$search_term%'
-								 OR (meta_key =  'first_name' AND meta_value LIKE  '%$search_term%') 
-								 OR (meta_key =  'last_name' AND meta_value LIKE  '%$search_term%'))
-								AND (meta_key =  'wp_capabilities' AND meta_value LIKE '%maker%')
-								GROUP BY ID LIMIT 0, 10
-								;
-								", OBJECT
-	);
+	}
+	wp_send_json_success($results_array);
 
-	wp_send_json_success($results);
 }
 
 	/*
@@ -366,6 +389,7 @@ function search_makers($search_term = NULL){
 									    'order'   		=> 'DESC',
 									    'number'  		=> $limit,
 									    'hide_empty'  	=> FALSE,
+									    'parent'  		=> 0,
 									    'exclude' 		=> 1
 									) );
 		foreach ($categories as $each_cat) {
@@ -439,22 +463,12 @@ function search_makers($search_term = NULL){
 	 */
 	function fetch_me_information($user_login  = NULL){
 		$user = get_user_by("login", $user_login);
-		$userData = get_userdata( $user->ID );
-
 		$assigned_terms = wp_get_object_terms( $user->ID, 'user_category' );
 		$foto_user = get_user_meta( $user->ID, 'foto_user', TRUE );
-		$first_name = get_user_meta( $user->ID, 'first_name', TRUE );
-		$last_name = get_user_meta( $user->ID, 'last_name', TRUE );
-		$bio = get_user_meta( $user->ID, 'user_3dbio', TRUE );
-
 		$me =   array(
 					"ID" 			=> $user->ID,
-					"login" 		=> $userData->data->user_login,
-					"first_name" 	=> $first_name,
-					"last_name" 	=> $last_name,
-					"email" 		=> $userData->data->user_email,
-					"bio" 			=> $bio,
-					"display_name" 	=> $userData->data->display_name,
+					"login" 		=> $user->data->user_login,
+					"display_name" 	=> $user->data->display_name,
 					"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 					"role" 			=> $user->roles[0],
 					"valid_token"	=> "HFJEUUSNNSODJJEHHAGADMNDHS&$86324",
@@ -480,7 +494,7 @@ function search_makers($search_term = NULL){
 
 		$previous = array("pool" => array(), "count" => 0);
 		/* Get categories from another endpoint */
-		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/0'));
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/'));
 		$categories = json_decode($categories);
 		/* Fetch 4 featured products */
 		$featured 	= fetch_featured_products();
@@ -605,7 +619,7 @@ function search_makers($search_term = NULL){
 	} 
 
 
-	/**
+/**
 	 * Fetch post detail information
 	 * @param Int $product_id
 	 * @return JSON Object
@@ -643,152 +657,34 @@ function search_makers($search_term = NULL){
 		return json_encode($final_array);
 	} 
 
-	
-	/**
-	 * Fetch user dashboard
-	 * Contains categories and users available to follow marked according status
-	 * @param String $user_login
-	 * @return JSON Object
-	 */
-	function fetch_user_dashboard($user_login = NULL){
-		$final_array = array();
-		/* Get categories and random makers from another endpoint */
-		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/14/'));
-		$categories = json_decode($categories);
-		$makers = file_get_contents(site_url("rest/v1/{$user_login}/content/users/maker/10/"));
-		$makers = json_decode($makers);
-		$user = get_user_by("slug", $user_login);
-
-		if($categories->count)
-			foreach ($categories->pool as $index => $each_cat) {
-				$final_array['categories']['pool'][] = $each_cat;
-				$final_array['categories']['pool'][$index]->followed = is_following_cat($user_login, $each_cat->ID);
-			}
-		$final_array['categories']['count'] = $categories->count;
-
-		if($makers->count)
-			foreach ($makers->pool as $index => $each_user) {
-				$final_array['makers']['pool'][] = $each_user;
-				$final_array['makers']['pool'][$index]->followed = is_following_user($user->ID, $each_user->ID);
-			}
-		$final_array['makers']['count'] = $makers->count;
-
-		return json_encode($final_array);
-	}
-
-	/**
-	 * Get a number of random users
-	 * @param String $role User role to retrieve
-	 * @param Integer $number Number of users to retrieve
-	 * @param Integer $exclude User ID to exclude
-	 * @return JSON encoded pool-count array 
-	 */
-	function fetch_randomUsers($role = "maker", $number = 5, $exclude = NULL){
-
-		global $wpdb;
-		$exclude_query = ($exclude) ?  " AND users.ID != {$exclude}" : "";
-		$users = $wpdb->get_results(
-					$wpdb->prepare( 
-						"SELECT ID , user_login
-							FROM wp_users users
-							 INNER JOIN wp_usermeta AS wm on user_id = ID
-							   AND wm.meta_key = 'wp_capabilities'
-							   AND wm.meta_value LIKE %s
-							   {$exclude_query}
-							ORDER BY rand() LIMIT %d
-						;"
-						, '%'.$role.'%'
-						, $number
-					), ARRAY_A
-				);
-		foreach ($users as &$each_maker) {
-			$each_maker['profile_pic'] = NULL;
-			$user_profile = get_user_meta( intval($each_maker['ID']), 'foto_user', TRUE);
-			
-			if($user_profile != '')
-				$each_maker['profile_pic'] = $user_profile;
-		}
-		return json_encode(array("pool" => $users, "count" => count($users)));
-	}
 
 
-	/**
-	 * Fetch user profile, requires authentication
-	 * @param Integer $queried_user_id
-	 * @param String $logged_user
-	 * @return Array / Object
-	 */
-	function fetch_user_profile($queried_user_id = NULL, $logged_user = NULL){
-		if(!$queried_user_id) 
-			return json_encode(array("success" => FALSE, "error" => "No user queried"));
-		if(!$logged_user){
-			global $current_user;
-		}else{
-			$current_user = get_user_by('slug', $logged_user);
-		}
-		$final_array = array();
-		$user_object 	= get_user_by( 'id', $queried_user_id );
-		if(!$user_object)
-			wp_send_json_error("No such user in the database, check data and try again");
-		$user_data = get_userdata( $user_object->ID );
 
-		$user_firstname 	= get_user_meta($user_object->ID, "first_name", TRUE);
-		$user_lastname 		= get_user_meta($user_object->ID, "last_name", TRUE);
-		$user_description  	= get_user_meta($user_object->ID, "user_3dbio", TRUE);
-		$user_profile  		= get_user_meta($user_object->ID, "foto_user", TRUE);
 
-		$role_prefix = $user_object->roles[0];
-		$user_data = array(
-							'ID' 			=> $user_object->ID,
-							'user_display' 	=> $user_object->display_name,
-							'user_login' 	=> get_clean_userlogin($user_object->ID),
-							'first_name' 	=> ($user_firstname) ? $user_firstname : NULL,
-							'last_name' 	=> ($user_lastname) ? $user_lastname : NULL,
-							'nickname' 		=> $user_object->nickname,
-							'bio' 			=> $user_description,
-							'profile_pic' 	=> $user_profile,
-							'is_'.$role_prefix		=> TRUE
-						);
-		$final_array['profile'] = $user_data;
-		$same_maker = get_posts( array(
-										"author" 			=> $user_object->ID,
-										"post_type" 		=> "productos",
-										"post_status" 		=> "publish",
-										"posts_per_page" 	=> -1,
-										"orderby" 			=> "date",
-									));
-		$categories = wp_get_object_terms( $user_object->ID, "user_category");
-		if($categories){
-
-			foreach ($categories as $each_usercat) {
-				$final_array['profile']['categories']['pool'][] = array(
-																"ID"	=> $each_usercat->term_id,
-																"name" 	=> $each_usercat->name,
-																"slug"	=> $each_usercat->slug
-															);
-			}
-			$final_array['profile']['categories']['count'] = count($final_array['profile']['categories']['pool']);
-		}
-		if($same_maker){
-			foreach ($same_maker as $each_related) {
-				$post_thumbnail_id 	= get_post_thumbnail_id($each_related->ID);
-				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'medium');
-				$post_thumbnail_url = $post_thumbnail_url[0];
-				$final_array['same_maker']['pool'][] = array( 
-																"ID"			=> $each_related->ID,
-																"product_title" => $each_related->post_title,
-																"thumb_url"		=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
-															);
-			}
-			$final_array['same_maker']['count'] = count($final_array['same_maker']['pool']);
-		}
-			
-		return json_encode($final_array);
-	}
 
 
 
 // -----------------------------------------------------------------------------------------------
+// CATEGORIES
+function follow_category($user_login){
+	
+	$user = get_user_by('login', $user_login);
+	if(museografo_follow_category($user)) 
+		wp_send_json_success();
+	wp_send_json_error('Problem while following category');
+}
+add_action('wp_ajax_follow_category', 'follow_category');
+add_action('wp_ajax_nopriv_follow_category', 'follow_category');
+
+function unfollow_category($user_login){
+	
+	$user = get_user_by('login', $user_login);
+	if(museografo_unfollow_category($user)) 
+		wp_send_json_success();
+	wp_send_json_error('Problem while following category');
+}
+add_action('wp_ajax_unfollow_category', 'unfollow_category');
+add_action('wp_ajax_nopriv_unfollow_category', 'unfollow_category');
 
 
 /*
@@ -872,14 +768,531 @@ function get_user_gallery($user_login, $limit = 5, $size = 'gallery_mobile'){
 	return json_encode($images);
 }
 
-
-
-/**
- * Fetch user notifications pool
+/*
+ * Get projects uploaded by an artist
+ *
  * @param String $user_login
- * @param Integer $limit
- * @return JSON encoded Pool/Count Array
+ * @param Int $limit
+ * @param String $size
  */
+function get_artist_projects($user_login, $limit = 5, $size = 'gallery_mobile'){
+	$user_object = get_user_by("slug", $user_login);
+	if(!$user_object)
+		wp_send_json_error("No such user or not enough permissions");
+	$project_array = array('items' => array());
+	$user_object = get_user_by("slug", $user_login);
+	if(!$user_object)
+		wp_send_json_error("No such user or not enough permissions");
+	$args = array(
+				"post_type" 	=> "proyectos-especiales",
+				"author" 		=> $user_object->ID,
+				"posts_per_page" => $limit
+			);
+	$projects = get_posts($args);
+	if(!empty($projects)){
+		foreach ($projects as $each_project) {
+		 	$url_full 	 = museo_get_attachment_url( get_post_thumbnail_id($each_project->ID), $size);
+		 	$title 		 = $each_project->post_title;
+		 	$description_rough = $each_project->post_content;
+		 	$description = wpautop($description_rough);
+		 	$project_array['items'][] = array(
+		 							'src' 		=> $url_full[0],
+		 							'w' 		=> ($size == 'thumbnail') ? 150 : 350,
+		 							'h' 		=> ($size == 'thumbnail') ? 150 : 240,
+		 							'title' 	=> $title,
+		 							'description' => $description,
+		 							'caption' 	=> $description_rough
+		 						);		 	
+		}
+		return json_encode($project_array);
+	}
+		
+
+}
+
+/*
+ * Get special projects uploaded by an artist
+ *
+ * @param String $user_login
+ * @param String $size
+ * @param Int $limit
+ */
+function get_artist_specialprojects($user_login, $limit = -1){
+	$user_object = get_user_by("slug", $user_login);
+	if(!$user_object)
+		wp_send_json_error("No such user or not enough permissions");
+	$args = array(
+				"post_type" 	=> "proyectos-especiales",
+				"author" 		=> $user_object->ID,
+				"posts_per_page" => $limit
+			);
+	return get_posts($args);
+}
+
+function get_venue_event_count($venue_id){
+	$venue_object = get_user_by("id", $venue_id);
+	return count(museografo_eventos_creados($venue_object));
+}
+
+function get_venue_events($venue_id, $logged_user, $offset = 0, $limit = 10){
+
+	$events_feed = array();
+	$venue_object = get_user_by("id", $venue_id);
+	$user_object = get_user_by("slug", $logged_user);
+	if(!$user_object)
+		wp_send_json_error("No such user or not enough permissions");
+	$created_events = museografo_eventos_creados($venue_object);
+	
+	if(!empty($created_events))
+		foreach ($created_events as $event) {
+			
+			if(is_event_ontime($event->ID)){
+				$events_feed['results']['ontime'][] = get_event_stdinfo($event->ID, FALSE, $user_object);
+			}else{
+				$events_feed['results']['history'][] = get_event_stdinfo($event->ID, FALSE, $user_object);
+			}
+			
+		}	
+	return json_encode($events_feed);
+}
+
+function get_user_events($user_id, $logged_user, $offset = 0, $limit = 10){
+
+	$events_feed = array();
+	$user_object = get_user_by("id", $user_id);
+	$scheduled_feed = get_scheduled($user_id, TRUE, 5);
+	$history_feed 	= get_scheduled($user_id, FALSE, 5);
+	
+	if(!empty($scheduled_feed))
+		foreach ($scheduled_feed as $event_id) {
+			$event = get_post($event_id);
+			$type_event = get_the_terms( $event->ID, 'tipo-de-evento' );
+			$type = !empty($type_event) ? array_values( get_the_terms( $event->ID, 'tipo-de-evento' ) )
+										: "";
+			$ID_venue = get_post_meta($event->ID ,'mg_venue_id',true);
+			$thumb_url = museo_get_attachment_url( get_post_thumbnail_id($event->ID), 'eventos-feed' );
+
+			$events_feed['results']['scheduled'][] = array(
+									'ID' 				=> $event->ID,
+									'event_title' 		=> $event->event_title,
+									'event_description' => wp_trim_words($event->event_description, 18, '...'),
+									'event_thumbnail' 	=> $thumb_url[0],
+									'event_type'	 	=> (!empty($type)) ? $type[0]->name : null,
+									'venue_id' 			=> $ID_venue,
+									'venue' 			=> (get_the_author_meta( 'display_name', $ID_venue ) !== '') ? get_the_author_meta( 'display_name', $ID_venue ) : NULL,
+									'venue_avatar' 		=> (museo_get_profilepic_url($ID_venue) !== '') ? museo_get_profilepic_url($ID_venue) : NULL,
+									'date_start' 		=> (fecha_inicio_evento($event->ID) !== '') ? fecha_inicio_evento($event->ID) : NULL,
+									'date_end' 			=> (fecha_fin_evento($event->ID) !== '') ? fecha_fin_evento($event->ID) : NULL,
+									'latlong' 			=> (get_post_meta($event->ID,'mg_evento_latlong', true) !== '') ? get_post_meta($event->ID,'mg_evento_latlong', true) : NULL,
+									'address' 			=> (get_post_meta($event->ID,'mg_evento_direccion', true) !== '') ? get_post_meta($event->ID,'mg_evento_direccion', true) : NULL,
+									'scheduled' 		=> ( in_array( $event->ID, museografo_eventos_agendados($user_object, TRUE) ) ) ? true : false,
+									'attended' 			=> ( in_array( $event->ID, get_attended_events($user_object) ) ) ? true : false
+								);
+		}
+	if(!empty($history_feed))
+		foreach ($history_feed as $event_id) {
+			$event = get_post($event_id);
+			$type_event = get_the_terms( $event->ID, 'tipo-de-evento' );
+			$type = !empty($type_event) ? array_values( get_the_terms( $event->ID, 'tipo-de-evento' ) )
+										: "";
+			$ID_venue = get_post_meta($event->ID ,'mg_venue_id',true);
+			$thumb_url = museo_get_attachment_url( get_post_thumbnail_id($event->ID), 'eventos-feed' );
+
+			$events_feed['results']['history'][] = array(
+									'ID' 				=> $event->ID,
+									'event_title' 		=> $event->event_title,
+									'event_description' => wp_trim_words($event->event_description, 18, '...'),
+									'event_thumbnail' 	=> $thumb_url[0],
+									'event_type'	 	=> (!empty($type)) ? $type[0]->name : null,
+									'venue_id' 			=> $ID_venue,
+									'venue' 			=> (get_the_author_meta( 'display_name', $ID_venue ) !== '') ? get_the_author_meta( 'display_name', $ID_venue ) : NULL,
+									'venue_avatar' 		=> (museo_get_profilepic_url($ID_venue) !== '') ? museo_get_profilepic_url($ID_venue) : NULL,
+									'date_start' 		=> (fecha_inicio_evento($event->ID) !== '') ? fecha_inicio_evento($event->ID) : NULL,
+									'date_end' 			=> (fecha_fin_evento($event->ID) !== '') ? fecha_fin_evento($event->ID) : NULL,
+									'latlong' 			=> (get_post_meta($event->ID,'mg_evento_latlong', true) !== '') ? get_post_meta($event->ID,'mg_evento_latlong', true) : NULL,
+									'address' 			=> (get_post_meta($event->ID,'mg_evento_direccion', true) !== '') ? get_post_meta($event->ID,'mg_evento_direccion', true) : NULL,
+									'scheduled' 		=> ( in_array( $event->ID, museografo_eventos_agendados($user_object, TRUE) ) ) ? true : false,
+									'attended' 			=> ( in_array( $event->ID, get_attended_events($user_object) ) ) ? true : false
+								);
+		}
+	return json_encode($events_feed);
+}
+
+
+/*
+ * Get agenda for a user
+ *
+ * @param String $logged_user user login part of the endpoint
+ * @param Int $offset
+ * @param Object $logged_user
+ * @param Boolean $flag_all Set TRUE if you don't want to filter events through ontime method
+ * @return Object
+ */
+function get_scheduled_feed($logged_user, $offset, $limit = 10, $flag_all = FALSE){
+	if(!$logged_user)
+		return NULL;
+	
+	$scheduled = array_map('intval', museografo_eventos_agendados($logged_user, $flag_all));
+	
+	$scheduled_full = array();
+	$scheduled_full['event_count'] = 0;
+	if(!$scheduled) return json_encode($scheduled_full);
+	foreach ($scheduled as $each_event) {
+		$event = get_post($each_event);
+		if(!$event)
+			continue;
+		//TO DO: Pagination using offset
+		if(count($scheduled_full) >= $limit) 
+			return $scheduled_full;
+		
+		$ID_venue = get_post_meta($event->ID ,'mg_venue_id',true);
+		$thumb_url = museo_get_attachment_url( get_post_thumbnail_id($event->ID), 'eventos-feed' );
+		$scheduled_full['event_count']++;
+		$latlong = (get_post_meta($event->ID,'mg_evento_latlong', true) !== '') ? get_post_meta($event->ID,'mg_evento_latlong', true) : NULL;
+		$scheduled_full['results'][] = array(
+								'ID' 				=> $event->ID,
+								'event_title' 		=> $event->post_title,
+								'event_description' => $event->post_content,
+								'event_thumbnail' 	=> $thumb_url[0],
+								'venue' 			=> get_the_author_meta( 'display_name', $ID_venue ),
+								'venue_avatar' 		=> museo_get_profilepic_url($ID_venue),
+								'date_start' 		=> fecha_inicio_evento($event->ID),
+								'date_end' 			=> fecha_fin_evento($event->ID),
+								'date_end_unformatted' 	=> fecha_fin_evento($event->ID, TRUE),
+								'venue_latlong' 	=> $latlong
+							);
+	}
+	if(empty($scheduled_full['results']))
+		return json_encode(array('empty_set' => TRUE, 'event_count' => 0, 'results' => array()));
+	$date_end_array = array();
+	foreach ($scheduled_full['results'] as $key => $row)
+	    $date_end_array[$key] = $row['date_end_unformatted'];
+	/* Order events by closest ending date */
+	array_multisort($date_end_array, SORT_ASC, $scheduled_full['results']);
+	return json_encode($scheduled_full);
+}
+
+// USERS
+function get_user_profile($queried_user = NULL, $logged_user = NULL){
+	if(!$queried_user) 
+		return json_encode(array("success" => FALSE, "error" => "No user queried"));
+	if(!$logged_user){
+		global $current_user;
+	}else{
+		$current_user = get_user_by('slug', $logged_user);
+	}
+	$user_object 	= get_user_by( 'slug', $queried_user );
+	if(!$user_object)
+		wp_send_json_error("No such user in the database, check data and try again");
+	$user_firstname = get_user_meta( $user_object->ID, 'first_name', true);
+	$user_lastname 	= get_user_meta( $user_object->ID, 'last_name', true);
+	$user_meta_bio_rough = get_user_meta( $user_object->ID, 'description', true );
+	$user_meta_bio 	= wpautop(addslashes($user_meta_bio_rough));
+	$user_meta_country = get_user_meta($user_object->ID, 'profile_country', true);
+	$user_meta_city = get_user_meta( $user_object->ID, 'profile_city', true);
+	$user_meta_gender = (get_user_meta( $user_object->ID, 'sexo', true) !== '') ? strtolower(get_user_meta( $user_object->ID, 'sexo', true)) : NULL;
+	$user_avatar 	= museo_get_profilepic_url($user_object->ID);
+	$is_private 	=  get_user_meta( $user_object->ID, 'private_profile', true);
+	$role_prefix 	= $user_object->roles[0];
+	if($role_prefix !== 'venue' AND $role_prefix !== 'artista')
+		$role_prefix = 'suscriptor';
+	if($role_prefix == 'suscriptor'){
+		$user_events = json_decode(get_user_events($user_object->ID, $current_user, 0));
+	}else{
+		$user_events = json_decode(get_venue_events($user_object->ID, get_clean_userlogin($current_user->ID), 0));
+	}
+	
+	$user_data = array(
+						'ID' 			=> $user_object->ID,
+						'user_display' 	=> $user_object->display_name,
+						'user_login' 	=> get_clean_userlogin($user_object->ID),
+						'user_nicename' => $user_object->user_nicename,
+						'first_name' 	=> ($user_firstname) ? $user_firstname : NULL,
+						'last_name' 	=> ($user_lastname) ? $user_lastname : NULL,
+						'nickname' 		=> $user_object->nickname,
+						'gender' 		=> get_user_meta($user_object->ID, 'sexo', true),
+						'user_role' 	=> $user_object->roles[0],
+						'user_bio_rough' => ($user_meta_bio_rough !== '') ? $user_meta_bio_rough : null,
+						'user_bio' 		=> ($user_meta_bio !== '') ? $user_meta_bio : null,
+						'user_avatar' 	=> ( isset($user_avatar) AND $user_avatar !== '') ? $user_avatar : null,
+						'user_email' 	=> $user_object->user_email,
+						'country' 		=> ($user_meta_country) ? get_nice_term($user_meta_country) : NULL,
+						'city' 			=> ($user_meta_city) ? get_nice_term($user_meta_city) : NULL,
+						'birthday' 		=> get_user_meta($user_object->ID, 'fecha-nacimiento', true),
+						'is_gender_'.$user_meta_gender 	=> true,
+						'follows' 		=> array(
+													'venues' 	=> checa_total_siguiendo($user_object->ID, 'venue'),
+													'artists' 	=> checa_total_siguiendo($user_object->ID, 'artista'),
+													'users' 	=> checa_total_siguiendo($user_object->ID, 'suscriptor'),
+													'all' 		=> checa_total_siguiendo($user_object->ID, 'any')
+												),
+						'followers' 	=> array(
+													'artists' 	=> checa_total_seguidores($user_object->ID, 'artista'),
+													'users' 	=> checa_total_seguidores($user_object->ID, 'suscriptor'),
+													'all' 		=> checa_total_seguidores($user_object->ID, 'any')
+												),
+						'upload_count'	=> get_total_attachment_user_id( $user_object->ID ),
+						'comment_count'	=> get_user_commentcount( $user_object->ID ),
+						'event_count'	=> array(
+												'scheduled' => get_eventos_agendados($user_object->ID),
+												'attended'  => (get_eventos_asistidos($user_object->ID))
+											),
+						'events'		=> $user_events,
+						'is_following'	=> ($current_user) ? intval(checa_si_sigue_el_usuario($current_user->ID ,$user_object->ID)) : 'undefined',
+						'is_private'	=> ($is_private === 'true') ? TRUE : FALSE,
+						'role_prefix'	=> $role_prefix,
+						'is_'.$role_prefix		=> TRUE
+					);
+	
+	return json_encode($user_data);
+}
+
+// VENUES
+function get_venue_profile($venue_id, $user = NULL){
+	if(!$user){
+		global $current_user;
+	}else{
+		$current_user = get_user_by('slug', $user);
+	}
+	$venue_object = get_user_by('id', $venue_id);
+	$venue_meta = get_user_meta($venue_id);
+	
+	return array(
+						'ID' 			=> $venue_id,
+						'venue_name' 	=> $venue_object->display_name,
+						'venue_slug' 	=> get_clean_userlogin($venue_object->ID),
+						'venue_bio' 	=> !empty($venue_meta['description']) ? wpautop($venue_meta['description'][0]) : NULL,
+						'venue_city' 	=> !empty($venue_meta['ciudad'][0]) ? $venue_meta['ciudad'][0] : NULL,
+						'venue_phone' 	=> !empty($venue_meta['telefono'][0]) ? $venue_meta['telefono'][0] : NULL,
+						'venue_address' => !empty($venue_meta['direccion'][0]) ? $venue_meta['direccion'][0] : NULL,
+						'venue_hours'   => (get_user_meta($venue_id, 'horario', true) !== '' ) ? get_user_meta($venue_id, 'horario', true)  : NULL,
+						'latlong'  	 	=> !empty($venue_meta['latlong'][0]) ? $venue_meta['latlong'][0] : NULL,
+						'venue_avatar' 	=> (museo_get_profilepic_url($venue_id) !== '') ? museo_get_profilepic_url($venue_id) : NULL,
+						'follows' 		=> array(
+													'venues' 	=> checa_total_siguiendo($venue_id, 'venue'),
+													'artists' 	=> checa_total_siguiendo($venue_id, 'artista'),
+													'users' 	=> checa_total_siguiendo($venue_id, 'suscriptor'),
+													'all' 		=> checa_total_siguiendo($venue_id, 'any')
+												),
+						'followers' 	=> array(
+													'artists' 	=> checa_total_seguidores($venue_id, 'artista'),
+													'users' 	=> checa_total_seguidores($venue_id, 'suscriptor'),
+													'all' 		=> checa_total_seguidores($venue_id, 'any')
+												),
+						'is_following'	=> ($current_user) ? intval(checa_si_sigue_el_usuario($current_user->ID ,$venue_id)) : 'undefined',
+						'events'		=> json_decode(get_venue_events($venue_object->ID, get_clean_userlogin($current_user->ID), 0)),
+						'event_count'   => get_venue_event_count($venue_object->ID)
+					);
+}
+
+// TIMELINE
+function get_user_timeline($user, $offset){
+
+	$user = get_user_by( 'login', $user );
+	$activities = get_actividades($offset*10, $user);
+	
+	/* TO DO: Do all this in separate functions */
+	$full_timeline = array();
+	foreach ($activities as $key => $activity) {
+		
+		if($activity->type == 'evento'){
+			$event = get_post($activity->post_id);
+			$thumb_url = museo_get_attachment_url( get_post_thumbnail_id($activity->post_id), 'eventos-feed' );
+			$ID_venue = get_post_meta($activity->post_id ,'mg_venue_id',true);
+			$full_timeline[] = array(
+										'ID' 				=> $activity->post_id,
+										'type' 				=> $activity->type,
+										'event_title' 		=> $event->post_title,
+										'event_author'  	=> $event->post_author,
+										'event_slug' 		=> $event->post_name,
+										'event_description' => wp_trim_words($event->post_content, 16, "..."),
+										'event_thumbnail' 	=> $thumb_url[0],
+										'venue' 			=> get_the_author_meta( 'display_name', $ID_venue ),
+										'venue_id' 			=> $ID_venue,
+										$activity->type 	=> true,
+										'venue_avatar' 		=> museo_get_profilepic_url($ID_venue),
+										'venue_latlong'		=> get_user_meta($ID_venue, 'latlong', true),
+										'date_start' 		=> fecha_inicio_evento($event->ID),
+										'date_end' 			=> fecha_fin_evento($event->ID),
+										'costo' 			=> get_post_meta($event->ID,'mg_costo',true),
+										'address' 			=> get_post_meta($event->ID,'mg_evento_direccion', true),
+										'scheduled' 		=> ( in_array( $activity->post_id, museografo_eventos_agendados($user) ) ) ? true : false,
+									);
+		}elseif($activity->type == 'resena'){
+			$data_excerpt = get_comment($activity->data_id);
+			$data_excerpt = wp_trim_words($data_excerpt->comment_content, 10);
+			$event = get_post($activity->post_id);
+			$act_user_meta = get_the_author_meta( 'display_name', $activity->user_id );
+			$act_userlogin_meta = get_the_author_meta( 'user_login', $activity->user_id );
+			
+			$activity_user = get_user_by('slug', $act_userlogin_meta);
+			$full_timeline[] = array(
+										'ID' 			=> $activity->actividad_id,
+										'user_id' 		=> $activity->user_id,
+										'user_nicename' => $act_user_meta,
+										'user_login' 	=> $activity_user->user_login,
+										'user_avatar' 	=> museo_get_profilepic_url($activity->user_id),
+										'event_id' 		=> $activity->post_id,
+										'event_title' 	=> $event->post_title,
+										$activity->type => true,
+										'data_excerpt' 	=> (isset($data_excerpt)) ? $data_excerpt :'',
+										'type' 			=> $activity->type,
+									);
+		}elseif($activity->type == 'media'){
+			$event = get_post($activity->post_id);
+			$media_thumbnail = museo_get_attachment_url( $activity->data_id, 'agenda-feed' );
+			$media_thumbnail = ($media_thumbnail) ? $media_thumbnail[0]: "images/event_placeholder.png";
+			$act_user_meta = get_the_author_meta( 'display_name', $activity->user_id );
+			$act_userlogin_meta = get_the_author_meta( 'user_login', $activity->user_id );
+			
+			$activity_user = get_user_by('slug', $act_userlogin_meta);
+			$full_timeline[] = array(
+										'ID' 			=> $activity->actividad_id,
+										'user_id' 		=> $activity->user_id,
+										'user_nicename' => $act_user_meta,
+										'user_login' 	=> $activity_user->user_login,
+										'user_avatar' 	=> museo_get_profilepic_url($activity->user_id),
+										'event_id' 		=> $activity->post_id,
+										'event_title' 	=> $event->post_title,
+										$activity->type => true,
+										'media_thumbnail' 	=> $media_thumbnail,
+										'type' 			=> $activity->type,
+									);
+		}elseif($activity->type == 'agendo'){
+			$user = get_user_by('id', $activity->user_id);
+			$event = get_post($activity->post_id);
+			
+			$full_timeline[] = array(
+										'ID' 				=> $activity->actividad_id,
+										'user_id' 			=> $activity->user_id,
+										'user_login' 		=> $user->user_login,
+										'user_nicename' 	=> get_the_author_meta( 'display_name', $activity->user_id ),
+										'user_avatar' 		=> museo_get_profilepic_url($activity->user_id),
+										'event_id' 			=> $event->ID,
+										'event_title' 		=> $event->post_title,
+										$activity->type 	=> true,
+										'type' 				=> $activity->type
+									);
+		}else{
+			$user = get_user_by('id', $activity->user_id);
+			$_role = (!empty($user->roles) AND $user->roles[0] != 'subscriber' ) ? $user->roles[0] : 'user';
+			$post_user = get_user_by('id', $activity->post_id);
+			$role = (!empty($post_user->roles) AND $post_user->roles[0] != 'subscriber' ) ? $post_user->roles[0] : 'user';
+			
+			$full_timeline[] = array(
+										'ID' 				=> $activity->actividad_id,
+										'type' 				=> $activity->type,
+										$activity->type 	=> true,
+										'user_id' 			=> $activity->user_id,
+										'user_login' 		=> get_clean_userlogin($user->ID),
+										'user_nicename' 	=> get_the_author_meta( 'display_name', $activity->user_id ),
+										'is_'.$_role 		=> TRUE,
+										'user_avatar' 		=> museo_get_profilepic_url($activity->user_id),
+										'followed'			=> array(
+																	'user_id' 		=> $post_user->ID,
+																	'user_login' 	=> get_clean_userlogin($post_user->ID),
+																	'user_nicename' => $post_user->display_name,
+																	'is_'.$role 	=> TRUE,
+																)
+									);
+		}
+	}
+	return json_encode($full_timeline);
+}
+
+
+// COMMENTS
+function get_event_comments($post_id, $offset = 0){
+
+	$args = array(
+					'post_id' => $post_id,
+					'number'  => 5,
+					'parent'  => 0,
+					'offset'  => $offset
+				);
+	$comments = get_comments($args);
+	
+	if(!empty($comments)){
+		$comments_data = array();
+		foreach ($comments as $comment) {
+			$comments_data[] = array(
+										'ID' 			=> $comment->comment_ID,
+										'author_name' 	=> $comment->comment_author,
+										'author_thumbnail' 	=> museo_get_profilepic_url($comment->user_id),
+										'content' 		=> $comment->comment_content,
+										'upvotes' 		=> total_votos($comment->comment_ID, 'up'),
+										'downvotes' 	=> total_votos($comment->comment_ID, 'down')
+									); 
+		}
+		$array_return = array(
+						'pool' 			=> $comments_data,
+						'comment_count' => count($comments_data)
+					);
+		wp_send_json_success($array_return);
+	}else{
+		wp_send_json_success(array(
+						'pool' 			=> NULL,
+						'comment_count' => 0
+					));
+	}
+	wp_send_json_error();
+}
+
+function get_child_comments($post_id, $parent_comment_id = 0, $limit = 0){
+	$args = array(
+					'post_id' => $post_id,
+					'number'  => $limit,
+					'parent'  => $parent_comment_id
+				);
+	$comments = get_comments($args);
+	if(!empty($comments)){
+		$comments_data = array();
+		foreach ($comments as $comment) {
+			$comments_data[] = array(
+										'ID' 			=> $comment->comment_ID,
+										'author_name' 	=> $comment->comment_author,
+										'author_thumbnail' 	=> museo_get_profilepic_url($comment->user_id),
+										'content' 		=> $comment->comment_content,
+										'upvotes' 		=> total_votos($comment->comment_ID, 'up'),
+										'downvotes' 	=> total_votos($comment->comment_ID, 'down')
+									); 
+		}
+		$array_return = array(
+						'pool' 			=> $comments_data,
+						'comment_count' => count($comments_data)
+					);
+		wp_send_json_success($array_return);
+	}
+	wp_send_json_error();
+}
+
+function vote_comment($args){
+	extract($args);
+	if(agregar_voto($voter, $args)) return TRUE;
+}
+
+function mobile_get_user_comments($user_id){
+	$user_comments = get_user_comments($user_id);
+	if($user_comments) return json_encode($user_comments);
+}
+
+function post_comment_to_event($logged_user){
+	$current_user 	 = get_user_by('slug', $logged_user);
+	$event_id 		 = isset($_POST['event_id']) ? $_POST['event_id'] : NULL;
+	$comment_content = isset($_POST['comment_content']) ? $_POST['comment_content'] : NULL;
+	if(!$event_id OR !$comment_content) return FALSE;
+	$data = array(
+				    'comment_post_ID' => $event_id ,
+				    'comment_author' => $current_user->display_name,
+				    'comment_content' => $comment_content,
+				    'user_id' => $current_user->ID,
+				    'comment_agent' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)',
+				    'comment_approved' => 1,
+				);
+	if(wp_insert_comment($data))
+		return TRUE;
+}
+
 function get_notifications_pool($user_login, $limit = 10){
 
 	$user = get_user_by('login', $user_login);
@@ -909,22 +1322,8 @@ function recomend_event_to_user($user){
 }
 
 function update_user_profile($user_login, $args){
-	$user = get_user_by("slug", $user_login);
-	
-	if(!$user)
-		wp_send_json_error();
-
-	$userdata = array(
-						"ID" 			=> $user->ID,
-						"first_name" 	=> $args->user_first_name,
-						"last_name" 	=> $args->user_last_name,
-						"user_email" 	=> $args->user_email,
-				);
-	if($user_updated = wp_update_user($userdata)){
-		/*** Updating extra meta information ***/
-		update_user_meta( $user_updated, 'user_3dbio', $args->user_bio );
+	if(museografo_completar_perfil($user_login, $args)) 
 		wp_send_json_success();
-	}
 	wp_send_json_error();
 }
 
@@ -1795,13 +2194,4 @@ function museo_get_attachment_url($attachment_id, $size='thumbnail', $icon = fal
     if ( $src && $width && $height )
         return array( $src, $width, $height );
     return false;
-}
-
-/*
- * Get clean url usable version of the user log in name
- * @param Int $ID
- * @return String $nicename
- */
-function get_clean_userlogin($user_id){
-	return get_the_author_meta('user_nicename', $user_id);
 }

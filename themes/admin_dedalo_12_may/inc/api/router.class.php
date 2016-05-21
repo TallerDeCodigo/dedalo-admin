@@ -134,7 +134,7 @@ class Router{
 			$slim->post('/rest/v1/auth/user/', function () {
 
 				extract($_POST);
-				if (!isset($username)) wp_send_json_error('Please provide a username');
+				if (!isset($username))wp_send_json_error('Please provide a username');
 				
 				/* Create user object */
 				$User 	= new User();
@@ -164,12 +164,7 @@ class Router{
 				$User = new User();
 				/* Create user */
 				if($User->_username_exists($username)){
-					$user = get_user_by("id", $user_id);
-					$json_response = array(
-											'user_id' => $User->_username_exists($username), 
-											'username' => $username,
-											'user_login' => $username
-										);
+					$json_response = array('user_id' => $User->_username_exists($username), 'username' => $username);
 					wp_send_json_success($json_response);
 				}
 				wp_send_json_error();
@@ -205,10 +200,24 @@ class Router{
 			 * @return JSON success
 			 */
 			$slim->post('/rest/v1/auth/:logged/logout/', function($logged) {
-
 				return mobile_pseudo_logout($logged);
 				exit;
 			});
+
+			/*
+			 * DEPRECATED!!!!!
+			 * DEPRECATED!!!!!
+			 * DEPRECATED!!!!!
+			 * CHECK USER LOGIN IMPORTANT USE BEFORE EVERY CALL TO THE API
+			 * DEPRECATED!!!!! 
+			 * DEPRECATED!!!!! 
+			 * DEPRECATED!!!!! (use checkToken endpoint instead)
+			 */
+			// $slim->get('/rest/v1/login/:user_id',function($user_id) {
+			// 	wp_send_json_error('deprecated');
+			// 	// wp_send_json_success(mobile_login_check($user_id, $user_token));
+			// 	exit;
+			// });
 
 
 		/*     __               _ 
@@ -218,13 +227,12 @@ class Router{
 		 *   |_|  \___|\___|\__,_|
 		 */      
 		
-			/**
+			/*
 			 * Get home feed
 			 * @param String $user_login The user to retrieve timeline for
 			 * @param Int $offset Number of offsetted posts pages for pagination purposes
 			 * @param String $filter
 			 * @type ANNONYMOUS
-			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/feed(/:offset(/:filter))',function ( $offset = 0, $filter = "all"){
 				// TODO Use user information to cure feed
@@ -232,12 +240,13 @@ class Router{
 				exit;
 			});
 
-			/**
+			/*
 			 * Get home feed for a logged user
 			 * @param String $user_login The user to retrieve timeline for
 			 * @param Int $offset Number of offsetted posts pages for pagination purposes
 			 * @param String $filter
 			 * @type LOGGED
+			 * 
 			 */
 			$slim->get('/rest/v1/:u_login/feed(/:offset(/:filter))',function ($user_login, $offset = 0, $filter = "all"){
 				// TODO Use user information to cure feed
@@ -248,17 +257,15 @@ class Router{
 			/**
 			 * Get categories feed
 			 * @category GET Endpoint
-			 * Dedalo approved
 			 */
-			$slim->get('/rest/v1/content/enum/categories/:limit/', function($limit){
-				echo fetch_categories($limit);
+			$slim->get('/rest/v1/content/enum/categories/', function(){
+				echo fetch_categories(10);
 				exit;
 			});
 
 			/**
 			 * Fetch product detail
 			 * @category GET Endpoint
-			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/products/:product_id/', function($product_id){
 				echo fetch_product_detail($product_id);
@@ -268,35 +275,9 @@ class Router{
 			/**
 			 * Fetch post detail
 			 * @category GET Endpoint
-			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/content/:post_id/', function($post_id){
 				echo fetch_post_detail($post_id);
-				exit;
-			});
-			
-			/**
-			 * Fetch a limited set of random users
-			 * @param String $filter
-			 * @param Integer $limit defaults to 5
-			 * @category GET Endpoint
-			 * Dedalo approved
-			 */
-			$slim->get('/rest/v1/content/users/:filter(/:limit)/', function($filter, $limit = 5){
-				echo fetch_randomUsers($filter, $limit);
-				exit;
-			});
-
-			/**
-			 * Fetch a limited set of random users excluding logged user
-			 * @param String $filter
-			 * @param Integer $limit defaults to 5
-			 * @category GET Endpoint
-			 * Dedalo approved
-			 */
-			$slim->get('/rest/v1/:logged_user/content/users/:filter(/:limit)/', function($logged_user, $filter, $limit = 5){
-				$user = get_user_by("slug", $logged_user);
-				echo fetch_randomUsers($filter, $limit, $user->ID);
 				exit;
 			});
 
@@ -312,7 +293,6 @@ class Router{
 			/**
 			 * Get search elements
 			 * @category GET Endpoint
-			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1(/:logged)/content/search-composite/', function($logged = NULL){
 
@@ -320,14 +300,13 @@ class Router{
 				exit;
 			});
 
-			/**
+			/*
 			 * Search website
 			 * @param String $s
-			 * @todo Divide search by: people, tag, events and accept the parameter as a filter
-			 * Dedalo approved
+			 * TO DO: Divide search by: people, tag, events and accept the parameter as a filter
 			 */
-			$slim->get('/rest/v1/content/search/:s(/:offset)/',function( $s, $offset = 0) {
-				return search_dedalo($s, $offset);
+			$slim->get('/rest/v1/user/:logged/search/:s/:offset/',function($logged, $s, $offset) {
+				return search_museografo($s, $offset, $logged);
 				exit;
 			});
 
@@ -368,73 +347,40 @@ class Router{
 			 * User ME
 			 * @return JSON formatted user basic info
 			 * TO DO: Check data sent by this endpoint and activate it
-			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/:logged/me/', function ($logged = NULL) {
 			  	echo fetch_me_information($logged);
 			  	exit;
 			});
-
-			/**
-			 * Get user dashboard
-			 * @param String $logged User requesting the profile
-			 * @return JSON formatted dashboard information
-			 * Dedalo approved
-			 */
-			$slim->get('/rest/v1/:logged/dashboard/', function ($logged){
-				echo fetch_user_dashboard($logged);
-				exit;
-			});
-	
 		
 			/* Get user profile
 			 * @param String $logged User requesting the profile
 			 * @param String $queried_login User whose profile is requested
 			 * @return JSON formatted user profile info
 			 */
-			$slim->get('/rest/v1/:logged/maker/:queried_id/', function ($logged, $queried_id){
-				echo fetch_user_profile($queried_id, $logged);
+			$slim->get('/rest/v1/:logged/user/:queried_login/', function ($logged, $queried_login){
+				echo get_user_profile($queried_login, $logged);
 				exit;
 			});
 
-
-			/**
-			 * Update user profile
+			/* Update user profile
 			 * @param String $ulogin User whose profile is being updated
-			 * @see update_user_profile
-			 * @see museografo_completar_perfil
 			 * @return JSON formatted user profile info
-			 * @todo Make this endpoint a PATCH
-			 * Dedalo approved
+			 * TO DO: Use PUT method instead with the same endpoint
+			 * DEPRECATED
+			 * DEPRECATED
+			 * DEPRECATED
+			 * DEPRECATED, USE PUT METHOD INSTEAD
+			 * DEPRECATED
+			 * DEPRECATED
 			 */
-			$slim->post('/rest/v1/user/:user_login/', function($user_login){
-				// $app = \Slim\Slim::getInstance();
-				// $app->add(new \Slim\Middleware\ContentTypes());
-				
-				// $var_array = json_decode($app->request->getBody());
-				$var_array = (object) $_POST;
-				return update_user_profile($user_login, $var_array);
+			$slim->post('/rest/v1/user/update/:ulogin', function($ulogin){
+				wp_send_json_error('deprecated');
+				// echo update_user_profile($user);
 				exit;
 			});
 
-			/**
-			 * Update user password
-			 * @param String $ulogin User whose password is being updated
-			 * @see PUT endpoint "/rest/v1/user/:ulogin"
-			 * @return JSON formatted success response
-			 * @todo Make this endpoint a PATCH
-			 */
-			$slim->post('/rest/v1/user/:ulogin/password/', function($ulogin){
-				// $app = \Slim\Slim::getInstance();
-				// $app->add(new \Slim\Middleware\ContentTypes());
-				// $var_array = array();
-				// parse_str($app->request->getBody(), $var_array);
-				$var_array = $_POST;
-				$new_password = $var_array['password_nuevo'];
-				return update_user_password($ulogin, $var_array['password_nuevo']);
-				exit;
-			});
-	
+			
 
 			/*
 			 * Get attachments uploaded by user
@@ -446,7 +392,18 @@ class Router{
 				echo get_user_gallery($user_login, $limit, $size);
 				exit;
 			});
-
+			
+			/*
+			 * Get projects uploaded by artist
+			 * @param String $user_login
+			 * @param Int $limit
+			 * @param String optional $Size
+			 */
+			$slim->get('/rest/v1/user/:artist_login/projects/:limit/(:size)/', function($artist_login, $limit = 5, $size = 'gallery_mobile') {	
+				$user_obj = get_user_by('login', $artist_login);
+				echo get_artist_projects( get_clean_userlogin($user_obj->ID), $limit );
+				exit;
+			});
 
 			/* Get user followers
 			 * @param String $logged The log in name of the logged user making the call
@@ -468,7 +425,40 @@ class Router{
 			  	return retrieve_user_followees($queried_login, $logged, $type);
 			});
 
-			
+			/* Update user profile (PUT)
+			 * @param String $ulogin User whose profile is being updated
+			 * @see update_user_profile
+			 * @see museografo_completar_perfil
+			 * @return JSON formatted user profile info
+			 */
+			$slim->put('/rest/v1/user/:ulogin/', function($ulogin){
+				$app = \Slim\Slim::getInstance();
+				$app->add(new \Slim\Middleware\ContentTypes());
+				
+				$var_array = array();
+				parse_str($app->request->getBody(), $var_array);
+				$var_array['return'] = 	FALSE;		
+				
+				return update_user_profile($ulogin, $var_array);
+				exit;
+			});
+
+			/* Update user password (PUT)
+			 * @param String $ulogin User whose password is being updated
+			 * @see PUT endpoint "/rest/v1/user/:ulogin"
+			 * @return JSON formatted success response
+			 * TO DO: Create a POST endpoint to set password first time.
+			 */
+			$slim->put('/rest/v1/user/:ulogin/password/', function($ulogin){
+				$app = \Slim\Slim::getInstance();
+				$app->add(new \Slim\Middleware\ContentTypes());
+				$var_array = array();
+				parse_str($app->request->getBody(), $var_array);
+				
+				$new_password = $var_array['password_nuevo'];
+				return update_user_password($ulogin, $var_array['password_nuevo']);
+				exit;
+			});
 
 
 		/*     __       _ _                   
@@ -484,13 +474,13 @@ class Router{
 			 * @param Int $who The user ID to follow
 			 * @param String $type The type of user who is following
 			 * @return JSON success
-			 * Dedalo approved
 			 */
 			$slim->post('/rest/v1/:who_follows/follow',function($who_follows) {
 
 				$who 	= isset($_POST['user_id']) 	? $_POST['user_id'] :  NULL;
+				$type 	= isset($_POST['type']) 	? $_POST['type'] 	: 'suscriptor';
 				$user  	= get_user_by('login', $who_follows);
-				if( follow_user( $user->ID, $who))
+				if( siguiendo( $who, $type, $user))
 					wp_send_json_success();
 				wp_send_json_error();
 				exit;
@@ -500,48 +490,15 @@ class Router{
 			 * @param Int $who_follows The active logged user
 			 * @param Int $who The user ID to unfollow
 			 * @return JSON success
-			 * Dedalo approved
 			 */
 			$slim->post('/rest/v1/:who_follows/unfollow',function($who_follows) {
 				
 				$who = isset($_POST['user_id']) ? $_POST['user_id'] : NULL;
 				$user = get_user_by('login', $who_follows);
-				if( unfollow_user($user->ID, $who))
+				if( dejar_de_seguir($who, $user))
 					wp_send_json_success();
 				wp_send_json_error();
 				exit;
-			});
-
-			/* Follow Category
-			 * @param String $user_login Who follows
-			 * @param $cat_id via $_POST
-			 * Dedalo approved
-			 */
-			$slim->post('/rest/v1/:user_login/categories/follow/', function($user_login) {
-				$cat_id = (!empty($_POST) AND isset($_POST['cat_id'])) ? $_POST['cat_id'] : NULL ; 
-				return (dedalo_follow_category($user_login, $cat_id)) ? wp_send_json_success() : wp_send_json_error("Error following category");
-				exit;
-			});
-
-			/* Unfollow Cateogry
-			 * @param String $user_login Who follows
-			 * @param $cat_id via $_POST
-			 * Dedalo approved
-			 */
-			$slim->post('/rest/v1/:user_login/categories/unfollow/',function($user_login) {
-				$cat_id = (!empty($_POST) AND isset($_POST['cat_id'])) ? $_POST['cat_id'] : NULL ; 
-				return (dedalo_unfollow_category($user_login, $cat_id)) ? wp_send_json_success() : wp_send_json_error("Error unfollowing category");
-				exit();
-			});
-
-			/* Check if user is following category
-			 * @param String $user_login Who
-			 * @param Integer $cat_id Which
-			 * Dedalo approved
-			 */
-			$slim->get('/rest/v1/:user_login/categories/is_following/:cat_id/',function($user_login, $cat_id) {
-				echo (is_following_cat($user_login, $cat_id)) ? "true" : "false";
-				exit();
 			});
 
 			/* Get categories feed by parent level
@@ -592,6 +549,23 @@ class Router{
 				exit;
 			});
 
+			/* Follow Category
+			 * @param Int $user_login The active logged user
+			 * @param Int $who The category ID to follow
+			 */
+			$slim->post('/rest/v1/:user_login/categories/follow/', function($user_login) {
+				return follow_category($user_login);
+				exit;
+			});
+
+			/* Unfollow Cateogry
+			 * @param Int $who_follows The active logged user
+			 * @param Int $who The cateogory ID to unfollow
+			 */
+			$slim->post('/rest/v1/:user_login/categories/unfollow/',function($user_login) {
+				return unfollow_category($user_login);
+				exit();
+			});
 
 			/* Get user follower count with user role filter
 			 * @param String $user_login The user whose followers are being queried

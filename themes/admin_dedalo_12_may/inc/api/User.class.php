@@ -28,32 +28,11 @@ class User{
 			$password,
 			$email
 		);
-
-		$first_name = (isset($attrs['name'])) 		? $attrs['name'] 	  : "" ;
-		$last_name 	= (isset($attrs['last_name'])) 	? $attrs['last_name'] : "" ;
-
-		$display_name = ($first_name == "" AND $last_name == "") ? $nombre : $first_name." ".$last_name;
 		
-		if(isset($attrs['fbId']))
-			update_user_meta($response, 'fbId', $attrs['fbId']);
-		if(isset($attrs['gpId']))
-			update_user_meta($response, 'gpId', $attrs['gpId']);
-		if(isset($attrs['avatar']))
-			update_user_meta( $response, 'foto_user', $attrs['avatar'] );
-		if(isset($attrs['bio']))
-			update_user_meta( $response, 'user_3dbio', $attrs['bio'] );
-		
-		$userdata = array(
-							"ID" 			=> $response,
-							"first_name" 	=> $first_name,
-							"last_name" 	=> $last_name,
-							"display_name" 	=> $display_name,
-							"nickname"		=> $display_name,
-							"role" 			=> "maker"
-						);
-
-		$update = wp_update_user( $userdata );
-
+		if(isset($attrs['twitter_username']))
+			$this->set_tw_username($response, $attrs['twitter_username']);
+		if(isset($attrs['gplus_username']))
+			$this->set_gp_username($response, $attrs['gplus_username']);
 		return $response;
 	}
 
@@ -75,13 +54,10 @@ class User{
 		//Check for twitter meta, email or username
 		$user = get_user_by( 'login', $username );
 		if(!$user) return FALSE;
-		$found_google	= 	get_user_meta($user->ID, 'gpId', TRUE);
-		$found_facebook = 	get_user_meta($user->ID, 'fbId', TRUE);
+		$found_twitter 	= 	get_user_meta($user->ID, 'twitter_username', TRUE);
 		$found_email 	=	get_user_by( 'email', $email );
-		
 		if($user_id 	= 	username_exists( $username )) return $user_id;
-		if($found_google) 	return $found_google;
-		if($found_facebook) return $found_facebook;
+		if($found_twitter) 	return $found_twitter;
 		if($found_email) 	return $found_email;
 		return FALSE;
 	}
@@ -103,7 +79,6 @@ class User{
 			$password = isset($attrs['password']) ? $attrs['password'] : wp_generate_password();
 			$user_id = $this->create($username,  $password, $email, $attrs);
 			$data_created = array('username' => $username, 'user_id' => $user_id);
-
 			if($autologin){
 				$this->login_if__Exists($username);
 				return;
