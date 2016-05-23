@@ -787,6 +787,67 @@ function search_makers($search_term = NULL){
 	}
 
 
+	/**
+	 * Fetch a taxonomy detailed info and archive of products
+	 * @param Integer $tax_id
+	 * @param Integer $limit Product pool limit
+	 * @return JSON encoded pool/count Array
+	 */
+	function fetch_taxonomy_archive($tax_id = NULL, $taxonomy = "category", $limit = NULL){
+		$return_array = array();
+		$term = get_term_by("id", $tax_id, $taxonomy);
+		$args = array(
+						"post_type" 	=>	"productos",
+						"post_status" 	=>	"publish",
+						"posts_per_page" =>	($limit) ? $limit : -1,
+						"tax_query" => array(
+											array(
+												"taxonomy" => $taxonomy,
+												"field"    => "id",
+												"terms"    => $tax_id,
+											),
+										),
+					);
+		$products = get_posts($args);
+		$return_array = array(
+								"ID" 	=> $term->term_id,
+								"name" 	=> $term->name,
+								"slug" 	=> $term->slug,
+								"pool" 	=> array(),
+								"count" => 0,
+							);
+		foreach ($products as $each_result) {
+			$product_price 			= (get_post_meta($each_result->ID,'precio_producto', true) != '') ? get_post_meta($each_result->ID,'precio_producto', true) : NULL;
+			$product_author 		= (get_user_by("id", $each_result->post_author)) ? get_user_by("id", $each_result->post_author) : NULL;
+
+			$designer_brand			= $product_author->data;
+
+			$trimmed_description 	= ($each_result->post_content !== '') ? wp_trim_words( $each_result->post_content, $num_words = 15, $more = '...' ) : NULL;
+			$post_thumbnail_id = get_post_thumbnail_id($each_result->ID);
+			$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'large');
+			$post_thumbnail_url = $post_thumbnail_url[0];
+			$foto_user = get_user_meta( $designer_brand->ID, 'foto_user', TRUE );
+			$return_array['pool'][] = 	array(
+												"ID" 					=> $each_result->ID,
+												"product_title" 		=> $each_result->post_title,
+												"product_description" 	=> $trimmed_description,
+												"slug" 					=> $each_result->slug,
+												"price"					=> $product_price,
+												"thumb_url"				=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
+												"designer_brand"		=> array(
+																				"ID"   => $designer_brand->ID,
+																				"name" => $designer_brand->display_name,
+																				"profile_pic" 	=> ($foto_user) ? $foto_user : null,
+																			),
+												"type"					=> $each_result->post_type,
+											);
+
+		}
+		$return_array['count'] = count($return_array['pool']);
+		return json_encode($return_array);
+	}
+
+
 
 // -----------------------------------------------------------------------------------------------
 

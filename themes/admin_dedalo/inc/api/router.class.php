@@ -256,6 +256,17 @@ class Router{
 			});
 
 			/**
+			 * Get design tool archive and detailed info
+			 * @param String $taxonomy ['category', 'design-tools', 'license']
+			 * @category GET Endpoint
+			 * Dedalo approved
+			 */
+			$slim->get('/rest/v1/content/taxonomy/:taxonomy/:tool_id/', function($taxonomy = 'category', $tool_id){
+				echo fetch_taxonomy_archive($tool_id, $taxonomy);
+				exit;
+			});
+
+			/**
 			 * Fetch product detail
 			 * @category GET Endpoint
 			 * Dedalo approved
