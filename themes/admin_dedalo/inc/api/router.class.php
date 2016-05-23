@@ -402,9 +402,21 @@ class Router{
 			 * @param String $logged User requesting the profile
 			 * @param String $queried_login User whose profile is requested
 			 * @return JSON formatted user profile info
+			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/:logged/maker/:queried_id/', function ($logged, $queried_id){
 				echo fetch_user_profile($queried_id, $logged);
+				exit;
+			});
+
+			/* Get users by user category
+			 * @param String $logged User requesting the profile
+			 * @param String $queried_login User whose profile is requested
+			 * @return JSON formatted user profile info
+			 * Dedalo approved
+			 */
+			$slim->get('/rest/v1/around/makers/:filter(/:limit)/', function ($filter, $limit = NULL){
+				echo fetch_users_bycategory($filter, $limit);
 				exit;
 			});
 

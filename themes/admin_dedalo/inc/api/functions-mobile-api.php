@@ -847,6 +847,28 @@ function search_makers($search_term = NULL){
 		return json_encode($return_array);
 	}
 
+	/**
+	 * Fetch a set of 3Dedalo users filtered by category
+	 * @param String $category
+	 * @param Integer $limit
+	 * @return JSON encoded pool/count Array
+	 */
+	function fetch_users_bycategory($category = "printer", $limit = 10){
+		global $wpdb;
+		$filtered_users = 	$wpdb->get_results(
+								$wpdb->prepare(" SELECT * FROM wp_users
+												 INNER JOIN wp_terms
+												 INNER JOIN wp_term_taxonomy
+												  ON wp_term_taxonomy.term_id = wp_terms.term_id
+												 INNER JOIN wp_term_relationships
+												  ON wp_term_relationships.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id
+												  AND wp_term_relationships.object_id = wp_users.ID
+												 WHERE wp_terms.slug = 'printer'
+												;" )
+							);
+		
+		return json_encode($filtered_users);
+	}
 
 
 // -----------------------------------------------------------------------------------------------

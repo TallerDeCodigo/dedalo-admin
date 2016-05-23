@@ -49,7 +49,7 @@ class User{
 							"last_name" 	=> $last_name,
 							"display_name" 	=> $display_name,
 							"nickname"		=> $display_name,
-							"role" 			=> "maker"
+							"role" 			=> "dedalo_user"
 						);
 
 		$update = wp_update_user( $userdata );

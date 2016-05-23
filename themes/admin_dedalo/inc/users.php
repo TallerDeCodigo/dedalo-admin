@@ -105,6 +105,15 @@
 			</tr>
 
 			<tr>
+				<th><label for="twitter">Latlong maker</label></th>
+				<td>
+					<input type="text" name="latlong_maker" id="latlong_maker" value="<?php echo esc_attr( get_the_author_meta( 'latlong_maker', $user->ID ) ); ?>" class="regular-text" /><br />
+					<span class="description">Latitude, longitude integer values</span>
+
+				</td>
+			</tr>
+
+			<tr>
 				<th><label for="bio_en">Semblanza Biográfica</label></th>
 				<td>
 					<textarea rows="3" id="user_3dbio" name="user_3dbio"><?php echo esc_attr( get_the_author_meta( 'user_3dbio', $user->ID ) ); ?></textarea>
@@ -128,6 +137,10 @@
 
 		if ( isset($_POST['foto_colaborador']) ){
 			update_user_meta( $user_id, 'foto_colaborador', $_POST['foto_colaborador'] );
+		}
+		
+		if ( isset($_POST['latlong_maker']) ){
+			update_user_meta( $user_id, 'latlong_maker', $_POST['latlong_maker'] );
 		}
 
 	}
