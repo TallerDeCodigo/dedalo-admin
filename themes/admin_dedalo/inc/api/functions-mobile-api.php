@@ -853,8 +853,14 @@ function search_makers($search_term = NULL){
 	 * @param Integer $limit
 	 * @return JSON encoded pool/count Array
 	 */
-	function fetch_users_bycategory($category = "printer", $limit = 10){
+	function fetch_users_bycategory($logged_user = NULL, $location = NULL, $category = "printer", $limit = 10, $offset = 0){
 		global $wpdb;
+		$user = get_user_by("slug", $logged_user);
+		$latlong_asking = explode(",", $location);
+		$asking_latitude 	= $latlong_asking[0];
+		$asking_longitude 	= $latlong_asking[1];
+		$latlong_maker_Obj 	= new LatLng($asking_latitude, $asking_longitude);
+
 		$filtered_users = 	$wpdb->get_results(
 								$wpdb->prepare(" SELECT * FROM wp_users
 												 INNER JOIN wp_terms
@@ -863,11 +869,54 @@ function search_makers($search_term = NULL){
 												 INNER JOIN wp_term_relationships
 												  ON wp_term_relationships.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id
 												  AND wp_term_relationships.object_id = wp_users.ID
-												 WHERE wp_terms.slug = 'printer'
-												;" )
+												 WHERE wp_terms.slug = '%s'
+												 AND wp_users.ID != %d
+												LIMIT %d, %d
+												;", 
+													$category,
+													$user->ID,
+													$offset,
+													$limit 
+												)
 							);
+		$final_array = array();
+		foreach ($filtered_users as $each_filtered_user) {
+			$latlong_maker = get_user_meta( $each_filtered_user->ID, "latlong_maker", TRUE );
+			if($latlong_maker !== ''){
+				$exploded 	= explode(",", $latlong_maker);
+				$latitude 	= $exploded[0];
+				$longitude 	= $exploded[1];
+
+				$differential = SphericalGeometry::computeDistanceBetween(new LatLng($latitude, $longitude), $latlong_maker_Obj);
+				
+				$kms_away = round(($differential/1000),1);
+				if($kms_away > 10)
+					continue;
+					$maker_categories = wp_get_object_terms($each_filtered_user->ID, "user_category");
+					
+					$final_categories = array();
+					foreach ($maker_categories as $each_cat) {
+						$final_categories[] = array(
+													"ID" 	=> $each_cat->term_id,
+													"name" 	=> $each_cat->name,
+													"slug" 	=> $each_cat->slug,
+													);
+					}
+
+					$final_array['pool'][] = array(
+													"ID" 	=> $each_filtered_user->ID,
+													"name" 	=> $each_filtered_user->display_name,
+													"user_login" => $each_filtered_user->user_login,
+													"distance" 	 => $kms_away,
+													"categories" => $final_categories
+												);
+
+			}	
+			
+		}
+		$final_array['count'] = count($final_array['pool']);
 		
-		return json_encode($filtered_users);
+		return json_encode($final_array);
 	}
 
 
