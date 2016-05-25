@@ -409,6 +409,17 @@ class Router{
 				exit;
 			});
 
+			/* Get user profile min
+			 * @param String $logged User requesting the profile
+			 * @param String $queried_login User whose profile is requested
+			 * @return JSON formatted user profile info
+			 * Dedalo approved
+			 */
+			$slim->get('/rest/v1/min/:logged/maker/:queried_id/', function ($logged, $queried_id){
+				echo min_fetch_user_profile($queried_id, $logged);
+				exit;
+			});
+
 			/**
 			 * Get users by user category
 			 * @param String $logged User requesting the profile
