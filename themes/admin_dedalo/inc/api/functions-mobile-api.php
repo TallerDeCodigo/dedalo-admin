@@ -745,7 +745,7 @@ function search_makers($search_term = NULL){
 							'first_name' 	=> ($user_firstname) ? $user_firstname : NULL,
 							'last_name' 	=> ($user_lastname) ? $user_lastname : NULL,
 							'nickname' 		=> $user_object->nickname,
-							'bio' 			=> $user_description,
+							'bio' 			=> wpautop($user_description),
 							'profile_pic' 	=> $user_profile,
 							'is_'.$role_prefix		=> TRUE
 						);
@@ -772,7 +772,7 @@ function search_makers($search_term = NULL){
 		if($same_maker){
 			foreach ($same_maker as $each_related) {
 				$post_thumbnail_id 	= get_post_thumbnail_id($each_related->ID);
-				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'medium');
+				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'thumbnail');
 				$post_thumbnail_url = $post_thumbnail_url[0];
 				$final_array['same_maker']['pool'][] = array( 
 																"ID"			=> $each_related->ID,
