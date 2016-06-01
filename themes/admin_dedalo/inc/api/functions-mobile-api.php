@@ -747,7 +747,7 @@ function search_makers($search_term = NULL){
 							'first_name' 	=> ($user_firstname) ? $user_firstname : NULL,
 							'last_name' 	=> ($user_lastname) ? $user_lastname : NULL,
 							'nickname' 		=> $user_object->nickname,
-							'bio' 			=> $user_description,
+							'bio' 			=> wpautop($user_description),
 							'profile_pic' 	=> $user_profile,
 							'is_'.$role_prefix		=> TRUE
 						);
@@ -774,7 +774,7 @@ function search_makers($search_term = NULL){
 		if($same_maker){
 			foreach ($same_maker as $each_related) {
 				$post_thumbnail_id 	= get_post_thumbnail_id($each_related->ID);
-				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'medium');
+				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'thumbnail');
 				$post_thumbnail_url = $post_thumbnail_url[0];
 				$final_array['same_maker']['pool'][] = array( 
 																"ID"			=> $each_related->ID,
@@ -784,6 +784,49 @@ function search_makers($search_term = NULL){
 			}
 			$final_array['same_maker']['count'] = count($final_array['same_maker']['pool']);
 		}
+			
+		return json_encode($final_array);
+	}
+
+	/**
+	 * Fetch user profile, requires authentication
+	 * Minimal required version for fast loadind
+	 * @param Integer $queried_user_id
+	 * @param String $logged_user
+	 * @return Array / Object
+	 */
+	function min_fetch_user_profile($queried_user_id = NULL, $logged_user = NULL){
+		if(!$queried_user_id) 
+			return json_encode(array("success" => FALSE, "error" => "No user queried"));
+		if(!$logged_user){
+			global $current_user;
+		}else{
+			$current_user = get_user_by('slug', $logged_user);
+		}
+		$final_array = array();
+		$user_object 	= get_user_by( 'id', $queried_user_id );
+		if(!$user_object)
+			wp_send_json_error("No such user in the database, check data and try again");
+		$user_data = get_userdata( $user_object->ID );
+
+		$user_firstname 	= get_user_meta($user_object->ID, "first_name", TRUE);
+		$user_lastname 		= get_user_meta($user_object->ID, "last_name", TRUE);
+		$user_description  	= get_user_meta($user_object->ID, "user_3dbio", TRUE);
+		$user_profile  		= get_user_meta($user_object->ID, "foto_user", TRUE);
+
+		$role_prefix = $user_object->roles[0];
+		$user_data = array(
+							'ID' 			=> $user_object->ID,
+							'user_display' 	=> $user_object->display_name,
+							'user_login' 	=> get_clean_userlogin($user_object->ID),
+							'first_name' 	=> ($user_firstname) ? $user_firstname : NULL,
+							'last_name' 	=> ($user_lastname) ? $user_lastname : NULL,
+							'nickname' 		=> $user_object->nickname,
+							'bio' 			=> $user_description,
+							'profile_pic' 	=> $user_profile,
+							'is_'.$role_prefix		=> TRUE
+						);
+		$final_array['profile'] = $user_data;
 			
 		return json_encode($final_array);
 	}
@@ -855,8 +898,16 @@ function search_makers($search_term = NULL){
 	 * @param Integer $limit
 	 * @return JSON encoded pool/count Array
 	 */
-	function fetch_users_bycategory($category = "printer", $limit = 10){
+	function fetch_users_bycategory($logged_user = NULL, $location = NULL, $category = "printer", $limit = 10, $offset = 0){
 		global $wpdb;
+		$user = get_user_by("slug", $logged_user);
+
+		$latlong_asking 	= explode(",", $location);
+		$asking_latitude 	= $latlong_asking[0];
+		$asking_longitude 	= $latlong_asking[1];
+		$latlong_maker_Obj 	= new LatLng($asking_latitude, $asking_longitude);
+		$where_clause 		= ($category !== 'all') ? " WHERE wp_terms.slug = '%s' " : "";
+
 		$filtered_users = 	$wpdb->get_results(
 								$wpdb->prepare(" SELECT * FROM wp_users
 												 INNER JOIN wp_terms
@@ -865,11 +916,55 @@ function search_makers($search_term = NULL){
 												 INNER JOIN wp_term_relationships
 												  ON wp_term_relationships.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id
 												  AND wp_term_relationships.object_id = wp_users.ID
-												 WHERE wp_terms.slug = 'printer'
-												;" )
+												 {$where_clause}
+												 AND wp_users.ID != %d
+												LIMIT %d, %d
+												;", 
+													$category,
+													$user->ID,
+													$offset,
+													$limit 
+												)
 							);
+		$final_array = array();
+		foreach ($filtered_users as $each_filtered_user) {
+			$latlong_maker = get_user_meta( $each_filtered_user->ID, "latlong_maker", TRUE );
+			if($latlong_maker !== ''){
+				$exploded 	= explode(",", $latlong_maker);
+				$latitude 	= $exploded[0];
+				$longitude 	= $exploded[1];
+				/*** Calculate distance differential ***/
+				$differential = SphericalGeometry::computeDistanceBetween(new LatLng($latitude, $longitude), $latlong_maker_Obj);
+				$kms_away = round(($differential/1000),1);
+
+				if($kms_away > 10)
+					continue;
+					$maker_categories = wp_get_object_terms($each_filtered_user->ID, "user_category");
+					
+					$final_categories = array();
+					foreach ($maker_categories as $each_cat) {
+						$final_categories[] = array(
+													"ID" 	=> $each_cat->term_id,
+													"name" 	=> $each_cat->name,
+													"slug" 	=> $each_cat->slug,
+													);
+					}
+					$final_array['pool'][] = array(
+													"ID" 	=> $each_filtered_user->ID,
+													"name" 	=> $each_filtered_user->display_name,
+													"user_login" => $each_filtered_user->user_login,
+													"distance" 	 => $kms_away,
+													"latitude" 	 => $latitude,
+													"longitude"  => $longitude,
+													"categories" => $final_categories
+												);
+
+			}	
+			
+		}
+		$final_array['count'] = count($final_array['pool']);
 		
-		return json_encode($filtered_users);
+		return json_encode($final_array);
 	}
 
 

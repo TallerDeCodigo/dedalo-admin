@@ -409,14 +409,30 @@ class Router{
 				exit;
 			});
 
-			/* Get users by user category
+			/* Get user profile min
 			 * @param String $logged User requesting the profile
 			 * @param String $queried_login User whose profile is requested
 			 * @return JSON formatted user profile info
 			 * Dedalo approved
 			 */
-			$slim->get('/rest/v1/around/makers/:filter(/:limit)/', function ($filter, $limit = NULL){
-				echo fetch_users_bycategory($filter, $limit);
+			$slim->get('/rest/v1/min/:logged/maker/:queried_id/', function ($logged, $queried_id){
+				echo min_fetch_user_profile($queried_id, $logged);
+				exit;
+			});
+
+			/**
+			 * Get users by user category
+			 * @param String $logged User requesting the profile
+			 * @param String $queried_login User whose profile is requested
+			 * @param String $@ User location via GET
+			 * @return JSON formatted user profile info
+			 * Dedalo approved
+			 */
+			$slim->get('/rest/v1/around/:logged/makers/:filter(/:limit)', function ($logged, $filter, $limit = 10){
+				if(!isset($_GET['@']))
+					echo wp_send_json_error();
+				$location = $_GET['@'];
+				echo fetch_users_bycategory($logged, $location, $filter, $limit);
 				exit;
 			});
 
