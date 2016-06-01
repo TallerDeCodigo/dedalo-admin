@@ -446,7 +446,6 @@ function search_makers($search_term = NULL){
 		$first_name = get_user_meta( $user->ID, 'first_name', TRUE );
 		$last_name = get_user_meta( $user->ID, 'last_name', TRUE );
 		$bio = get_user_meta( $user->ID, 'user_3dbio', TRUE );
-
 		$me =   array(
 					"ID" 			=> $user->ID,
 					"login" 		=> $userData->data->user_login,
@@ -460,12 +459,15 @@ function search_makers($search_term = NULL){
 					"valid_token"	=> "HFJEUUSNNSODJJEHHAGADMNDHS&$86324",
 					"categories" 	=> array(),
 				);
-		foreach ($assigned_terms as $each_term) 
+		foreach ($assigned_terms as $each_term){
 			$me['categories'][] =   array(
 										"ID" => $each_term->term_id,
 										"name" => $each_term->name,
 										"slug" => $each_term->slug
 									);
+			$me['is_'.$each_term->slug] = true;
+		}
+
 		return wp_send_json($me);
 		
 	}
@@ -993,7 +995,7 @@ function recomend_event_to_user($user){
 
 function update_user_profile($user_login, $args){
 	$user = get_user_by("slug", $user_login);
-	
+
 	if(!$user)
 		wp_send_json_error();
 
@@ -1003,9 +1005,23 @@ function update_user_profile($user_login, $args){
 						"last_name" 	=> $args->user_last_name,
 						"user_email" 	=> $args->user_email,
 				);
+
 	if($user_updated = wp_update_user($userdata)){
+
+		$object_terms = array();
 		/*** Updating extra meta information ***/
 		update_user_meta( $user_updated, 'user_3dbio', $args->user_bio );
+		if($args->become_printer == 'true'){
+			$pterm = get_term_by("slug", "printer", "user_category");
+			$object_terms[] = $pterm->term_id;
+		}
+		if($args->become_scanner == 'true'){
+			$sterm = get_term_by("slug", "scanner", "user_category");
+			$object_terms[] = $sterm->term_id;
+		}
+		wp_set_object_terms( $user->ID, $object_terms, 'user_category', false );
+		clean_object_term_cache($user->ID, 'user_category');
+
 		wp_send_json_success();
 	}
 	wp_send_json_error();

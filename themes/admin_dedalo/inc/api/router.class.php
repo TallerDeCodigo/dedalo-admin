@@ -435,6 +435,7 @@ class Router{
 				// $app->add(new \Slim\Middleware\ContentTypes());
 				
 				// $var_array = json_decode($app->request->getBody());
+
 				$var_array = (object) $_POST;
 				return update_user_profile($user_login, $var_array);
 				exit;
