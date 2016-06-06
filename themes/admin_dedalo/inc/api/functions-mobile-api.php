@@ -524,18 +524,21 @@ function search_makers($search_term = NULL){
 		$supports_rafts		= get_post_meta($post->ID, 'supports_rafts', TRUE);
 		$infill				= get_post_meta($post->ID, 'infill', TRUE);
 		$resolution			= get_post_meta($post->ID, 'resolution', TRUE);
+		$file_for_download 	= get_post_meta($post->ID, 'file_for_download', true);
 
 		$tags = wp_get_post_tags( $post->ID );
 		
 		$design_tools = get_the_terms( $post->ID, 'design-tools' );
 		
 		$final_array = array(
+								"ID" 				=> $post->ID,
 								"product_title" 	=> $post->post_title,
 								"product_description" => $post->post_content,
 								"product_price" 	=> $product_price,
 								"slug" 				=> $post->post_name,
 								"type" 				=> $post->post_type,
 								"thumb_url" 		=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
+								"has_file" 			=> ($file_for_download) ? TRUE : FALSE,
 								"gallery" 			=> array(),
 								"by_same_maker"		=> array(),
 								"tags"				=> array(),
@@ -574,7 +577,7 @@ function search_makers($search_term = NULL){
 		if($same_maker)
 			foreach ($same_maker as $each_related) {
 				$post_thumbnail_id 	= get_post_thumbnail_id($each_related->ID);
-				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'medium');
+				$post_thumbnail_url = wp_get_attachment_image_src($post_thumbnail_id,'thumbnail');
 				$post_thumbnail_url = $post_thumbnail_url[0];
 				$final_array['by_same_maker']['pool'][] = array( 
 																"ID"			=> $each_related->ID,
@@ -966,6 +969,51 @@ function search_makers($search_term = NULL){
 		
 		return json_encode($final_array);
 	}
+
+	function ec_mail_name( $email ){
+		return '3Dedalo'; // new email name from sender.
+	}
+	add_filter( 'wp_mail_from_name', 'ec_mail_name', 0 );
+
+	function ec_mail_from ($email ){
+		return 'info@3dedalo.org'; // new email address from sender.
+	}
+	add_filter( 'wp_mail_from', 'ec_mail_from', 0 );
+
+	/**
+	 * Set a printer job to another user
+	 * @param Integer $user_id
+	 * @param Integer $ref_id
+	 * @param Integer $printer_id
+	 * @return Bool $result
+	 */
+	function set_printer_job($user_id = NULL, $ref_id = NULL, $printer_id = NULL){
+		
+		$printer_user = get_user_by("id", $printer_id);
+		$download_count = get_post_meta($post->ID, 'download_count', true);
+		$download_count++;
+		update_post_meta($psot->ID, "download_count", $download_count);
+		
+		$mortal_user = get_user_by("id", $user_id);
+		$model_file_url = get_post_meta($ref_id, 'file_for_download', true);
+
+		$headers = array('Content-Type: text/html; charset=UTF-8', 'From: 3Dedalo <info@3dedalo.org>');
+		/*** Send mail to printer ***/
+		$to = $printer_user->user_email;
+		$subject = "You have a pending 3D printing job";
+		$message = "<h2>Hello {$printer_user->display_name},</h2><p>{$mortal_user->display_name} has requested a 3D printing job of the following model. <br>Please click the link to download file: <a href='{$model_file_url}'>$model_file_url</a> </p>";
+		$result = wp_mail($to, $subject, $message, $headers);
+
+		/*** Send mail to mortal user ***/
+		$to = $mortal_user->user_email;
+		$subject = "Your recently bought 3D model";
+		$message = "<h2>Hello {$mortal_user->display_name},</h2><p>{$printer_user->display_name} has been informed about your 3D printing job, you will receive a notification when the printer sets an estimated time for your piece to be ready. <br>Please click the link to download file: <a href='{$model_file_url}'>$model_file_url</a> </p>";
+
+		$result = wp_mail($to, $subject, $message, $headers);
+		return true;
+	}
+
+
 
 
 // -----------------------------------------------------------------------------------------------

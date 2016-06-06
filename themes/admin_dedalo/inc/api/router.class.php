@@ -718,6 +718,22 @@ class Router{
 				exit;
 			});
 
+
+
+		/*
+		 * Select printer for my product
+		 * @param String $user_login
+		 * @param Int $ref_id
+		 * DEDALO APPROVED
+		 */
+		$slim->post('/rest/v1/:user_login/purchase/:ref_id',function($user_login, $ref_id) {
+			extract($_POST);
+			$user = get_user_by('login', $user_login);
+			echo set_printer_job($user->ID, $ref_id, $printer_id);
+			exit;
+		});
+
+
 		
 			/*                         _            
 			 *     _____   _____ _ __ | |_ ___  ___ 
@@ -727,18 +743,6 @@ class Router{
 			 *                                      
 			 */
 		
-			/*
-			 * Get events feed for a user
-			 * @param String $user_login
-			 * @param Int $offset Feed offset
-			 * @param Int $filter Events filter (all, most_popular, most_visited, ending)
-			 * @new v2 of this method includes a filter parameter
-			 */
-			$slim->get('/rest/v1/:user_login/events/feed/:offset/:filter',function($user_login, $offset, $filter) {
-				$user = get_user_by('login', $user_login);
-				echo get_events_feed($user, $filter, $offset);
-				exit;
-			});
 
 			/*
 			 * Get event single data

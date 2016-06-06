@@ -8,6 +8,34 @@
 
 	function custom_taxonomies_callback(){
 
+		// Printer
+		if( ! taxonomy_exists('printer-model')){
+
+			$labels = array(
+				'name'              => 'Printer',
+				'singular_name'     => 'Printer',
+				'search_items'      => 'Buscar',
+				'all_items'         => 'Todas',
+				'edit_item'         => 'Editar Printer',
+				'update_item'       => 'Actualizar Printer',
+				'add_new_item'      => 'Nueva Printer',
+				'new_item_name'     => 'Nombre Nueva Printer',
+				'menu_name'         => 'Printers'
+			);
+
+			$args = array(
+				'hierarchical'      => true,
+				'labels'            => $labels,
+				'show_ui'           => true,
+				'show_admin_column' => true,
+				'show_in_nav_menus' => true,
+				'query_var'         => true,
+				'rewrite'           => array( 'slug' => 'printer-model' ),
+			);
+
+			register_taxonomy( 'printer-model', 'productos', $args );
+		}
+
 		// Design Tools
 		if( ! taxonomy_exists('design-tools')){
 
