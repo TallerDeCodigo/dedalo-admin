@@ -131,6 +131,8 @@
 							if(is_user_logged_in()){ 
 								$userID = get_current_user_id();
 						?>
+							<a href="uploads">Uploads</a>
+							<a href="">My models</a>
 							<a href="">Welcome, <?php echo get_user_meta($userID, 'first_name', true);?></a>
 						<?php 
 							

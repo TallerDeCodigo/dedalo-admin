@@ -115,7 +115,7 @@ btn_sign.onclick = function(){
 		$(".login-password input").attr("placeholder", "password").val();
 	});
 
-/*set height of invsible height*/
+/*set height of invsible div*/
 	var header_height	= $(".header").height();
 	var footer_height 	= $("footer").height();
 	var total_height	= $(window).height();
