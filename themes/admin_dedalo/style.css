@@ -185,15 +185,17 @@ h3 {font-size: 30px; margin: 0 0 30px 0; font-weight: normal; color: #1e88e5; ma
 .l textarea{margin-top:20px;}
 .r{position:relative;left:105px;}
 .r input:first-child{margin-top:0px!important;margin-bottom:20px;}
-.r input:last-child{margin-top:30px;border-style:none;background: none;color:#fff;border-bottom:1px solid #fff; width:400px;text-align: right;padding:0px 20px 0px 0px;}
+.r input:last-child{margin-top:30px;border-style:none;background: none;color:#fff;border:1px solid #fff; width:80px;height:40px;float:right;text-align: right;padding:0px 20px 0px 0px;border-radius: 2px}
 .checks{margin-bottom:10px;}
 .box__dragndrop, .box__uploading, .box__success, .box__error {display: none;}
-/*.box__file{visibility: none}*/
-.box__input.has-advanced-upload {background-color:rgba(255,255,255,0.3);outline: 2px dashed black; outline-offset: -10px;width:400px;}
+.box__file{display: none}
+.box__input.has-advanced-upload {background-color:rgba(30,136,229,0.3);outline: 2px dashed #1e88e5; outline-offset: -10px;width:400px;height: 100px;margin-top:30px;}
 .box__input.has-advanced-upload .box__dragndrop {display: inline;}
 .box__input.is-dragover {background-color: grey;}
 .box__input.is-uploading {visibility: none;}
 .box__input.is-uploading .box__uploading {display: block;}
+.box__input label{position: relative;top:35%;left:25%; }
+.box__input button{position: relative;top:35%;left:25%;background:none;color:#fff;border-style: none;border:1px solid #fff;border-radius: 2px}
 
 
 /*** Page LOGIN ***/
