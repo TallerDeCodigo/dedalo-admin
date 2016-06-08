@@ -7,20 +7,27 @@
 			<fieldset class="fields l">
 				<input type="text" class="textField" placeholder="Title"><br>
 				<?php
-				
-				// $subArgs = array(
-				// 				'child_of'=>'13','hide_empty'=>'0','echo'=>'0');
-				// $subcats = wp_list_categories($subArgs);
-
-				$args = array(
+					$args = array(
 									'show_count'=>'0',
 									'parent'=>'0',
 									'hierarchical'=>'1',
 									'hide_empty'=>'0',
-									'exclude'=>'1' ); ?>
-				
+									'exclude'=>'1' ); 
+				?>
+			<div id="drop1">	
 				<?php wp_dropdown_categories( $args );?><br>
-				<?php wp_dropdown_categories();?><br>
+			</div>
+
+			<?php
+				// $subArgs = array(
+				// 				'child_of'=>'13','hide_empty'=>'0','echo'=>'0');
+				// $subcats = wp_list_categories($subArgs);
+			?>
+			
+			<div id="drop2">
+				
+				<?php wp_dropdown_categories('exclude=1&hierarchical=1');?><br>
+			</div>
 
 				<textarea placeholder="Write a description" class="textField" rows="10"></textarea>
 			</fieldset>
