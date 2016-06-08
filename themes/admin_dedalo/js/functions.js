@@ -1,3 +1,4 @@
+var vv;
 (function($){
 
 	"use strict";
@@ -43,10 +44,10 @@ var login = document.getElementById("centrar");
 console.log(login);
 var btn = document.getElementById("btnTest");
 console.log(btn);
-btn.onclick = function(){
-	console.log("hizo click");
-	login.style.display = "block";
-}
+// btn.onclick = function(){
+// 	console.log("hizo click");
+// 	login.style.display = "block";
+// }
 
 // window.onclick = function(event){
 // 	if (event.target == forma) {	
@@ -115,12 +116,24 @@ btn_sign.onclick = function(){
 		$(".login-password input").attr("placeholder", "password").val();
 	});
 
-/*set height of invsible height*/
+/*set height of invsible div*/
 	var header_height	= $(".header").height();
 	var footer_height 	= $("footer").height();
 	var total_height	= $(window).height();
 	var altodeldiv	 	= total_height-(header_height+footer_height)+"px";
 
 	$(".empty").css("height",altodeldiv);
+
+	/*
+		*	slect category
+	*/
+
+	$('#drop1 select').change(function(){
+		$('#drop1 select option:selected').each(function(){
+			vv = $(this).val();
+			console.log(vv);
+		});
+	}).change();
+
 
 })(jQuery);
