@@ -21,7 +21,8 @@
 	
 	}//end if
 ?>
-<!doctype html>
+<!DOCTYPE html>
+<html class="no-js">
 	<head>
 		<meta charset="utf-8">
 		<title><?php print_title(); ?></title>
@@ -36,6 +37,7 @@
 		<script type="text/javascript" src="<?php echo THEMEPATH; ?>js/jquery.validate.min.js"></script>
 		<script src="<?php echo THEMEPATH; ?>oauthio/dist/oauth.js"></script>
 		<script type="text/javascript" src="<?php echo THEMEPATH; ?>js/script.js"></script>
+		<script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
 		<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 		
 		<?php wp_head(); ?>
@@ -131,6 +133,8 @@
 							if(is_user_logged_in()){ 
 								$userID = get_current_user_id();
 						?>
+							<a href="uploads">Uploads</a>
+							<a href="">My models</a>
 							<a href="">Welcome, <?php echo get_user_meta($userID, 'first_name', true);?></a>
 						<?php 
 							

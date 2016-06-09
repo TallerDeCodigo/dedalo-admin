@@ -411,3 +411,20 @@
 			}
 		}
 }//end FUNCION CUSTOM_CREATE_USER
+
+
+function user_can_save( $post_id, $plugin_file, $nonce ) {					
+	$is_autosave = wp_is_post_autosave( $post_id );			
+	$is_revision = wp_is_post_revision( $post_id );			
+	$is_valid_nonce = ( isset( $_POST[ $nonce ] ) && wp_verify_nonce( $_POST[ $nonce ], $plugin_file ) );						
+// Return true if the user is able to save; otherwise, false.			
+	return ! ( $is_autosave || $is_revision ) && $is_valid_nonce;
+}
+
+function has_files_to_upload( $id ) {
+	return ( ! empty( $_FILES ) ) && isset( $_FILES[ $id ] );
+}
+
+
+
+

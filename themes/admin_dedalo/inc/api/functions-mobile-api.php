@@ -547,9 +547,14 @@ function search_makers($search_term = NULL){
 		$infill				= get_post_meta($post->ID, 'infill', TRUE);
 		$resolution			= get_post_meta($post->ID, 'resolution', TRUE);
 		$file_for_download 	= get_post_meta($post->ID, 'file_for_download', true);
-
-		$tags = wp_get_post_tags( $post->ID );
+		$download_count 	= get_post_meta($post->ID, 'download_count', true);
 		
+		$times_viewed 		= get_post_meta($post->ID, 'times_viewed', true);
+		$times_viewed 		= ($times_viewed != "") ? intval($times_viewed) : 0;
+		$times_viewed++;
+		update_post_meta($post->ID, 'times_viewed', $times_viewed);
+		
+		$tags = wp_get_post_tags( $post->ID );
 		$design_tools = get_the_terms( $post->ID, 'design-tools' );
 		
 		$final_array = array(
@@ -561,6 +566,8 @@ function search_makers($search_term = NULL){
 								"type" 				=> $post->post_type,
 								"thumb_url" 		=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
 								"has_file" 			=> ($file_for_download) ? TRUE : FALSE,
+								"download_count" 	=> ($download_count == '') ? 0 : $download_count,
+								"times_viewed" 		=> $times_viewed,
 								"gallery" 			=> array(),
 								"by_same_maker"		=> array(),
 								"tags"				=> array(),
@@ -1012,9 +1019,9 @@ function search_makers($search_term = NULL){
 	function set_printer_job($user_id = NULL, $ref_id = NULL, $printer_id = NULL){
 		
 		$printer_user = get_user_by("id", $printer_id);
-		$download_count = get_post_meta($post->ID, 'download_count', true);
+		$download_count = get_post_meta($ref_id, 'download_count', true);
 		$download_count++;
-		update_post_meta($psot->ID, "download_count", $download_count);
+		update_post_meta($ref_id, "download_count", $download_count);
 		
 		$mortal_user = get_user_by("id", $user_id);
 		$model_file_url = get_post_meta($ref_id, 'file_for_download', true);
