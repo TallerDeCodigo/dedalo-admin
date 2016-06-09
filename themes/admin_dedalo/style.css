@@ -176,96 +176,34 @@ h3 {font-size: 30px; margin: 0 0 30px 0; font-weight: normal; color: #1e88e5; ma
 #uploads{margin:30px 0px 10px 0px;}
 #upfiles{width:90%; margin:0 auto;background-color:#000; color:#fff;padding:20px 20px 10px 20px;}
 #upfiles label{display:inline;}
-.fields{display:inline-block;/*height:400px;*/vertical-align: top;}
-.textField{width:400px!important;height:40px;background:none;border-style:none;border-bottom:1px solid #fff;outline:none;}
-#upfiles select{width:400px;}
+fieldset{width:49%;}
+.fields{display:inline-block;/*height:100%;*/vertical-align: top;}
+.textField{width:100%!important;height:40px;background:none;border-style:none;border-bottom:1px solid #fff;outline:none;}
+#upfiles select{width:100%;}
 .r p{margin-bottom:0;}
 .l{position:relative;left:10px;}
 .l select{margin-top:20px;height:40px;background:none; color:#fff;border-style:none;border-bottom:1px solid #fff;border-radius:0px;outline:none;}
 .l textarea{margin-top:20px;}
-.r{position:relative;left:105px;}
+.r{position:relative;left:20px;}
 .r input:first-child{margin-top:0px!important;margin-bottom:20px;}
 .r input:last-child{margin-top:30px;border-style:none;background: none;color:#fff;border:1px solid #fff; width:80px;height:40px;float:right;text-align: right;padding:0px 20px 0px 0px;border-radius: 2px}
 .checks{margin-bottom:10px;}
-/*.box__dragndrop, .box__uploading, .box__success, .box__error {display: none;}
+input[type=text]{color:#fff;}
+textarea{color:#fff;}
 
-.box__input.has-advanced-upload {background-color:rgba(30,136,229,0.3);outline: 2px dashed #1e88e5; outline-offset: -10px;width:400px;height: 100px;margin-top:30px;}
-.box__input.has-advanced-upload .box__dragndrop {display: inline;}
-.box__input.is-dragover {background-color: grey;}
-.box__input.is-uploading {visibility: none;}
-.box__input.is-uploading .box__uploading {display: block;}
-.box__input label{position: relative;top:35%;left:25%; }
-.box__input button{position: relative;top:35%;left:25%;background:none;color:#fff;border-style: none;border:1px solid #fff;border-radius: 2px}
-*/
-.box{font-size: 1.25rem; /* 20 */
-					background:none;
-					position: relative;
-					padding: 100px 20px;
-				}
-				.box.has-advanced-upload
-				{
-					outline: 2px dashed #92b0b3;
-					outline-offset: -10px;
 
-					-webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
-					transition: outline-offset .15s ease-in-out, background-color .15s linear;
-				}
-				.box.is-dragover
-				{
-					outline-offset: -20px;
-					outline-color: #c8dadf;
-					background-color: #1e88e5;
-				}
-					.box__dragndrop,
-					.box__icon
-					{
-						display: none;
-					}
-					.box.has-advanced-upload .box__dragndrop
-					{
-						display: inline;
-					}
+.box{font-size: 1.25rem;background:none;position: relative;padding: 100px 20px;}
+.box.has-advanced-upload{outline: 2px dashed #92b0b3;outline-offset: -10px;-webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;transition: outline-offset .15s ease-in-out, background-color .15s linear;}
+.box.is-dragover{outline-offset: -20px;outline-color: #c8dadf;background-color: #1e88e5;}
+.box__dragndrop,.box__icon{display: none;}
+.box.has-advanced-upload .box__dragndrop{display: inline;}
+.box.is-uploading .box__input,.box.is-success .box__input,.box.is-error .box__input{visibility: hidden;}
+.box__uploading,.box__success,.box__error{display: none;}
+.box.is-uploading .box__uploading,.box.is-success .box__success,.box.is-error .box__error{display: block;position: absolute;top: 50%;right: 0;left: 0;-webkit-transform: translateY( -50% );transform: translateY( -50% );}
+.box__uploading{font-style: italic;}
+.box__success{-webkit-animation: appear-from-inside .25s ease-in-out;animation: appear-from-inside .25s ease-in-out;}
 
-					.box.is-uploading .box__input,
-					.box.is-success .box__input,
-					.box.is-error .box__input
-					{
-						visibility: hidden;
-					}
-
-					.box__uploading,
-					.box__success,
-					.box__error
-					{
-						display: none;
-					}
-					.box.is-uploading .box__uploading,
-					.box.is-success .box__success,
-					.box.is-error .box__error
-					{
-						display: block;
-						position: absolute;
-						top: 50%;
-						right: 0;
-						left: 0;
-
-						-webkit-transform: translateY( -50% );
-						transform: translateY( -50% );
-					}
-					.box__uploading
-					{
-						font-style: italic;
-					}
-					.box__success
-					{
-						-webkit-animation: appear-from-inside .25s ease-in-out;
-						animation: appear-from-inside .25s ease-in-out;
-					}
-@-webkit-keyframes appear-from-inside{
-							from	{ -webkit-transform: translateY( -50% ) scale( 0 ); }
-							75%		{ -webkit-transform: translateY( -50% ) scale( 1.1 ); }
-							to		{ -webkit-transform: translateY( -50% ) scale( 1 ); }
-}
+@-webkit-keyframes appear-from-inside{from{ -webkit-transform: translateY( -50% ) scale( 0 ); }75%{ -webkit-transform: translateY( -50% ) scale( 1.1 ); }to		{ -webkit-transform: translateY( -50% ) scale( 1 ); }}
 @keyframes appear-from-inside{from	{ transform: translateY( -50% ) scale( 0 ); }75%{ transform: translateY( -50% ) scale( 1.1 ); }to{ transform: translateY( -50% ) scale( 1 ); }}
 .box__restart{font-weight: 700;
 }

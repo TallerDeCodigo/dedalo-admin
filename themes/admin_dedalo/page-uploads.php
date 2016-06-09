@@ -1,31 +1,36 @@
 <?php
+	
+	$license_checked = '';
 
-	if(isset($_POST['data'])){
+	if(!empty($_GET) AND isset($title)){
 
-		$title 			= $_POST['productTitle'];
-		$category 		= $_POST['mainCat'];
-		$subCategrory 	= $_POST['subCat'];
-		$description 	= $_POST['description'];
-		$fileurl		= $_POST['modelFileUrl'];
-		$tool 			= $_POST['tools'];
-		$license 		= $_POST['cc'];
-		$fileUpload		= $_POST['file'];
+		$title 				= $_GET['productTitle'];
+		$category 			= $_GET['mainCat'];
+		$subCategory 		= $_GET['subCat'];
+		$description 		= $_GET['description'];
+		$fileurl			= $_GET['modelFileUrl'];
+		$tool 				= $_GET['tools'];
+		$license 			= (isset($_GET["cc"]) AND $_GET["cc"] != "") ? $_GET['cc'] : NULL;
+		$license_checked 	= ($license == "true") ? "checked" : "";
+		$fileUpload			= $_GET['archivo'];
+		$price				= $_GET['costo'];
 
+		
 		$insertData = array(
 						'post_type'=>'productos',
-						'post_title'=>$title
+						'post_title'=>$title,
+						'post_excerpt'=>$description,
+						'meta_input'=>array($category, $subCategory, $fileurl, $tool, $license,$price)
 						);
-
 		wp_insert_post($insertData);
-		
+		print_r('entro al post');
 	}
-?>
-<?php get_header(); 
 
+	//print_r($fileUpload);
 ?>
-
+<?php get_header();?>
 	<section id="uploads">
-		<form id="upfiles" method="post" action="" enctype="multipart/form-data" name="upfiles">
+		<form id="upfiles" method="get" action="" enctype="multipart/form-data" name="upfiles">
 			<fieldset class="fields l">
 				<input type="text" class="textField" placeholder="Title" name="productTitle"><br>
 				<?php
@@ -48,7 +53,6 @@
 				for($i=0; $i<count($catList);$i++){
 					//obtiene los ids de cada category parent
 					
-
 					$args2 = array(
 								'show_count'=>'0',
 								'parent'=>$catList[$i]->cat_ID,
@@ -83,10 +87,13 @@
 
 				<p>License</p>
 				<label for="cc">Creative Commons</label>
-				<input type="checkbox" id="cc" class="checks" chacked="" name="cc"><br>
+				<input type="checkbox" id="cc" class="checks" name="cc" value="true" <?php echo $license_checked; ?>><br>
+
+				<input type="text" class="textField" placeholder="Costo" name="costo">
+
 					<div class="box">
 					<div class="box__input">
-				    	<input class="box__file" type="file" name="file" id="file" data-multiple-caption="{count} files selected" multiple />
+				    	<input class="box__file" type="file" name="archivo" id="file" data-multiple-caption="{count} files selected" multiple />
 				    	<label id="showTitle" for="file"><strong>Choose file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
 				    	<!-- <button class="box__button" type="submit">Upload</button> -->
 				  	</div>
@@ -94,16 +101,6 @@
 				  	<div class="box__success">Done!</div>
 				  	<div class="box__error">Error! <span></span>.</div>
 				  	</div>
-				  	<?php
-				  		// if ( user_can_save( $post_id, plugin_basename( __FILE__ ), 'file-nonce' ) ) {
-				  		// 	if ( has_files_to_upload( 'file' ) ) {
-				  		// 		if ( isset( $_FILES['file'] ) ) {
-				  		// 		$file = wp_upload_bits( $_FILES['file']['name'], null, @file_get_contents( $_FILES['file']['tmp_name'] ) );			
-				  		// 		}
-				  		// 	}
-				  		// }
-				  	?>
-
 				<input type="submit" id="go" name="submit" value="Send">
 			</fieldset>
 		</form>
