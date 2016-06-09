@@ -1,29 +1,45 @@
 <?php
 	
-	$license_checked = '';
+	$license_checked 	= '';
+	$toolMarked			= '';
 
-	if(!empty($_GET) AND isset($title)){
+	if(!empty($_GET)){
 
-		$title 				= $_GET['productTitle'];
-		$category 			= $_GET['mainCat'];
-		$subCategory 		= $_GET['subCat'];
-		$description 		= $_GET['description'];
-		$fileurl			= $_GET['modelFileUrl'];
-		$tool 				= $_GET['tools'];
+		$title 				= (isset($_GET['productTitle']) AND $_GET['productTitle'] != "") ? $_GET['productTitle'] : NULL; 
+		$category 			= (isset($_GET['mainCat']) AND $_GET['mainCat'] != "") ? $_GET['mainCat'] : NULL;
+		$subCategory 		= (isset($_GET['subCat'])AND $_GET['subCat'] != "") ? $_GET['subCat'] : NULL;
+		$description 		= (isset($_GET['description']) AND $_GET['description'] != "") ? $_GET['description'] : NULL;
+		$fileurl			= (isset($_GET['modelFileUrl']) AND $_GET['modelFileUrl'] != "") ? $_GET['modelFileUrl'] : NULL;
+		$tool 				= (isset($_GET['tools']) AND $_GET['tools'] != "") ? $_GET['tools'] : NULL ;
+		$toolMarked			= ($tool == "true") ? "checked" : "";
 		$license 			= (isset($_GET["cc"]) AND $_GET["cc"] != "") ? $_GET['cc'] : NULL;
 		$license_checked 	= ($license == "true") ? "checked" : "";
-		$fileUpload			= $_GET['archivo'];
-		$price				= $_GET['costo'];
+		$fileUpload			= (isset($_GET['archivo']) AND $_GET['archivo'] != "") ? $_GET['archivo'] : NULL;
+		$price				= (isset($_GET['costo']) AND $_GET['costo'] != "") ? $_GET['costo'] : NULL;
 
 		
 		$insertData = array(
-						'post_type'=>'productos',
-						'post_title'=>$title,
-						'post_excerpt'=>$description,
-						'meta_input'=>array($category, $subCategory, $fileurl, $tool, $license,$price)
+						'post_type'		=>'productos',
+						'post_title'	=>$title,
+						'post_content'	=>$description,
+						'meta_input'	=>array(
+											'file_for_download'=>$fileurl,
+											'precio_producto'=>$price,
+											'_wp_attached_file'=>$fileUpload,
+											'license'=>$license,
+											'design-tools'=>$tool )
 						);
-		wp_insert_post($insertData);
-		print_r('entro al post');
+		$insertID = wp_insert_post($insertData);
+
+		// if($insertID){
+		// 	update_post_meta($insertID, 'license', $license);
+		// 	print_r(add_post_meta($insertID,'license', $license, true));
+		// }
+		
+		print_r($insertID);
+		echo"<div class='successMsg'>";
+		print_r('Your file has been uploaded');
+		echo "</div>";
 	}
 
 	//print_r($fileUpload);
@@ -87,7 +103,7 @@
 
 				<p>License</p>
 				<label for="cc">Creative Commons</label>
-				<input type="checkbox" id="cc" class="checks" name="cc" value="true" <?php echo $license_checked; ?>><br>
+				<input type="checkbox" id="cc" class="checks" name="cc" value="Creative Commons" <?php echo $license_checked; ?>><br>
 
 				<input type="text" class="textField" placeholder="Costo" name="costo">
 
