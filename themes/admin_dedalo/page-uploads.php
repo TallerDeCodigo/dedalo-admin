@@ -14,9 +14,8 @@
 		$toolMarked			= ($tool == "true") ? "checked" : "";
 		$license 			= (isset($_GET["cc"]) AND $_GET["cc"] != "") ? $_GET['cc'] : NULL;
 		$license_checked 	= ($license == "true") ? "checked" : "";
-		$fileUpload			= (isset($_GET['archivo']) AND $_GET['archivo'] != "") ? $_GET['archivo'] : NULL;
+		$fileUpload			= (isset($_GET['file']) AND $_GET['file'] != "") ? $_GET['file'] : NULL;
 		$price				= (isset($_GET['costo']) AND $_GET['costo'] != "") ? $_GET['costo'] : NULL;
-
 		
 		$insertData = array(
 						'post_type'		=>'productos',
@@ -26,8 +25,8 @@
 											'file_for_download'=>$fileurl,
 											'precio_producto'=>$price,
 											'_wp_attached_file'=>$fileUpload,
-											'license'=>$license,
-											'design-tools'=>$tool )
+											'license'=>$license
+											)
 						);
 		$insertID = wp_insert_post($insertData);
 
@@ -35,8 +34,13 @@
 		// 	update_post_meta($insertID, 'license', $license);
 		// 	print_r(add_post_meta($insertID,'license', $license, true));
 		// }
-		
-		print_r($insertID);
+		print_r("CAT ".$category . " ");
+		print_r("SCAT ".$subCategory . " ");
+		print_r("TOOL ".$tool . " ");
+		print_r("LICENSE ".$license . " ");
+		print_r("FILEUP ".$fileUpload . " ");
+		print_r("INSERT ID ".$insertID);
+
 		echo"<div class='successMsg'>";
 		print_r('Your file has been uploaded');
 		echo "</div>";
@@ -57,6 +61,7 @@
 									'hide_empty'=>'0',
 									'exclude'=>'1,9',
 									'echo'=>'0'
+									// 'show_option_none'=>'Select category'
 								 );
 					echo "<div id='drop1'>";
 						echo wp_dropdown_categories($args);
@@ -82,8 +87,6 @@
 					echo "</div>";
 					}
 				?>
-
-
 				<textarea placeholder="Write a description" class="textField" rows="10" name="description"></textarea>
 			</fieldset>
 
@@ -93,30 +96,26 @@
 				<input type="text" class="textField" placeholder="Model file URL" name="modelFileUrl">
 				<p>Design tools</p>
 				<label for="tinkercad">Tinkercad</label>
-				<input type="radio" class="checks" id="tinkercad" checked="" name="tools">
+				<input type="radio" class="checks" id="tinkercad" <?php if(isset($_GET['tools']) AND $_GET['tools']== "tinkercad") : echo "checked = 'checked'"; endif; ?> name="tools" value="tinkercad"<?php echo $toolMarked; ?>>
 
 				<label for="blender">Blender</label>
-				<input type="radio" class="checks" id="blender" checked="" name="tools">
+				<input type="radio" class="checks" id="blender" <?php if(isset($_GET['tools']) AND $_GET['tools']== "blender") : echo "checked = 'checked'"; endif; ?> name="tools" value="Blender">
 
 				<label for="other">Other</label>
-				<input type="radio" class="checks" id="other" checked="" name="tools"><br><br>
+				<input type="radio" class="checks" id="other"  <?php if(isset($_GET['tools']) AND $_GET['tools']== "other") : echo "checked = 'checked'"; endif; ?> name="tools" value="other"><br><br>
 
 				<p>License</p>
 				<label for="cc">Creative Commons</label>
 				<input type="checkbox" id="cc" class="checks" name="cc" value="Creative Commons" <?php echo $license_checked; ?>><br>
 
 				<input type="text" class="textField" placeholder="Costo" name="costo">
-
-					<div class="box">
-					<div class="box__input">
-				    	<input class="box__file" type="file" name="archivo" id="file" data-multiple-caption="{count} files selected" multiple />
-				    	<label id="showTitle" for="file"><strong>Choose file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
-				    	<!-- <button class="box__button" type="submit">Upload</button> -->
-				  	</div>
-				  	<div class="box__uploading">Uploading&hellip;</div>
-				  	<div class="box__success">Done!</div>
-				  	<div class="box__error">Error! <span></span>.</div>
-				  	</div>
+					<div id="drop-zone">
+					    Drop files here...
+					    <div id="clickHere">
+					        or click here..
+					        <input type="file" name="file" id="file" />
+					    </div>
+					</div>
 				<input type="submit" id="go" name="submit" value="Send">
 			</fieldset>
 		</form>
