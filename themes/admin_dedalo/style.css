@@ -185,6 +185,7 @@ fieldset{width:49%;}
 .l select{margin-top:20px;height:40px;background:none; color:#fff;border-style:none;border-bottom:1px solid #fff;border-radius:0px;outline:none;}
 .l textarea{margin-top:20px;}
 .r{position:relative;left:20px;}
+#go{margin-top:50px;}
 /*.r input:first-child{margin-top:0px!important;margin-bottom:20px;}
 .r input:last-child{margin-top:30px;border-style:none;background: none;color:#fff;border:1px solid #fff; width:80px;height:40px;float:right;text-align: right;padding:0px 20px 0px 0px;border-radius: 2px}*/
 .checks{margin-bottom:10px;}

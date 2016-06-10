@@ -30,16 +30,27 @@
 						);
 		$insertID = wp_insert_post($insertData);
 
+
+		$catName = get_cat_name($category);
+		$subCatName = get_cat_name($subCategory);
+
+		wp_set_object_terms( $insertID, [$catName, $subCatName], 'category');
+		wp_set_object_terms( $insertID, $tool, 'design-tools');
+		wp_set_object_terms( $insertID, $license, 'license');
+		
+
+
+
 		// if($insertID){
 		// 	update_post_meta($insertID, 'license', $license);
 		// 	print_r(add_post_meta($insertID,'license', $license, true));
 		// }
-		print_r("CAT ".$category . " ");
-		print_r("SCAT ".$subCategory . " ");
-		print_r("TOOL ".$tool . " ");
-		print_r("LICENSE ".$license . " ");
-		print_r("FILEUP ".$fileUpload . " ");
-		print_r("INSERT ID ".$insertID);
+		// print_r("CAT ".$category . " ");
+		// print_r("SCAT ".$subCategory . " ");
+		// print_r("TOOL ".$tool . " ");
+		// print_r("LICENSE ".$license . " ");
+		// print_r("FILEUP ".$fileUpload . " ");
+		 print_r("INSERT ID ".$insertID);
 
 		echo"<div class='successMsg'>";
 		print_r('Your file has been uploaded');
@@ -99,10 +110,10 @@
 				<input type="radio" class="checks" id="tinkercad" <?php if(isset($_GET['tools']) AND $_GET['tools']== "tinkercad") : echo "checked = 'checked'"; endif; ?> name="tools" value="tinkercad"<?php echo $toolMarked; ?>>
 
 				<label for="blender">Blender</label>
-				<input type="radio" class="checks" id="blender" <?php if(isset($_GET['tools']) AND $_GET['tools']== "blender") : echo "checked = 'checked'"; endif; ?> name="tools" value="Blender">
+				<input type="radio" class="checks" id="blender" <?php if(isset($_GET['tools']) AND $_GET['tools']== "blender") : echo "checked = 'checked'"; endif; ?> name="tools" value="Blender"<?php echo $toolMarked; ?>>
 
 				<label for="other">Other</label>
-				<input type="radio" class="checks" id="other"  <?php if(isset($_GET['tools']) AND $_GET['tools']== "other") : echo "checked = 'checked'"; endif; ?> name="tools" value="other"><br><br>
+				<input type="radio" class="checks" id="other"  <?php if(isset($_GET['tools']) AND $_GET['tools']== "other") : echo "checked = 'checked'"; endif; ?> name="tools" value="other"<?php echo $toolMarked; ?>><br><br>
 
 				<p>License</p>
 				<label for="cc">Creative Commons</label>
