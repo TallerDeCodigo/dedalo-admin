@@ -14,10 +14,10 @@
 		$toolMarked			= ($tool == "true") ? "checked" : "";
 		$license 			= (isset($_GET["cc"]) AND $_GET["cc"] != "") ? $_GET['cc'] : NULL;
 		$license_checked 	= ($license == "true") ? "checked" : "";
-		$fileUpload			= (isset($_GET['file']) AND $_GET['file'] != "") ? $_GET['file'] : NULL;
+		$fileUpload			= (isset($_FILES['file']) AND $_FILES['file'] != "") ? $_FILES['file'] : NULL;
 		$price				= (isset($_GET['costo']) AND $_GET['costo'] != "") ? $_GET['costo'] : NULL;
 		$tst				= $_GET['_wp_http_referer'];
-
+		echo($fileUpload);
 		//print_r("este es file upload " .$fileUpload);
 		$insertData = array(
 						'post_type'		=>'productos',
@@ -43,36 +43,62 @@
 
 
 		//carga imagen a media library y la signa como thumbnail al post
+		require_once( ABSPATH . 'wp-admin/includes/image.php' );
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		require_once( ABSPATH . 'wp-admin/includes/media.php' );
+		// Let WordPress handle the upload
+		$attachment_id = media_handle_upload('file', $insertID );
+		if ( is_wp_error( $attachment_id ) ) {
+			wp_send_json_error();
+		}else {
+			add_post_meta($insertID, '_thumbnail_id', $attachment_id);
+			$metadata = wp_get_attachment_metadata( $attachment_id );
+			// $new_imagemeta = array(
+			// 					"aperture"=> 0,
+			// 					"credit"=> "",
+			// 					"camera"=> "",
+			// 					"caption"=> "",
+			// 					"created_timestamp"=> 0,
+			// 					"copyright"=> "",
+			// 					"focal_length"=> 0,
+			// 					"iso"=> 0,
+			// 					"shutter_speed"=> 0,
+			// 					"title"=> $project_data['event_title'],
+			// 					"orientation"=> 0
+			// 				);
+			// $metadata['image_meta'] = $new_imagemeta;
+			// wp_update_attachment_metadata($attachment_id, $metadata);
+		}
 
 		// $filename should be the path to a file in the upload directory.
-		$filename = '/dedalo/wp-content/uploads/' . date('Y') .'/'. date('m') .'/'. $fileUpload;
-		//print_r($filename);
-		// The ID of the post this attachment is for.
-		$parent_post_id = $insertID;
+		// $filename = '/dedalo/wp-content/uploads/' . date('Y') .'/'. date('m') .'/'. $fileUpload;
+		// //print_r($filename);
+		// // The ID of the post this attachment is for.
+		// $parent_post_id = $insertID;
 
-		// Check the type of file. We'll use this as the 'post_mime_type'.
-		$filetype = wp_check_filetype( basename( $filename ), null );
+		// // Check the type of file. We'll use this as the 'post_mime_type'.
+		// $filetype = wp_check_filetype( basename( $filename ), null );
 
-		// Get the path to the upload directory.
-		$wp_upload_dir = wp_upload_dir();
+		// // Get the path to the upload directory.
+		// $wp_upload_dir = wp_upload_dir();
 
-		// Prepare an array of post data for the attachment.
-		$attachment = array(
-			'guid'           => $wp_upload_dir['url'] . '/' . basename( $filename ), 
-			'post_mime_type' => $filetype['type']
-		);
+		// // Prepare an array of post data for the attachment.
+		// $attachment = array(
+		// 	'guid'           => $wp_upload_dir['url'] . '/' . basename( $filename ), 
+		// 	'post_mime_type' => $filetype['type']
+		// );
 
-		// Insert the attachment.
-		$attach_id = wp_insert_attachment( $attachment, $filename, $parent_post_id );
-		//print_r('attach id '.$attach_id);
-		// Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
-		require_once( ABSPATH . 'wp-admin/includes/image.php' );
+		// // Insert the attachment.
+		// $attach_id = wp_insert_attachment( $attachment, $filename, $parent_post_id );
+		// //print_r('attach id '.$attach_id);
+		// // Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
+		// require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
-		// Generate the metadata for the attachment, and update the database record.
-		$attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
-		wp_update_attachment_metadata( $attach_id, $attach_data );
+		// // Generate the metadata for the attachment, and update the database record.
+		// $attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
+		// wp_update_attachment_metadata( $attach_id, $attach_data );
 
-		set_post_thumbnail( $parent_post_id, $attach_id );
+		// set_post_thumbnail( $parent_post_id, $attach_id );
 
 	}
 
@@ -143,8 +169,8 @@
 					    Drop files here
 					    <div id="clickHere">
 					        or click here
-					        <input type="file" name="file" id="file" />
-					        <?php wp_nonce_field( 'file', 'file_nonce' ); ?>
+					        <input type="file" name="file" id="file" accept="image/*" />
+					        <?php wp_nonce_field( 'artist_image_upload', 'artist_image_upload_nonce' ); ?>
 					    </div>
 					</div>
 				<input type="submit" id="go" name="submit" value="Send">
