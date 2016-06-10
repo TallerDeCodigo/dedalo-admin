@@ -426,5 +426,52 @@ function has_files_to_upload( $id ) {
 }
 
 
+/*upload image*/
+
+function guardar_imagen() {
+
+	global $wpdb;
+
+
+	$image_name = (isset($_GET['file']) AND $_GET['file'] != "") ? $_GET['file'] : NULL;
+	$file       = saveAttachmentData($_GET['file'], $image_name);
+	$imagen     = pathinfo($file);
+
+	$wp_upload_dir = wp_upload_dir();
+
+	$attachment = array(
+		'post_status'    => 'inherit',
+		'post_mime_type' => "image/{$imagen['extension']}",
+		'post_type'      => 'attachment',
+		'post_title'     => preg_replace('/\.[^.]+$/', '', $imagen['basename']),
+
+	);
+
+	$dir = substr($wp_upload_dir['subdir'], 1);
+	$img = $dir .'/'. $imagen['basename'];
+
+	$attach_id = wp_insert_attachment( $attachment, $img);
+
+	if($attach_id){
+		// you must first include the image.php file for the function wp_generate_attachment_metadata() to work
+		require_once(ABSPATH . 'wp-admin/includes/image.php');
+		$image_file = $wp_upload_dir['path'] .'/'. $imagen['basename'];
+		$attach_data = wp_generate_attachment_metadata( $attach_id, $image_file );
+		$_POST['attach_id'] = $attach_id;
+		wp_update_attachment_metadata( $attach_id, $attach_data );
+		set_post_thumbnail( '', $attach_id );
+
+		 $img_url2 = museo_get_attachment_url($attach_id, 'thumbnail');
+		 $pat_img    = pathinfo($img_url2[0]);
+		 $img2 = $dir .'/'. $pat_img['basename'];
+		 save_image_user($img2, $user_id);
+
+
+	}
+	echo $img_url2[0];
+	exit;
+}
+add_action('wp_ajax_guardar_imagen', 'guardar_imagen');
+add_action('wp_ajax_nopriv_guardar_imagen', 'guardar_imagen');
 
 

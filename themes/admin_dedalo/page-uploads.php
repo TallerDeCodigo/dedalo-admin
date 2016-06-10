@@ -16,7 +16,9 @@
 		$license_checked 	= ($license == "true") ? "checked" : "";
 		$fileUpload			= (isset($_GET['file']) AND $_GET['file'] != "") ? $_GET['file'] : NULL;
 		$price				= (isset($_GET['costo']) AND $_GET['costo'] != "") ? $_GET['costo'] : NULL;
-		
+		$tst				= $_GET['_wp_http_referer'];
+
+		//print_r("este es file upload " .$fileUpload);
 		$insertData = array(
 						'post_type'		=>'productos',
 						'post_title'	=>$title,
@@ -29,7 +31,7 @@
 											)
 						);
 		$insertID = wp_insert_post($insertData);
-
+		//print_r($_GET['_wp_http_referer'] . " ");
 
 		$catName = get_cat_name($category);
 		$subCatName = get_cat_name($subCategory);
@@ -40,24 +42,41 @@
 		
 
 
+		//carga imagen a media library y la signa como thumbnail al post
 
-		// if($insertID){
-		// 	update_post_meta($insertID, 'license', $license);
-		// 	print_r(add_post_meta($insertID,'license', $license, true));
-		// }
-		// print_r("CAT ".$category . " ");
-		// print_r("SCAT ".$subCategory . " ");
-		// print_r("TOOL ".$tool . " ");
-		// print_r("LICENSE ".$license . " ");
-		// print_r("FILEUP ".$fileUpload . " ");
-		 print_r("INSERT ID ".$insertID);
+		// $filename should be the path to a file in the upload directory.
+		$filename = '/dedalo/wp-content/uploads/' . date('Y') .'/'. date('m') .'/'. $fileUpload;
+		//print_r($filename);
+		// The ID of the post this attachment is for.
+		$parent_post_id = $insertID;
 
-		echo"<div class='successMsg'>";
-		print_r('Your file has been uploaded');
-		echo "</div>";
+		// Check the type of file. We'll use this as the 'post_mime_type'.
+		$filetype = wp_check_filetype( basename( $filename ), null );
+
+		// Get the path to the upload directory.
+		$wp_upload_dir = wp_upload_dir();
+
+		// Prepare an array of post data for the attachment.
+		$attachment = array(
+			'guid'           => $wp_upload_dir['url'] . '/' . basename( $filename ), 
+			'post_mime_type' => $filetype['type']
+		);
+
+		// Insert the attachment.
+		$attach_id = wp_insert_attachment( $attachment, $filename, $parent_post_id );
+		//print_r('attach id '.$attach_id);
+		// Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
+		require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+		// Generate the metadata for the attachment, and update the database record.
+		$attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
+		wp_update_attachment_metadata( $attach_id, $attach_data );
+
+		set_post_thumbnail( $parent_post_id, $attach_id );
+
 	}
 
-	//print_r($fileUpload);
+
 ?>
 <?php get_header();?>
 	<section id="uploads">
@@ -121,10 +140,11 @@
 
 				<input type="text" class="textField" placeholder="Costo" name="costo">
 					<div id="drop-zone">
-					    Drop files here...
+					    Drop files here
 					    <div id="clickHere">
-					        or click here..
+					        or click here
 					        <input type="file" name="file" id="file" />
+					        <?php wp_nonce_field( 'file', 'file_nonce' ); ?>
 					    </div>
 					</div>
 				<input type="submit" id="go" name="submit" value="Send">
