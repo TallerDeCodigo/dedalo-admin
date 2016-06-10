@@ -445,7 +445,21 @@ function search_makers($search_term = NULL){
 		$foto_user = get_user_meta( $user->ID, 'foto_user', TRUE );
 		$first_name = get_user_meta( $user->ID, 'first_name', TRUE );
 		$last_name = get_user_meta( $user->ID, 'last_name', TRUE );
+		$printer_brand = get_user_meta( $user->ID, 'printer_brand', TRUE );
+		$printer_model = get_user_meta( $user->ID, 'printer_model', TRUE );
 		$bio = get_user_meta( $user->ID, 'user_3dbio', TRUE );
+
+		$brand_object = get_term_by("id", intval($printer_brand), "printer-model");
+		$model_object = get_term_by("id", intval($printer_model), "printer-model");
+		
+		$catalogue = file_get_contents(THEMEPATH."inc/pModels.json");
+		$catalogue = json_decode($catalogue);
+		$catalogue = (array) $catalogue;
+
+		$search_brand = array_search($brand_object->name, $catalogue);
+		
+		$search_model = array_search($model_object->name, $catalogue[$brand_object->name]);
+
 		$me =   array(
 					"ID" 			=> $user->ID,
 					"login" 		=> $userData->data->user_login,
@@ -453,6 +467,10 @@ function search_makers($search_term = NULL){
 					"last_name" 	=> $last_name,
 					"email" 		=> $userData->data->user_email,
 					"bio" 			=> $bio,
+					"printer_brand" => intval($printer_brand),
+					"printer_model" => intval($printer_model),
+					"cat_printer_brand" => intval($search_brand),
+					"cat_printer_model" => intval($search_model),
 					"display_name" 	=> $userData->data->display_name,
 					"profile_pic" 	=> ($foto_user) ? $foto_user : null,
 					"role" 			=> $user->roles[0],
@@ -467,7 +485,11 @@ function search_makers($search_term = NULL){
 									);
 			$me['is_'.$each_term->slug] = true;
 		}
-
+		// file_put_contents(
+		// 	'/logs/php.log',
+		// 	var_export( $me, true ) . PHP_EOL,
+		// 	FILE_APPEND
+		// );
 		return wp_send_json($me);
 		
 	}
@@ -1142,7 +1164,12 @@ function recomend_event_to_user($user){
 	//TO DO: Return falsie value if not done
 	ajax_museografo_recomendar($user);
 }
-
+/*
+ * Update user profile information
+ * @param String $user_login
+ * @param Object $args
+ * @return Boolean
+ */
 function update_user_profile($user_login, $args){
 	$user = get_user_by("slug", $user_login);
 
@@ -1164,6 +1191,26 @@ function update_user_profile($user_login, $args){
 		if($args->become_printer == 'true'){
 			$pterm = get_term_by("slug", "printer", "user_category");
 			$object_terms[] = $pterm->term_id;
+			/*** Saving hardware specifics ***/
+			if($args->just_modified){
+				$catalogue = file_get_contents(THEMEPATH."inc/pModels.json");
+				$catalogue = json_decode($catalogue);
+				$catalogue = (array) $catalogue;
+				$keys = array_keys($catalogue);
+
+				$brand_index = intval($args->printer_brand);
+				$brand_name = $keys[$brand_index];
+				$brand_object = get_term_by("name", $brand_name, "printer-model");
+
+				$model_index = $args->printer_model;
+				$model_name = $catalogue[$brand_name][$model_index];
+				$model_object = get_term_by("name", $model_name, "printer-model");
+			
+				$object_ptr_terms =  array($brand_object->term_id, $model_object->term_id);
+				
+				update_user_meta($user->ID, "printer_brand", $brand_object->term_id);
+				update_user_meta($user->ID, "printer_model", $model_object->term_id);
+			}
 		}
 		if($args->become_scanner == 'true'){
 			$sterm = get_term_by("slug", "scanner", "user_category");
@@ -1171,6 +1218,7 @@ function update_user_profile($user_login, $args){
 		}
 		wp_set_object_terms( $user->ID, $object_terms, 'user_category', false );
 		clean_object_term_cache($user->ID, 'user_category');
+		
 
 		wp_send_json_success();
 	}
