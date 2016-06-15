@@ -419,11 +419,7 @@ function fetch_main_feed($filter = "all", $offset){
 									);
 			$me['is_'.$each_term->slug] = true;
 		}
-		// file_put_contents(
-		// 	'/logs/php.log',
-		// 	var_export( $me, true ) . PHP_EOL,
-		// 	FILE_APPEND
-		// );
+
 		return wp_send_json($me);
 		
 	}

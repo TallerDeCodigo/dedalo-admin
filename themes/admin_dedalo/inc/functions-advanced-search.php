@@ -7,17 +7,20 @@
 	 * @param Integer $cat_id
 	 * @return Boolean $followed
 	 */
-	function exec_advanced_search($search_term = null, $cat_id = NULL, $args = array() ) {
+	function exec_advanced_search($offset = 0, $args = array() ) {
+		$final_array = array();
 		extract($args);
 		$keywords = json_decode(stripslashes($keywords));
 		$offered = search_dedalo($keywords, NULL, $filter);
-
-		file_put_contents(
-			'/logs/php.log',
-			var_export( $offered, true ) . PHP_EOL,
-			FILE_APPEND
-		);
-
+		$final_array["offered"] = $offered;
+		/*** Assign response ***/
+		$final_array["response"] = TRUE;
+		// file_put_contents(
+		// 	'/logs/php.log',
+		// 	var_export( $final_array, true ) . PHP_EOL,
+		// 	FILE_APPEND
+		// );
+		return $final_array;
 	}
 
 	/*

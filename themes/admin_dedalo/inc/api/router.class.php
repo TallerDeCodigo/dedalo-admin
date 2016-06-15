@@ -347,14 +347,19 @@ class Router{
 			 * @param String $s
 			 * Dedalo approved
 			 */
-			$slim->post('/rest/v1/content/search/advanced/:s/',function( $s ) {
+			$slim->post('/rest/v1/content/search/advanced/',function() {
 				$args = !empty($_POST) ? $_POST : NULL;
-				file_put_contents(
-					'/logs/php.log',
-					var_export( $_FILES, true ) . PHP_EOL,
-					FILE_APPEND
-				);
-				return exec_advanced_search($s, $offset, $args);
+				// file_put_contents(
+				// 	'/logs/php.log',
+				// 	var_export( $_POST, true ) . PHP_EOL,
+				// 	FILE_APPEND
+				// );
+				// file_put_contents(
+				// 	'/logs/php.log',
+				// 	var_export( $_FILES, true ) . PHP_EOL,
+				// 	FILE_APPEND
+				// );
+				return exec_advanced_search($offset, $args);
 				exit;
 			});
 
