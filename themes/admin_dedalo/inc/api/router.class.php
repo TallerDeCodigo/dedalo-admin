@@ -350,16 +350,22 @@ class Router{
 			$slim->post('/rest/v1/content/search/advanced/',function() {
 				$args = !empty($_POST) ? $_POST : NULL;
 				// file_put_contents(
-				// 	'/logs/php.log',
+				// 	'/var/log/php.log',
 				// 	var_export( $_POST, true ) . PHP_EOL,
 				// 	FILE_APPEND
 				// );
 				// file_put_contents(
-				// 	'/logs/php.log',
+				// 	'/var/log/php.log',
 				// 	var_export( $_FILES, true ) . PHP_EOL,
 				// 	FILE_APPEND
 				// );
-				return exec_advanced_search($offset, $args);
+				// return exec_advanced_search($offset, $args);
+				echo "<pre>";
+					print_r($_POST);
+				echo "</pre>";
+				echo "<pre>";
+					print_r($_FILES);
+				echo "</pre>";
 				exit;
 			});
 

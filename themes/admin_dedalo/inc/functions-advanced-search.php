@@ -15,11 +15,11 @@
 		$final_array["offered"] = $offered;
 		/*** Assign response ***/
 		$final_array["response"] = TRUE;
-		// file_put_contents(
-		// 	'/logs/php.log',
-		// 	var_export( $final_array, true ) . PHP_EOL,
-		// 	FILE_APPEND
-		// );
+		file_put_contents(
+			'/var/log/php.log',
+			var_export( $final_array, true ) . PHP_EOL,
+			FILE_APPEND
+		);
 		return $final_array;
 	}
 
