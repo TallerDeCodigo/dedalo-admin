@@ -50,21 +50,21 @@ class Router{
 			 */
 			$slim->get('/rest/v1/auth/getToken/', function () use ($context){
 				
-			  	if (method_exists("Router", 'generateToken')){
-			  		$new_token = $context->generateToken(FALSE);
-			  		wp_send_json_success(array('request_token' => $new_token));
-			  	}
-			  	wp_send_json_error('Couldn\'t execute method');
-			  	exit;
+				if (method_exists("Router", 'generateToken')){
+					$new_token = $context->generateToken(FALSE);
+					wp_send_json_success(array('request_token' => $new_token));
+				}
+				wp_send_json_error('Couldn\'t execute method');
+				exit;
 			});
 			
 			/* Check token for validity */
 			$slim->post('/rest/v1/auth/user/checkToken/', function () {
 				
 				if(!isset($_POST['request_token']) OR !isset($_POST['user_id'])) return wp_send_json_error(array("error" => "Please provide a user_id and a request token, or refer to the documentation for further support"));
-			  	$device_info = (isset($_POST['device_info'])) ? $_POST['device_info'] : NULL;
+				$device_info = (isset($_POST['device_info'])) ? $_POST['device_info'] : NULL;
 				
-			  	$response = $this->check_token_valid($_POST['user_id'], $_POST['request_token'], $device_info);
+				$response = $this->check_token_valid($_POST['user_id'], $_POST['request_token'], $device_info);
 				if($response) wp_send_json_success($response);
 				wp_send_json_error();
 			});
@@ -144,7 +144,7 @@ class Router{
 					if( isset($attrs['login_redirect']) 
 						 AND (!$attrs['login_redirect'] OR $attrs['login_redirect'] == FALSE)
 					  ) {
-					  	mobile_pseudo_login();
+						mobile_pseudo_login();
 						wp_send_json_success($created);
 					}
 						
@@ -152,8 +152,8 @@ class Router{
 					_mobile_pseudo_login($username, $attrs['password'], $attrs['request_token']);
 					exit;
 				}
-			  	wp_send_json_error('Couldn\'t create user');
-			  	exit;
+				wp_send_json_error('Couldn\'t create user');
+				exit;
 			});
 
 			/* 
@@ -338,7 +338,23 @@ class Router{
 			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/content/search/:s(/:offset)/',function( $s, $offset = 0) {
-				return search_dedalo($s, $offset);
+				echo json_encode(search_dedalo($s, $offset));
+				exit;
+			});
+
+			/**
+			 * Advanced search
+			 * @param String $s
+			 * Dedalo approved
+			 */
+			$slim->post('/rest/v1/content/search/advanced/:s/',function( $s ) {
+				$args = !empty($_POST) ? $_POST : NULL;
+				file_put_contents(
+					'/logs/php.log',
+					var_export( $_FILES, true ) . PHP_EOL,
+					FILE_APPEND
+				);
+				return exec_advanced_search($s, $offset, $args);
 				exit;
 			});
 
@@ -382,8 +398,8 @@ class Router{
 			 * Dedalo approved
 			 */
 			$slim->get('/rest/v1/:logged/me/', function ($logged = NULL) {
-			  	echo fetch_me_information($logged);
-			  	exit;
+				echo fetch_me_information($logged);
+				exit;
 			});
 
 			/**
@@ -495,7 +511,7 @@ class Router{
 			 * @see retrieve_user_followers
 			 */
 			$slim->get('/rest/v1/:logged/user/:queried_login/followers/:type/', function ($logged, $queried_login, $type) {
-			  	return retrieve_user_followers($queried_login, $logged, $type);
+				return retrieve_user_followers($queried_login, $logged, $type);
 			});
 
 			/* Get user followees
@@ -505,7 +521,7 @@ class Router{
 			 * @see retrieve_user_followees
 			 */
 			$slim->get('/rest/v1/:logged/user/:queried_login/followees/:type/', function ($logged, $queried_login, $type) {
-			  	return retrieve_user_followees($queried_login, $logged, $type);
+				return retrieve_user_followees($queried_login, $logged, $type);
 			});
 
 			
@@ -1075,7 +1091,7 @@ class Router{
 			});
 	
 	}
-                      
+					  
 
 	/*
 	 * Set expiration for the Request token
@@ -1113,10 +1129,10 @@ class Router{
 												  (user_id, token, token_status, expiration)
 												  VALUES(%s, %s, %d, %d);
 											   "
-											 	 ,$user_id
-											 	 ,$this->attrs['request_token']
-											 	 ,0
-											 	 ,$this->attrs['expires'] ));
+												 ,$user_id
+												 ,$this->attrs['request_token']
+												 ,0
+												 ,$this->attrs['expires'] ));
 		return ($result == 1) ? TRUE : FALSE; 
 	}
 
@@ -1133,9 +1149,9 @@ class Router{
 												  WHERE user_id = %s
 												  AND token = %s;
 											   "
-											 	 ,$status
-											 	 ,$user_id
-											 	 ,$token));
+												 ,$status
+												 ,$user_id
+												 ,$token));
 		return ($result == 1) ? $token : FALSE; 
 	}
 
@@ -1152,9 +1168,9 @@ class Router{
 												  WHERE user_id = %s
 												  AND token = %s;
 											   "
-											 	 ,$status
-											 	 ,$user_id
-											 	 ,$token));
+												 ,$status
+												 ,$user_id
+												 ,$token));
 		return ($result == 1) ? $token : FALSE; 
 	}
 
@@ -1171,9 +1187,9 @@ class Router{
 												  WHERE user_id = %s
 												  AND token = %s;
 											   "
-											 	 ,$status
-											 	 ,$user_id
-											 	 ,$new_timestamp));
+												 ,$status
+												 ,$user_id
+												 ,$new_timestamp));
 		return ($result == 1) ? $token : FALSE; 
 	}
 
@@ -1188,8 +1204,8 @@ class Router{
 												  SET user_id = %d
 												  WHERE token = %s;
 											   "
-											 	 ,$user_id
-											 	 ,$token));
+												 ,$user_id
+												 ,$token));
 		$pieces = array();
 		if($result == 1 AND $device_info)
 			$pieces = array(
@@ -1217,8 +1233,8 @@ class Router{
 													  WHERE user_id = %s
 													  AND token = %s;
 												   "
-											 	 ,$user_id
-											 	 ,$token));
+												 ,$user_id
+												 ,$token));
 		$pieces = array();
 		if($result == 1 AND $device_info){
 			$pieces = array(

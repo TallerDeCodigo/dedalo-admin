@@ -136,6 +136,8 @@
 	require_once('inc/functions-categories.php');
 
 	require_once('inc/functions-followusers.php');
+	
+	require_once('inc/functions-advanced-search.php');
 
 	get_template_part( 'inc/api/functions', 'mobile-api' );
 
