@@ -531,7 +531,7 @@ function fetch_main_feed($filter = "all", $offset){
 									"post_status" 		=> "publish",
 									"posts_per_page" 	=> 4,
 									"exclude" 			=> $product_id,
-									"orderby" 			=> "date",
+									"orderby" 			=> "rand",
 								));
 
 		if($same_maker)
