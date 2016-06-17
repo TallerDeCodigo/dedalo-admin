@@ -529,7 +529,7 @@ function fetch_main_feed($filter = "all", $offset){
 									"author" 			=> $designer_brand->ID,
 									"post_type" 		=> "productos",
 									"post_status" 		=> "publish",
-									"posts_per_page" 	=> 5,
+									"posts_per_page" 	=> 4,
 									"orderby" 			=> "date",
 								));
 
@@ -544,7 +544,8 @@ function fetch_main_feed($filter = "all", $offset){
 																"thumb_url"		=> ($post_thumbnail_url) ? $post_thumbnail_url : "",
 															);
 			}
-		if($tags)
+		if($tags){
+			
 			foreach ($tags as $each_tag) {
 				$final_array['tags']['pool'][] = array( 
 																"ID"		=> $each_tag->term_id,
@@ -552,7 +553,10 @@ function fetch_main_feed($filter = "all", $offset){
 																"slug"		=> $each_tag->slug,
 															);
 			}
-		if($design_tools)
+			$final_array['tags']['count'] = count($final_array['tags']['pool']);
+		}
+		if($design_tools){
+			
 			foreach ($design_tools as $each_dt) {
 				$final_array['design_tools']['pool'][] = array( 
 																"ID"		=> $each_dt->term_id,
@@ -560,11 +564,11 @@ function fetch_main_feed($filter = "all", $offset){
 																"slug"		=> $each_dt->slug,
 															);
 			}
+			$final_array['design_tools']['count'] = count($final_array['design_tools']['pool']);
+		}
 
 		$final_array['gallery']['count'] = count($final_array['gallery']['pool']);
 		$final_array['by_same_maker']['count'] = count($final_array['by_same_maker']['pool']);
-		$final_array['tags']['count'] = count($final_array['tags']['pool']);
-		$final_array['design_tools']['count'] = count($final_array['design_tools']['pool']);
 		return json_encode($final_array);
 	} 
 
