@@ -44,7 +44,6 @@ function mobile_pseudo_login() {
 	$creds['user_login'] = $user->data->user_login;
 	$creds['user_password'] = $user_password;
 	$creds['remember'] = true;
-
 	$SignTry = wp_signon( $creds, false );
 
 	if( !is_wp_error($SignTry)){
@@ -53,8 +52,11 @@ function mobile_pseudo_login() {
 		$user_login = $SignTry->user_login;
 		$role 		= $SignTry->roles[0];
 		$user_name 	= $SignTry->display_name;
-
-
+		file_put_contents(
+					'/logs/php.log',
+					var_export( "Mobile pseudo", true ) . PHP_EOL,
+					FILE_APPEND
+				);
 		/* Validate token before sending response */
 		if(!$rest->check_token_valid('none', $request_token)){
 			$response = $rest->update_tokenStatus($request_token, 'none', 1);
@@ -372,6 +374,13 @@ function fetch_main_feed($filter = "all", $offset){
 	 * @return JSON Object
 	 */
 	function fetch_me_information($user_login  = NULL){
+		file_put_contents(
+			'/logs/php.log',
+			var_export( "Mr meeseeks!", true ) . PHP_EOL,
+			FILE_APPEND
+		);
+		$search_brand = -1;
+		$search_model = -1;
 		$user = get_user_by("login", $user_login);
 		$userData = get_userdata( $user->ID );
 
@@ -389,10 +398,10 @@ function fetch_main_feed($filter = "all", $offset){
 		$catalogue = file_get_contents(THEMEPATH."inc/pModels.json");
 		$catalogue = json_decode($catalogue);
 		$catalogue = (array) $catalogue;
-
-		$search_brand = array_search($brand_object->name, $catalogue);
-		
-		$search_model = array_search($model_object->name, $catalogue[$brand_object->name]);
+		if($brand_object)
+			$search_brand = array_search($brand_object->name, $catalogue);
+		if($model_object)
+			$search_model = array_search($model_object->name, $catalogue[$brand_object->name]);
 
 		$me =   array(
 					"ID" 			=> $user->ID,
