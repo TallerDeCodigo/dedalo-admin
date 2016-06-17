@@ -60,11 +60,7 @@ class Router{
 			
 			/* Check token for validity */
 			$slim->post('/rest/v1/auth/user/checkToken/', function () {
-				file_put_contents(
-					'/logs/php.log',
-					var_export( "Check token valid", true ) . PHP_EOL,
-					FILE_APPEND
-				);
+				
 				if(!isset($_POST['request_token']) OR !isset($_POST['user_id'])) return wp_send_json_error(array("error" => "Please provide a user_id and a request token, or refer to the documentation for further support"));
 				$device_info = (isset($_POST['device_info'])) ? $_POST['device_info'] : NULL;
 				
@@ -77,11 +73,7 @@ class Router{
 			 * Validate Token
 			 */
 			$slim->post('/rest/v1/user/validateToken/', function () {
-				file_put_contents(
-					'/logs/php.log',
-					var_export( "Validate token", true ) . PHP_EOL,
-					FILE_APPEND
-				);
+				
 				$token 		= (isset($_POST['token'])) 		? $_POST['token'] 	: NULL;
 				$user_id 	= (isset($_POST['user_id'])) 	? $_POST['user_id'] : NULL;
 				$validate_id 	= (isset($_POST['validate_id'])) ? $_POST['validate_id'] : NULL;
@@ -371,12 +363,12 @@ class Router{
 				// 	FILE_APPEND
 				// );
 				return exec_advanced_search($offset, $args);
-				// echo "<pre>";
-				// 	print_r($_POST);
-				// echo "</pre>";
-				// echo "<pre>";
-				// 	print_r($_FILES);
-				// echo "</pre>";
+				echo "<pre>";
+					print_r($_POST);
+				echo "</pre>";
+				echo "<pre>";
+					print_r($_FILES);
+				echo "</pre>";
 				exit;
 			});
 
@@ -1250,19 +1242,7 @@ class Router{
 	 */
 	public function check_token_valid($user_id, $token, $device_info = array()){
 		global $wpdb;
-		file_put_contents(
-			'/logs/php.log',
-			var_export( $user_id, true ) . PHP_EOL,
-			FILE_APPEND
-		);file_put_contents(
-			'/logs/php.log',
-			var_export( $token, true ) . PHP_EOL,
-			FILE_APPEND
-		);file_put_contents(
-			'/logs/php.log',
-			var_export( $device_info, true ) . PHP_EOL,
-			FILE_APPEND
-		);
+		
 		$result = $wpdb->get_var( $wpdb->prepare(" SELECT token_status
 													FROM _api_active_tokens
 													  WHERE user_id = %s
@@ -1270,11 +1250,7 @@ class Router{
 												   "
 												 ,$user_id
 												 ,$token));
-		file_put_contents(
-			'/logs/php.log',
-			var_export( $result, true ) . PHP_EOL,
-			FILE_APPEND
-		);
+		
 		$pieces = array();
 		if(intval($result) == 1 ){
 			$pieces = array(

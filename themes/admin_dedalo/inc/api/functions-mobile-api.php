@@ -52,11 +52,7 @@ function mobile_pseudo_login() {
 		$user_login = $SignTry->user_login;
 		$role 		= $SignTry->roles[0];
 		$user_name 	= $SignTry->display_name;
-		file_put_contents(
-					'/logs/php.log',
-					var_export( "Mobile pseudo", true ) . PHP_EOL,
-					FILE_APPEND
-				);
+		
 		/* Validate token before sending response */
 		if(!$rest->check_token_valid('none', $request_token)){
 			$response = $rest->update_tokenStatus($request_token, 'none', 1);
@@ -374,11 +370,7 @@ function fetch_main_feed($filter = "all", $offset){
 	 * @return JSON Object
 	 */
 	function fetch_me_information($user_login  = NULL){
-		file_put_contents(
-			'/logs/php.log',
-			var_export( "Mr meeseeks!", true ) . PHP_EOL,
-			FILE_APPEND
-		);
+
 		$search_brand = -1;
 		$search_model = -1;
 		$user = get_user_by("login", $user_login);
@@ -448,9 +440,9 @@ function fetch_main_feed($filter = "all", $offset){
 		/* Fetch 4 featured products */
 		$featured 	= fetch_featured_products();
 		/* Get previous searches */
-		if($logged){
-			// $previous 	= fetch_previous_searches();
-		}
+		// if($logged){
+		// 	// $previous 	= fetch_previous_searches();
+		// }
 		$composite = array(
 									"featured" => $featured,
 									"previous" => $previous,
@@ -480,7 +472,7 @@ function fetch_main_feed($filter = "all", $offset){
 		$foto_user 			= get_user_meta( $designer_brand->ID, 'foto_user', TRUE );
 		$product_price 		= (get_post_meta($post->ID,'precio_producto', true) != '') ? get_post_meta($post->ID,'precio_producto', true) : NULL;
 		$info_tecninca		= get_post_meta($post->ID, 'info_tecninca', TRUE);
-		$notas_tecnicas		= get_post_meta($post->ID, 'notas_tecnicas', TRUE);
+		$notas_tecnicas		= wpautop(get_post_meta($post->ID, 'notas_tecnicas', TRUE));
 		$printer_type		= get_post_meta($post->ID, 'printer_type', TRUE);
 		$supports_rafts		= get_post_meta($post->ID, 'supports_rafts', TRUE);
 		$infill				= get_post_meta($post->ID, 'infill', TRUE);
@@ -524,7 +516,7 @@ function fetch_main_feed($filter = "all", $offset){
 								"printer"			=> array(
 															"type" 	=> ($printer_type !== '') ? $printer_type : NULL,
 															"rafts" => ($supports_rafts !== '') ? $supports_rafts : NULL,
-															"infill" => ($notas_tecnicas !== '') ? $notas_tecnicas : NULL,
+															"infill" => ($infill !== '') ? $infill : NULL,
 															"resolution" => ($resolution !== '') ? $resolution : NULL,
 														),
 							);
