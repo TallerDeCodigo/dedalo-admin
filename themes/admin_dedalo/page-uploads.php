@@ -3,112 +3,65 @@
 	$license_checked 	= '';
 	$toolMarked			= '';
 
-	if(!empty($_GET)){
+	if( !empty($_POST) AND isset($_POST['mainCat']) ){
 
-		$title 				= (isset($_GET['productTitle']) AND $_GET['productTitle'] != "") ? $_GET['productTitle'] : NULL; 
-		$category 			= (isset($_GET['mainCat']) AND $_GET['mainCat'] != "") ? $_GET['mainCat'] : NULL;
-		$subCategory 		= (isset($_GET['subCat'])AND $_GET['subCat'] != "") ? $_GET['subCat'] : NULL;
-		$description 		= (isset($_GET['description']) AND $_GET['description'] != "") ? $_GET['description'] : NULL;
-		$fileurl			= (isset($_GET['modelFileUrl']) AND $_GET['modelFileUrl'] != "") ? $_GET['modelFileUrl'] : NULL;
-		$tool 				= (isset($_GET['tools']) AND $_GET['tools'] != "") ? $_GET['tools'] : NULL ;
+		$title 				= (isset($_POST['productTitle']) AND $_POST['productTitle'] != "") ? $_POST['productTitle'] : NULL; 
+		$category 			= (isset($_POST['mainCat']) AND $_POST['mainCat'] != "") ? $_POST['mainCat'] : NULL;
+		$subCategory 		= (isset($_POST['subCat'])AND $_POST['subCat'] != "") ? $_POST['subCat'] : NULL;
+		$description 		= (isset($_POST['description']) AND $_POST['description'] != "") ? $_POST['description'] : '';
+		$fileurl			= (isset($_POST['modelFileUrl']) AND $_POST['modelFileUrl'] != "") ? $_POST['modelFileUrl'] : NULL;
+		$tool 				= (isset($_POST['tools']) AND $_POST['tools'] != "") ? $_POST['tools'] : NULL ;
 		$toolMarked			= ($tool == "true") ? "checked" : "";
-		$license 			= (isset($_GET["cc"]) AND $_GET["cc"] != "") ? $_GET['cc'] : NULL;
+		$license 			= (isset($_POST["cc"]) AND $_POST["cc"] != "") ? $_POST['cc'] : NULL;
 		$license_checked 	= ($license == "true") ? "checked" : "";
-		$fileUpload			= (isset($_FILES['file']) AND $_FILES['file'] != "") ? $_FILES['file'] : NULL;
-		$price				= (isset($_GET['costo']) AND $_GET['costo'] != "") ? $_GET['costo'] : NULL;
-		$tst				= $_GET['_wp_http_referer'];
-		echo($fileUpload);
-		//print_r("este es file upload " .$fileUpload);
+		$fileUploadName		= (isset($_FILES['file']) AND $_FILES['file'] != "") ? $_FILES['file'] : NULL;
+		$price				= (isset($_POST['costo']) AND $_POST['costo'] != "") ? $_POST['costo'] : NULL;
+
 		$insertData = array(
 						'post_type'		=>'productos',
 						'post_title'	=>$title,
 						'post_content'	=>$description,
+						'post_status'   =>'publish',
 						'meta_input'	=>array(
 											'file_for_download'=>$fileurl,
 											'precio_producto'=>$price,
-											'_wp_attached_file'=>$fileUpload,
+											'_wp_attached_file'=>$fileUploadName,
 											'license'=>$license
 											)
 						);
-		$insertID = wp_insert_post($insertData);
-		//print_r($_GET['_wp_http_referer'] . " ");
 
+		$insertID = wp_insert_post($insertData);
 		$catName = get_cat_name($category);
 		$subCatName = get_cat_name($subCategory);
 
 		wp_set_object_terms( $insertID, [$catName, $subCatName], 'category');
 		wp_set_object_terms( $insertID, $tool, 'design-tools');
 		wp_set_object_terms( $insertID, $license, 'license');
-		
-
 
 		//carga imagen a media library y la signa como thumbnail al post
-		require_once( ABSPATH . 'wp-admin/includes/image.php' );
-		require_once( ABSPATH . 'wp-admin/includes/file.php' );
-		require_once( ABSPATH . 'wp-admin/includes/media.php' );
-		// Let WordPress handle the upload
-		$attachment_id = media_handle_upload('file', $insertID );
-		if ( is_wp_error( $attachment_id ) ) {
-			wp_send_json_error();
-		}else {
-			add_post_meta($insertID, '_thumbnail_id', $attachment_id);
-			$metadata = wp_get_attachment_metadata( $attachment_id );
-			// $new_imagemeta = array(
-			// 					"aperture"=> 0,
-			// 					"credit"=> "",
-			// 					"camera"=> "",
-			// 					"caption"=> "",
-			// 					"created_timestamp"=> 0,
-			// 					"copyright"=> "",
-			// 					"focal_length"=> 0,
-			// 					"iso"=> 0,
-			// 					"shutter_speed"=> 0,
-			// 					"title"=> $project_data['event_title'],
-			// 					"orientation"=> 0
-			// 				);
-			// $metadata['image_meta'] = $new_imagemeta;
-			// wp_update_attachment_metadata($attachment_id, $metadata);
+		if ($_FILES['file']['size'] != 0) {
+			require_once( ABSPATH . 'wp-admin/includes/image.php' );
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			require_once( ABSPATH . 'wp-admin/includes/media.php' );
+			// Let WordPress handle the upload
+			$attachment_id = media_handle_upload('file', $insertID );
+			set_post_thumbnail( $insertID, $attachment_id );
+			// if ( is_wp_error( $attachment_id ) ) {
+			// }else {
+			// }
 		}
-
-		// $filename should be the path to a file in the upload directory.
-		// $filename = '/dedalo/wp-content/uploads/' . date('Y') .'/'. date('m') .'/'. $fileUpload;
-		// //print_r($filename);
-		// // The ID of the post this attachment is for.
-		// $parent_post_id = $insertID;
-
-		// // Check the type of file. We'll use this as the 'post_mime_type'.
-		// $filetype = wp_check_filetype( basename( $filename ), null );
-
-		// // Get the path to the upload directory.
-		// $wp_upload_dir = wp_upload_dir();
-
-		// // Prepare an array of post data for the attachment.
-		// $attachment = array(
-		// 	'guid'           => $wp_upload_dir['url'] . '/' . basename( $filename ), 
-		// 	'post_mime_type' => $filetype['type']
-		// );
-
-		// // Insert the attachment.
-		// $attach_id = wp_insert_attachment( $attachment, $filename, $parent_post_id );
-		// //print_r('attach id '.$attach_id);
-		// // Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
-		// require_once( ABSPATH . 'wp-admin/includes/image.php' );
-
-		// // Generate the metadata for the attachment, and update the database record.
-		// $attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
-		// wp_update_attachment_metadata( $attach_id, $attach_data );
-
-		// set_post_thumbnail( $parent_post_id, $attach_id );
+	
+	header("Location: ".home_url());
+	exit;
 
 	}
-
 
 ?>
 <?php get_header();?>
 	<section id="uploads">
-		<form id="upfiles" method="get" action="" enctype="multipart/form-data" name="upfiles">
+		<form id="upfiles" method="POST" action="#" enctype="multipart/form-data" name="upfiles">
 			<fieldset class="fields l">
-				<input type="text" class="textField" placeholder="Title" name="productTitle"><br>
+				<input type="text" class="textField" placeholder="Title" name="productTitle" required><br>
 				<?php
 					$args = array(
 									'show_count'=>'0',
@@ -152,27 +105,28 @@
 				<input type="text" class="textField" placeholder="Model file URL" name="modelFileUrl">
 				<p>Design tools</p>
 				<label for="tinkercad">Tinkercad</label>
-				<input type="radio" class="checks" id="tinkercad" <?php if(isset($_GET['tools']) AND $_GET['tools']== "tinkercad") : echo "checked = 'checked'"; endif; ?> name="tools" value="tinkercad"<?php echo $toolMarked; ?>>
+				<input type="radio" class="checks" id="tinkercad" <?php if(isset($_POST['tools']) AND $_POST['tools']== "tinkercad") : echo "checked = 'checked'"; endif; ?> name="tools" value="tinkercad"<?php echo $toolMarked; ?>>
 
 				<label for="blender">Blender</label>
-				<input type="radio" class="checks" id="blender" <?php if(isset($_GET['tools']) AND $_GET['tools']== "blender") : echo "checked = 'checked'"; endif; ?> name="tools" value="Blender"<?php echo $toolMarked; ?>>
+				<input type="radio" class="checks" id="blender" <?php if(isset($_POST['tools']) AND $_POST['tools']== "blender") : echo "checked = 'checked'"; endif; ?> name="tools" value="Blender"<?php echo $toolMarked; ?>>
 
 				<label for="other">Other</label>
-				<input type="radio" class="checks" id="other"  <?php if(isset($_GET['tools']) AND $_GET['tools']== "other") : echo "checked = 'checked'"; endif; ?> name="tools" value="other"<?php echo $toolMarked; ?>><br><br>
+				<input type="radio" class="checks" id="other"  <?php if(isset($_POST['tools']) AND $_POST['tools']== "other") : echo "checked = 'checked'"; endif; ?> name="tools" value="other"<?php echo $toolMarked; ?>><br><br>
 
 				<p>License</p>
 				<label for="cc">Creative Commons</label>
 				<input type="checkbox" id="cc" class="checks" name="cc" value="Creative Commons" <?php echo $license_checked; ?>><br>
 
-				<input type="text" class="textField" placeholder="Costo" name="costo">
+				<input type="text" class="textField" placeholder="Costo" name="costo" onkeypress='return event.charCode >= 36 && event.charCode <= 57'>
 					<div id="drop-zone">
 					    Drop files here
 					    <div id="clickHere">
 					        or click here
-					        <input type="file" name="file" id="file" accept="image/*" />
-					        <?php wp_nonce_field( 'artist_image_upload', 'artist_image_upload_nonce' ); ?>
+					        <input type="file" name="file" id="file" multiple="false" />
+				        
 					    </div>
 					</div>
+				<?php wp_nonce_field( 'file', 'file_nonce' ); ?>
 				<input type="submit" id="go" name="submit" value="Send">
 			</fieldset>
 		</form>
