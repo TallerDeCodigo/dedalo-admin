@@ -253,8 +253,8 @@ class Router{
 			 * @category GET Endpoint
 			 * Dedalo approved
 			 */
-			$slim->get('/rest/v1/content/enum/categories/:limit/', function($limit){
-				echo fetch_categories($limit);
+			$slim->get('/rest/v1/content/enum/categories/:level/:limit/', function($limit){
+				echo fetch_categories($level, $limit);
 				exit;
 			});
 

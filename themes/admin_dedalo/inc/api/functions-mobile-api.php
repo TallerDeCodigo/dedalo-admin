@@ -289,13 +289,15 @@ function fetch_main_feed($filter = "all", $offset){
 
 	/*
 	 * Fetch categories for feed
-	 * @param Int $limit = 5
+	 * @param Int $level Defaults to 0
+	 * @param Int $limit Defaults to 5
 	 */
-	function fetch_categories($limit = 5){
+	function fetch_categories($level = 0, $limit = 5 ){
 		$return_array = array();
 		$categories = get_categories( array(
 									    'orderby' 		=> 'count',
 									    'order'   		=> 'DESC',
+									    'parent'   		=> $level,
 									    'number'  		=> $limit,
 									    'hide_empty'  	=> FALSE,
 									    'exclude' 		=> 1
@@ -435,7 +437,7 @@ function fetch_main_feed($filter = "all", $offset){
 
 		$previous = array("pool" => array(), "count" => 0);
 		/* Get categories from another endpoint */
-		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/0'));
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/0/-1'));
 		$categories = json_decode($categories);
 		/* Fetch 4 featured products */
 		$featured 	= fetch_featured_products();
@@ -444,9 +446,9 @@ function fetch_main_feed($filter = "all", $offset){
 		// 	// $previous 	= fetch_previous_searches();
 		// }
 		$composite = array(
-									"featured" => $featured,
-									"previous" => $previous,
-									"categories" => $categories,
+									"featured" 		=> $featured,
+									"previous" 		=> $previous,
+									"categories" 	=> $categories,
 							);
 
 		return json_encode($composite);
