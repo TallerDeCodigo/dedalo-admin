@@ -156,6 +156,101 @@ btn_sign.onclick = function(){
 
 	});
 
+	/*****************************/
+	/* ACCOUNT, DASHBOARD Y CART */
+	/*****************************/
+
+	$.fn.digits = function(){ 
+	    return this.each(function(){ 
+	        $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
+	    })
+	}
+
+	$(document).on('click', '.mas', function() {
+	    var cantidad = parseInt($(this).parent().find( ".cantidad" ).html(), 10);
+	    var multip = $(this).parent().find( ".precio" ).html().replace("$ ", "");
+	    multip = parseInt(multip.replace(/,/g, ''), 10);
+	    multip = (multip/cantidad)*(cantidad+1);
+	    ++cantidad;
+	    $(this).parent().find( ".cantidad" ).html( cantidad );
+	    $(this).parent().find( ".precio" ).html( "$ " + multip );
+	    $(this).parent().find( ".precio" ).digits();
+	});
+
+	$(document).on('click', '.menos', function() {
+	    var cantidad = parseInt($(this).parent().find( ".cantidad" ).html(), 10);
+	    var multip = $(this).parent().find( ".precio" ).html().replace("$ ", "");
+	    multip = parseInt(multip.replace(/,/g, ''), 10);
+	    multip = (multip/cantidad)*(cantidad-1);
+	    --cantidad;
+	    if (cantidad != 0) {
+	        $(this).parent().find( ".cantidad" ).html( cantidad );
+	        $(this).parent().find( ".precio" ).html( "$ " + multip );
+	        $(this).parent().find( ".precio" ).digits();
+	    }
+	});
+
+	$(document).on('click', '.close', function() {
+	    $(this).parent().remove();
+	    var totitems = $('.actions').length;
+	    totitems = totitems + " ITEMS";
+	    $("#items").html( totitems ) ;
+	});
+
+	$(document).on('click', '.addad', function() {
+	    $(this).parent().hide();
+	    $('.newad').toggle();
+	});
+
+	$(document).on('click', '.addca', function() {
+	    $(this).parent().hide();
+	    $('.newca').toggle();
+	});
+
+	$(document).on('click', '.edit1', function() {
+	    $(this).toggleClass( 'colorear' );
+	    $('#payment .separator[data-id=' + $(this).data('id') + ']').toggle();
+	});
+
+	$(document).on('click', '.edit2', function() {
+	    $(this).toggleClass( 'colorear' );
+	    $('#shipping .separator[data-id=' + $(this).data('id') + ']').toggle();
+	});
+
+	$(document).on('click', '.shipp', function() {
+	    $(".shipp i").html( "panorama_fish_eye" );
+	    $(this).find( "i" ).html( "adjust" );
+	});
+
+	$(document).on('click', '.paym', function() {
+	    $(".paym i").html( "panorama_fish_eye" );
+	    $(this).find( "i" ).html( "adjust" );
+	});
+
+	$(document).on('click', '.more', function() {
+	    var extra = ' <a href="#">Lorem</a> <a href="#">Ipsum</a> <a href="#">Dolor</a> <a href="#">Sit</a> <a href="#">Amet</a> <a href="#">Consectetur</a> <a href="#">Adipiscing</a>';
+	    $("#dashboard1").append(extra);
+	    $("#dashboard1 a").addClass( "choosed" );
+	    var extra1 = ' <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a>';
+	    $("#dashboard2").append(extra1);
+	    $("#dashboard2 a").addClass( "usuario" );
+	});
+
+	$(document).on('click', '.choosed', function() {
+	    if ($(this).hasClass( "cat-choose" )) {
+	        $(this).removeClass( "cat-choose" );
+	    } else {
+	        $(this).addClass( "cat-choose" );
+	    }
+	});
+
+	$(document).on('click', '.usuario', function() {
+	    if ($(this).hasClass( "following" )) {
+	        $(this).removeClass( "following" );
+	    } else {
+	        $(this).addClass( "following" );
+	    }
+	});
 
 
 
@@ -213,8 +308,5 @@ btn_sign.onclick = function(){
 	         $("#" + dropZoneId).removeClass(mouseOverClass);
 	     }, true);
 
-
-
-	 
-
 })(jQuery);
+
