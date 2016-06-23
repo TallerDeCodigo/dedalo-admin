@@ -39,17 +39,17 @@
 
 		// USER MESSAGES
 		$labels = array(
-			'name'          => 'Mensajes de usuarios',
-			'singular_name' => 'Mensaje',
-			'add_new'       => 'Nuevo Mensaje',
-			'add_new_item'  => 'Nuevo Mensaje',
-			'edit_item'     => 'Editar Mensaje',
-			'new_item'      => 'Nuevo Mensaje',
+			'name'          => 'Custom search',
+			'singular_name' => 'Custom search',
+			'add_new'       => 'Nuevo',
+			'add_new_item'  => 'Nuevo',
+			'edit_item'     => 'Editar',
+			'new_item'      => 'Nuevo',
 			'all_items'     => 'Todos',
-			'view_item'     => 'Ver Mensaje',
-			'search_items'  => 'Buscar Mensaje',
+			'view_item'     => 'Ver',
+			'search_items'  => 'Buscar',
 			'not_found'     => 'No se encontró',
-			'menu_name'     => 'Mensajes de usuarios'
+			'menu_name'     => 'Custom search'
 		);
 
 		$args = array(

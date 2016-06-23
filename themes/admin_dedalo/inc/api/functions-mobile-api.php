@@ -1021,7 +1021,7 @@ function get_event_gallery($event_id, $limit = 5, $size = 'gallery_mobile'){
 	if ( $attachments ) {
 		foreach ( $attachments as $attachment ) {
 
-			$img_url = museo_get_attachment_url($attachment->ID, $size);
+			$img_url = _get_attachment_url($attachment->ID, $size);
 			$this_array = array(
 									'src' => $img_url[0],
 									'w' => ($size == 'thumbnail') ? 150 : 350,
@@ -1056,7 +1056,7 @@ function get_user_gallery($user_login, $limit = 5, $size = 'gallery_mobile'){
 	if ( $attachments ) {
 		foreach ( $attachments as $attachment ) {
 
-			$img_url = museo_get_attachment_url($attachment->ID, $size);
+			$img_url = _get_attachment_url($attachment->ID, $size);
 			$this_array = array(
 									'src' => $img_url[0],
 									'w' => ($size == 'thumbnail') ? 150 : 350,
@@ -1434,7 +1434,7 @@ function get_event_stdinfo($event_id, $complete = TRUE, $logged_user){
 		return wp_send_json_error('Not a valid user or you don\'t have enough permissions');
 	$info_array = array();
 	$ID_venue 		= get_post_meta($event_object->ID ,'mg_venue_id', TRUE);
-	$thumb_url 		= museo_get_attachment_url( get_post_thumbnail_id($event_object->ID), 'gallery_mobile' );
+	$thumb_url 		= _get_attachment_url( get_post_thumbnail_id($event_object->ID), 'gallery_mobile' );
 	$type 			= array_values(wp_get_post_terms( $event_object->ID, 'tipo-de-evento' ));
 	$event_address  = (get_post_meta($event_object->ID,'mg_evento_direccion', true) !== '') 
 							? get_post_meta($event_object->ID,'mg_evento_direccion', true) 
@@ -1805,7 +1805,7 @@ function get_login_content(){
 				);
 	$random_event = get_posts($args);
 	$random_event = $random_event[0];
-	$thumb = museo_get_attachment_url(get_post_thumbnail_id($random_event->ID), 'gallery_mobile');
+	$thumb = _get_attachment_url(get_post_thumbnail_id($random_event->ID), 'gallery_mobile');
 	wp_send_json_success( array(
 					'login_image' => $thumb[0]
 				));
@@ -1890,7 +1890,7 @@ function save_event_upload($user_login, $image_temp, $image_name, $event_id) {
 		wp_update_attachment_metadata( $attach_id, $attach_data );
 		set_post_thumbnail( '', $attach_id );
 		registra_actividad($event_id, $current_user->ID, 'media', $attach_id);
-		$img_url2 = museo_get_attachment_url($attach_id, 'agenda-feed');
+		$img_url2 = _get_attachment_url($attach_id, 'agenda-feed');
 
 	}
 	return $img_url2[0];
@@ -1951,7 +1951,7 @@ function save_profile_picture_upload($user_login, $image_temp, $image_name) {
 		wp_update_attachment_metadata( $attach_id, $attach_data );
 		set_post_thumbnail( '', $attach_id );
 		$dir = substr($wp_upload_dir['subdir'], 1);
-		 $img_url2 = museo_get_attachment_url($attach_id, 'thumbnail');
+		 $img_url2 = _get_attachment_url($attach_id, 'thumbnail');
 		 $pat_img    = pathinfo($img_url2[0]);
 		 $img2 = $dir .'/'. $pat_img['basename'];
 		 save_image_user($img2, $current_user->ID);
@@ -1996,7 +1996,7 @@ function museo_get_asset_by_name($asset_name = NULL, $args = array()){
 }
 
 /*
- * Override for the  museo_get_attachment_url method
+ * Override for the  _get_attachment_url method
  * This one always gets an absolute path
  *
  * @param Int $attachment_id
@@ -2004,7 +2004,7 @@ function museo_get_asset_by_name($asset_name = NULL, $args = array()){
  * @param Boolean $icon
  * @return Array $image or FALSE if an error ocurred
  */
-function museo_get_attachment_url($attachment_id, $size='thumbnail', $icon = false) {
+function _get_attachment_url($attachment_id, $size='thumbnail', $icon = false) {
  
     // get a thumbnail or intermediate image if there is one
     if ( $image = image_downsize($attachment_id, $size) ){

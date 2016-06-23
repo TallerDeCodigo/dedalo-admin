@@ -349,27 +349,14 @@ class Router{
 			 * Advanced search
 			 * @param String $message via $_POST
 			 * @param File $file via $_FILES
+			 * @return Array/Object advanced results compound
 			 * Dedalo approved
 			 */
-			$slim->post('/rest/v1/content/search/advanced/',function() {
-				$args = !empty($_POST) ? $_POST : NULL;
-				// file_put_contents(
-				// 	'/var/log/php.log',
-				// 	var_export( $_POST, true ) . PHP_EOL,
-				// 	FILE_APPEND
-				// );
-				// file_put_contents(
-				// 	'/var/log/php.log',
-				// 	var_export( $_FILES, true ) . PHP_EOL,
-				// 	FILE_APPEND
-				// );
-				// return exec_advanced_search($offset, $args);
-				echo "<pre>";
-					print_r($_POST);
-				echo "</pre>";
-				echo "<pre>";
-					print_r($_FILES);
-				echo "</pre>";
+			$slim->post('/rest/v1/:logged_user/content/search/advanced/',function($logged_user = NULL) {
+				$args = NULL;
+				$args['key_string'] = (!empty($_POST) AND isset($_POST['message'])) ? $_POST['message'] : NULL;
+				$args['files'] 	 	= !empty($_FILES) ? $_FILES['file'] : NULL;
+				echo json_encode(exec_advanced_search($logged_user, $args));
 				exit;
 			});
 

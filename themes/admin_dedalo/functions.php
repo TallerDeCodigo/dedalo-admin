@@ -463,7 +463,7 @@ function guardar_imagen() {
 		wp_update_attachment_metadata( $attach_id, $attach_data );
 		set_post_thumbnail( '', $attach_id );
 
-		 $img_url2 = museo_get_attachment_url($attach_id, 'thumbnail');
+		 $img_url2 = _get_attachment_url($attach_id, 'thumbnail');
 		 $pat_img    = pathinfo($img_url2[0]);
 		 $img2 = $dir .'/'. $pat_img['basename'];
 		 save_image_user($img2, $user_id);

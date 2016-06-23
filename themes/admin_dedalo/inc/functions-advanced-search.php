@@ -7,23 +7,30 @@
 	 * @param Integer $cat_id
 	 * @return Boolean $followed
 	 */
-	function exec_advanced_search($offset = 0, $args = array() ) {
+	function exec_advanced_search($user_login, $args = array() ) {
 		$final_array = array();
 		extract($args);
-		$keywords = json_decode(stripslashes($keywords));
-		$offered = search_dedalo($keywords, NULL, $filter);
+		
+		$keywords_exploded = explode(",", $key_string);
+
+		$offered = search_dedalo($keywords_exploded, NULL, "productos");
 		$final_array["offered"] = $offered;
 		/*** Assign response ***/
-		$final_array["response"] = TRUE;
+		$author = get_user_by("slug", $user_login);
+		$to_insert = array(
+							"post_title" 	=> "$user_login advanced search ".date('Y-m-d'),
+							"post_content" 	=> $key_string,
+							"post_status" 	=> "draft",
+							"post_type" 	=> "mensaje",
+							"post_author" 	=> $author->ID,
+							);
+
+		$posted = wp_insert_post($to_insert);
 
 		/**+ Upload image as message ***/
-		// $response = save_search_upload();
-
-		// file_put_contents(
-		// 	'/var/log/php.log',
-		// 	var_export( $final_array, true ) . PHP_EOL,
-		// 	FILE_APPEND
-		// );
+		$response = save_search_upload($user_login, $args['files']['tmp_name'], $args['files']['name'], $posted);
+		$final_array["response"] = ($response) ? TRUE : FALSE;
+		
 		return $final_array;
 	}
 
@@ -34,6 +41,7 @@
 	 * @return associative Array of the results by type
 	 */
 	function search_dedalo($search_term = NULL, $offset = 0, $filter = "none"){
+
 		global $wpdb;
 		$final_array = array();
 
@@ -47,13 +55,14 @@
 		if(is_array($search_term)){
 			$keyword_query = "";
 			foreach ($search_term as $index => $each_term) {
+				$each_term = str_replace(" ", "", $each_term);
 				$keyword_query .= (!$index) ? " WHERE ( concat( post_title, post_content ) LIKE '%{$each_term}%' "
 											: " OR concat( post_title, post_content ) LIKE '%{$each_term}%' ";
 				if($index == count($search_term)-1)
 					$keyword_query .= ")";
 			}
 		}
-
+		
 		$results = $wpdb->get_results(
 									"SELECT wpp.ID  post_id, wpp.post_type  type, wpp.post_title name, post_date  fecha,
 										wpm2.post_id attachment_id, u.display_name maker_name, u.ID maker_id
@@ -109,20 +118,23 @@
 		wp_send_json_success($results);
 	}
 
-	/*
-	 * Save event uploads
-	 * @param $user The user uploading the object
-	 * @param $ajax Wheather to use as API call (FALSE) or an ajax call
+	/**
+	 * Save 'search by image' uploads
+	 * @param $user_login Logged user uploading file
+	 * @param $image_temp File temp name
+	 * @param $image_name File name (Usually generated)
+	 * @param $inserted Inserted entry in database
 	 * @return JSON success plus the image url
+	 * Dedalo approved
 	 */
-	function save_search_upload($user_login, $image_temp, $image_name, $event_id) {
-		if(!$user_login){
-			global $current_user;
-		}else{
-			$current_user = get_user_by('slug', $user_login);
-		}
+	function save_search_upload($user_login, $image_temp, $image_name, $inserted) {
+		// if(!$user_login){
+		// 	global $current_user;
+		// }else{
+		// 	$current_user = get_user_by('slug', $user_login);
+		// }
 		global $wpdb;
-
+		
 		$finfo = new finfo(FILEINFO_MIME_TYPE);
 		    if (false === $ext = array_search(
 		        $finfo->file($image_temp),
@@ -150,7 +162,7 @@
 			'post_status'    => 'private',
 			'post_mime_type' => "image/{$extension}",
 			'post_type'      => 'attachment',
-			'post_parent'    => $event_id,
+			'post_parent'    => $inserted,
 			'post_title'     => $image_name,
 
 		);
@@ -162,11 +174,10 @@
 			// you must first include the image.php file for the function wp_generate_attachment_metadata() to work
 			require_once(ABSPATH . 'wp-admin/includes/image.php');
 			$attach_data = wp_generate_attachment_metadata( $attach_id, $img );
-			$_POST['attach_id'] = $attach_id;
 			wp_update_attachment_metadata( $attach_id, $attach_data );
-			set_post_thumbnail( '', $attach_id );
-			registra_actividad($event_id, $current_user->ID, 'media', $attach_id);
-			$img_url2 = museo_get_attachment_url($attach_id, 'agenda-feed');
+			set_post_thumbnail( $inserted, $attach_id );
+			// registra_actividad($event_id, $current_user->ID, 'media', $attach_id);
+			$img_url2 = _get_attachment_url($attach_id, 'large');
 
 		}
 		return $img_url2[0];
