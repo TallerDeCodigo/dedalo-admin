@@ -347,7 +347,8 @@ class Router{
 
 			/**
 			 * Advanced search
-			 * @param String $s
+			 * @param String $message via $_POST
+			 * @param File $file via $_FILES
 			 * Dedalo approved
 			 */
 			$slim->post('/rest/v1/content/search/advanced/',function() {
@@ -362,7 +363,7 @@ class Router{
 				// 	var_export( $_FILES, true ) . PHP_EOL,
 				// 	FILE_APPEND
 				// );
-				return exec_advanced_search($offset, $args);
+				// return exec_advanced_search($offset, $args);
 				echo "<pre>";
 					print_r($_POST);
 				echo "</pre>";
