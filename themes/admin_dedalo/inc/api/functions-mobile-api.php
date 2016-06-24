@@ -292,13 +292,14 @@ function fetch_main_feed($filter = "all", $offset){
 	 * @param Int $level Defaults to 0
 	 * @param Int $limit Defaults to 5
 	 */
-	function fetch_categories($level = 0, $limit = 5 ){
+	function fetch_categories($level = 0, $limit = 5, $offset = 0){
 		$return_array = array();
 		$categories = get_categories( array(
 									    'orderby' 		=> 'count',
 									    'order'   		=> 'DESC',
 									    'parent'   		=> $level,
 									    'number'  		=> $limit,
+									    'offset'  		=> $offset,
 									    'hide_empty'  	=> FALSE,
 									    'exclude' 		=> 1
 									) );
