@@ -273,7 +273,7 @@ class Router{
 			});
 
 			/**
-			 * Fetch product detail
+			 * Fetch product detai
 			 * @category GET Endpoint
 			 * Dedalo approved
 			 */

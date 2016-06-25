@@ -248,7 +248,7 @@ function fetch_main_feed($filter = "all", $offset){
 				'post_status' 		=> 'publish',
 				'paged'				=> $offset+1,
 				'posts_per_page' 	=> 20,
-            	'orderby'   		=> 'date',
+				'orderby'   		=> 'date',
 			);
 		$query = new WP_Query($args);
 		return $query->posts;
@@ -289,20 +289,26 @@ function fetch_main_feed($filter = "all", $offset){
 
 	/*
 	 * Fetch categories for feed
-	 * @param Int $level Defaults to 0
+	 * @param Int $level Defaults to 0 (Use -1 for all levels)
 	 * @param Int $limit Defaults to 5
 	 */
 	function fetch_categories($level = 0, $limit = 5, $offset = 0){
 		$return_array = array();
-		$categories = get_categories( array(
-									    'orderby' 		=> 'count',
-									    'order'   		=> 'DESC',
-									    'parent'   		=> $level,
-									    'number'  		=> $limit,
-									    'offset'  		=> $offset,
-									    'hide_empty'  	=> FALSE,
-									    'exclude' 		=> 1
-									) );
+		$parent_chunk = ($level != -1) ? $level : NULL;
+
+		$args = array(
+						'orderby' 		=> 'count',
+						'order'   		=> 'DESC',
+						'number'  		=> $limit,
+						'offset'  		=> $offset,
+						'hide_empty'  	=> FALSE,
+						'exclude' 		=> 1
+					);
+			if($parent_chunk)
+				$args['parent'] = $parent_chunk;
+		
+		$categories = get_categories( $args );
+
 		foreach ($categories as $each_cat) {
 			$return_array['pool'][] = 	array(
 											"ID" 	=> $each_cat->term_id,
@@ -626,7 +632,7 @@ function fetch_main_feed($filter = "all", $offset){
 	function fetch_user_dashboard($user_login = NULL){
 		$final_array = array();
 		/* Get categories and random makers from another endpoint */
-		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/14/'));
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/-1/14'));
 		$categories = json_decode($categories);
 		$makers = file_get_contents(site_url("rest/v1/{$user_login}/content/users/maker/10/"));
 		$makers = json_decode($makers);
@@ -1180,7 +1186,7 @@ function get_rand_categories_feed($user, $number = 4){
 			$wpdb->prepare( 
 				"SELECT tt.term_id FROM wp_term_taxonomy AS tt
 				  INNER JOIN wp_terms AS wpt
-				   	ON tt.term_id = wpt.term_id
+					ON tt.term_id = wpt.term_id
 						WHERE taxonomy = 'category'
 						AND tt.term_id != '1'
 						ORDER BY rand() LIMIT %d
@@ -1243,7 +1249,7 @@ function get_categories_feed($user, $level, $exclude = NULL, $cached = TRUE){
 	$cat_feed_try = get_transient( 'cat_feed_tree_'.$level );
 	
 	if ( !$cached OR false === $cat_feed_try ) {
-  		$categories = get_categories($args);
+		$categories = get_categories($args);
 		$seguidas = museografo_categorias_seguidas($user);
 		$parent_name = NULL;
 
@@ -1274,8 +1280,8 @@ function get_categories_feed($user, $level, $exclude = NULL, $cached = TRUE){
 						);
 
 		}
-  		set_transient( 'cat_feed_tree_'.$level , $cat_feed, 12 * HOUR_IN_SECONDS );
-  		if(!empty($cat_feed)) wp_send_json_success($cat_feed);
+		set_transient( 'cat_feed_tree_'.$level , $cat_feed, 12 * HOUR_IN_SECONDS );
+		if(!empty($cat_feed)) wp_send_json_success($cat_feed);
 	}
 	$cat_feed = $cat_feed_try;
 	if(!empty($cat_feed)) wp_send_json_success($cat_feed);
@@ -1849,18 +1855,18 @@ function save_event_upload($user_login, $image_temp, $image_name, $event_id) {
 	global $wpdb;
 
 	$finfo = new finfo(FILEINFO_MIME_TYPE);
-	    if (false === $ext = array_search(
-	        $finfo->file($image_temp),
-	        array(
-	            'jpg' => 'image/jpeg',
-	            'png' => 'image/png',
-	            'gif' => 'image/gif',
-	        ),
-	        true
-	    )) {
-	        throw new RuntimeException('Invalid file format.');
-	   		wp_send_json_error('Invalid file format.');
-	    }
+		if (false === $ext = array_search(
+			$finfo->file($image_temp),
+			array(
+				'jpg' => 'image/jpeg',
+				'png' => 'image/png',
+				'gif' => 'image/gif',
+			),
+			true
+		)) {
+			throw new RuntimeException('Invalid file format.');
+			wp_send_json_error('Invalid file format.');
+		}
 	
 	$wp_upload_dir = wp_upload_dir();
 	$extension = get_extension_fromMIMEtype($_FILES['file']['type']);
@@ -1913,18 +1919,18 @@ function save_profile_picture_upload($user_login, $image_temp, $image_name) {
 	global $wpdb;
 
 	$finfo = new finfo(FILEINFO_MIME_TYPE);
-	    if (false === $ext = array_search(
-	        $finfo->file($image_temp),
-	        array(
-	            'jpg' => 'image/jpeg',
-	            'png' => 'image/png',
-	            'gif' => 'image/gif',
-	        ),
-	        true
-	    )) {
-	        throw new RuntimeException('Invalid file format.');
-	   		wp_send_json_error('Invalid file format.');
-	    }
+		if (false === $ext = array_search(
+			$finfo->file($image_temp),
+			array(
+				'jpg' => 'image/jpeg',
+				'png' => 'image/png',
+				'gif' => 'image/gif',
+			),
+			true
+		)) {
+			throw new RuntimeException('Invalid file format.');
+			wp_send_json_error('Invalid file format.');
+		}
 	
 	$wp_upload_dir = wp_upload_dir();
 	$extension = get_extension_fromMIMEtype($_FILES['file']['type']);
@@ -2007,32 +2013,32 @@ function museo_get_asset_by_name($asset_name = NULL, $args = array()){
  */
 function _get_attachment_url($attachment_id, $size='thumbnail', $icon = false) {
  
-    // get a thumbnail or intermediate image if there is one
-    if ( $image = image_downsize($attachment_id, $size) ){
-    	$broken = explode('/', $image[0]);
-    	$is_museo_dev = (array_search("museografo.dev", $broken) !== FALSE) ? TRUE : FALSE;
-    	$relative_start_index = array_search("wp-content", $broken);
-    	$broken = array_splice($broken, $relative_start_index, count($broken)-1);
-    	if( (array_search("museografo.com", $broken) == FALSE AND !$is_museo_dev) 
-    		OR (array_search("museografo.dev", $broken) == FALSE AND $is_museo_dev) ){
-    		$joint = implode("/", $broken);
-    		$image[0] = site_url( $joint);
-    		return $image;
-    	}
-        return $image;
-    }
+	// get a thumbnail or intermediate image if there is one
+	if ( $image = image_downsize($attachment_id, $size) ){
+		$broken = explode('/', $image[0]);
+		$is_museo_dev = (array_search("museografo.dev", $broken) !== FALSE) ? TRUE : FALSE;
+		$relative_start_index = array_search("wp-content", $broken);
+		$broken = array_splice($broken, $relative_start_index, count($broken)-1);
+		if( (array_search("museografo.com", $broken) == FALSE AND !$is_museo_dev) 
+			OR (array_search("museografo.dev", $broken) == FALSE AND $is_museo_dev) ){
+			$joint = implode("/", $broken);
+			$image[0] = site_url( $joint);
+			return $image;
+		}
+		return $image;
+	}
  
-    $src = false;
-    if ( $icon && $src = wp_mime_type_icon($attachment_id) ) {
-    
-        /** This filter is documented in wp-includes/post.php */
-        $icon_dir = apply_filters( 'icon_dir', ABSPATH . WPINC . '/images/media' );
-        $src_file = $icon_dir . '/' . wp_basename($src);
-        @list($width, $height) = getimagesize($src_file);
-    }
-    if ( $src && $width && $height )
-        return array( $src, $width, $height );
-    return false;
+	$src = false;
+	if ( $icon && $src = wp_mime_type_icon($attachment_id) ) {
+	
+		/** This filter is documented in wp-includes/post.php */
+		$icon_dir = apply_filters( 'icon_dir', ABSPATH . WPINC . '/images/media' );
+		$src_file = $icon_dir . '/' . wp_basename($src);
+		@list($width, $height) = getimagesize($src_file);
+	}
+	if ( $src && $width && $height )
+		return array( $src, $width, $height );
+	return false;
 }
 
 /*
