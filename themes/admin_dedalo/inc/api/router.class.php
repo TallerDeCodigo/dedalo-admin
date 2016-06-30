@@ -262,6 +262,19 @@ class Router{
 			});
 
 			/**
+			 * Get categories tree
+			 * @param Integer $level where 0 is top level and $parent is expected for deeper levels
+			 * @param Integer $limit
+			 * @param Integer $offset for pagination
+			 * @category GET Endpoint
+			 * Dedalo approved
+			 */
+			$slim->get('/rest/v1/content/enum/categories/', function(){
+				echo fetch_categories_tree();
+				exit;
+			});
+
+			/**
 			 * Get design tool archive and detailed info
 			 * @param String $taxonomy ['category', 'design-tools', 'license']
 			 * @category GET Endpoint

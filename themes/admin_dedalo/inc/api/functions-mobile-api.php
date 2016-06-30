@@ -294,8 +294,8 @@ function fetch_main_feed($filter = "all", $offset){
 	 */
 	function fetch_categories($level = 0, $limit = 5, $offset = 0){
 		$return_array = array();
-		$parent_chunk = ($level != -1) ? $level : NULL;
-
+		$parent_sent = ($level !== -1) ? TRUE : NULL;
+		
 		$args = array(
 						'orderby' 		=> 'count',
 						'order'   		=> 'DESC',
@@ -304,9 +304,9 @@ function fetch_main_feed($filter = "all", $offset){
 						'hide_empty'  	=> FALSE,
 						'exclude' 		=> 1
 					);
-			if($parent_chunk)
-				$args['parent'] = $parent_chunk;
-		
+		if($parent_sent)
+			$args['parent'] = $level;
+
 		$categories = get_categories( $args );
 
 		foreach ($categories as $each_cat) {
@@ -318,7 +318,21 @@ function fetch_main_feed($filter = "all", $offset){
 										);
 		}
 		$return_array['count'] = count($return_array['pool']);
-		return wp_send_json($return_array);
+		return json_encode($return_array);
+	}
+
+	/*
+	 * Fetch categories for feed
+	 */
+	function fetch_categories_tree(){
+		$return_array = array();
+
+		$parent_cats = json_decode( fetch_categories(0, 0) , true);
+		
+		foreach ($parent_cats['pool'] as $index => $each_parent) {
+			$parent_cats['pool'][$index]['children'] = json_decode(fetch_categories($each_cat['ID']), TRUE);
+		}
+		return json_encode($parent_cats);
 	}
 
 	/**
