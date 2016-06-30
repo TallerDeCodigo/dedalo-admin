@@ -291,6 +291,7 @@ function fetch_main_feed($filter = "all", $offset){
 	 * Fetch categories for feed
 	 * @param Int $level Defaults to 0 (Use -1 for all levels)
 	 * @param Int $limit Defaults to 5
+	 * @return JSON pool/count Object
 	 */
 	function fetch_categories($level = 0, $limit = 5, $offset = 0){
 		$return_array = array();
@@ -314,7 +315,7 @@ function fetch_main_feed($filter = "all", $offset){
 											"ID" 	=> $each_cat->term_id,
 											"name" 	=> $each_cat->name,
 											"slug" 	=> $each_cat->slug,
-											"count" => $each_cat->count
+											"product_count" => $each_cat->count
 										);
 		}
 		$return_array['count'] = count($return_array['pool']);
@@ -322,15 +323,16 @@ function fetch_main_feed($filter = "all", $offset){
 	}
 
 	/*
-	 * Fetch categories for feed
+	 * Fetch categories tree structure
+	 * @uses fetch_categories
+	 * @return JSON pool/count object
 	 */
 	function fetch_categories_tree(){
-		$return_array = array();
 
-		$parent_cats = json_decode( fetch_categories(0, 0) , true);
-		
+		$parent_cats = json_decode( fetch_categories(0, 0) , true);		
 		foreach ($parent_cats['pool'] as $index => $each_parent) {
-			$parent_cats['pool'][$index]['children'] = json_decode(fetch_categories($each_cat['ID']), TRUE);
+			$child_categories = json_decode(fetch_categories($each_parent['ID']), TRUE);
+			$parent_cats['pool'][$index]['children'] = $child_categories;
 		}
 		return json_encode($parent_cats);
 	}
