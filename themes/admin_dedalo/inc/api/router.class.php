@@ -345,7 +345,7 @@ class Router{
 			 * @category GET Endpoint
 			 * Dedalo approved
 			 */
-			$slim->get('/rest/v1(/:logged)/content/search-composite/', function($logged = NULL){
+			$slim->get('/rest/v1(/:logged)/content/search-composite/', function($logged = 'not_logged'){
 
 				echo fetch_search_composite( $logged );
 				exit;

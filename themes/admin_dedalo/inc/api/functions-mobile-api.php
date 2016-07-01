@@ -294,7 +294,7 @@ function fetch_main_feed($filter = "all", $offset){
 	 * @return JSON pool/count Object
 	 */
 	function fetch_categories($level = 0, $limit = 5, $offset = 0){
-		$return_array = array();
+		$return_array = array("count" => 0, "pool" => Array());
 		$parent_sent = ($level !== -1) ? TRUE : NULL;
 		
 		$args = array(
