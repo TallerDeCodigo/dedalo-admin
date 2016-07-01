@@ -62,9 +62,9 @@
 					$keyword_query .= ")";
 			}
 		}
-		
+	
 		$results = $wpdb->get_results(
-									"SELECT wpp.ID  post_id, wpp.post_type  type, wpp.post_title name, post_date  fecha,
+									"SELECT DISTINCT wpp.ID  post_id, wpp.post_type  type, wpp.post_title name, post_date  fecha,
 										wpm2.post_id attachment_id, u.display_name maker_name, u.ID maker_id
 									  FROM wp_posts AS wpp 
 									  INNER JOIN wp_users AS u  
