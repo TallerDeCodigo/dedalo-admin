@@ -312,9 +312,9 @@ function fetch_main_feed($filter = "all", $offset){
 
 		foreach ($categories as $each_cat) {
 			$return_array['pool'][] = 	array(
-											"ID" 	=> $each_cat->term_id,
-											"name" 	=> $each_cat->name,
-											"slug" 	=> $each_cat->slug,
+											"ID" 			=> $each_cat->term_id,
+											"name" 			=> $each_cat->name,
+											"slug" 			=> $each_cat->slug,
 											"product_count" => $each_cat->count
 										);
 		}

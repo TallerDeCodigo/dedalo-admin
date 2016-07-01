@@ -65,7 +65,8 @@ class Router{
 				$device_info = (isset($_POST['device_info'])) ? $_POST['device_info'] : NULL;
 				
 				$response = $this->check_token_valid($_POST['user_id'], $_POST['request_token'], $device_info);
-				if($response) wp_send_json_success($response);
+				if($response) 
+					wp_send_json_success($response);
 				wp_send_json_error();
 			});
 
