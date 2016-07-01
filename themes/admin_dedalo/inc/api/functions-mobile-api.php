@@ -460,7 +460,7 @@ function fetch_main_feed($filter = "all", $offset){
 
 		$previous = array("pool" => array(), "count" => 0);
 		/* Get categories from another endpoint */
-		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/0/-1'));
+		$categories = file_get_contents(site_url('rest/v1/content/enum/categories/'));
 		$categories = json_decode($categories);
 		/* Fetch 4 featured products */
 		$featured 	= fetch_featured_products();
