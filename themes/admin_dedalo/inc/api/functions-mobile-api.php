@@ -295,7 +295,7 @@ function fetch_main_feed($filter = "all", $offset){
 	 */
 	function fetch_categories($level = 0, $limit = 5, $offset = 0){
 		$return_array = array("count" => 0, "pool" => Array());
-		$parent_sent = ($level !== -1) ? TRUE : NULL;
+		$parent_sent = ($level != -1) ? TRUE : NULL;
 		
 		$args = array(
 						'orderby' 		=> 'count',
