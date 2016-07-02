@@ -410,33 +410,40 @@ function fetch_main_feed($filter = "all", $offset){
 		$bio = get_user_meta( $user->ID, 'user_3dbio', TRUE );
 
 		$brand_object = get_term_by("id", intval($printer_brand), "printer-model");
+
 		$model_object = get_term_by("id", intval($printer_model), "printer-model");
-		
+
 		$catalogue = file_get_contents(THEMEPATH."inc/pModels.json");
 		$catalogue = json_decode($catalogue);
 		$catalogue = (array) $catalogue;
-		if($brand_object)
-			$search_brand = array_search($brand_object->name, $catalogue);
-		if($model_object)
-			$search_model = array_search($model_object->name, $catalogue[$brand_object->name]);
+
+		if($brand_object !== FALSE)
+			$search_brand = array_search($brand_object->name, array_keys($catalogue), TRUE);
+
+		if($model_object !== FALSE)
+			$search_model = intval(array_search($model_object->name, $catalogue[$brand_object->name]));
 
 		$me =   array(
-					"ID" 			=> $user->ID,
-					"login" 		=> $userData->data->user_login,
-					"first_name" 	=> $first_name,
-					"last_name" 	=> $last_name,
-					"email" 		=> $userData->data->user_email,
-					"bio" 			=> $bio,
-					"printer_brand" => intval($printer_brand),
-					"printer_model" => intval($printer_model),
-					"cat_printer_brand" => intval($search_brand),
-					"cat_printer_model" => intval($search_model),
-					"display_name" 	=> $userData->data->display_name,
-					"profile_pic" 	=> ($foto_user) ? $foto_user : null,
-					"role" 			=> $user->roles[0],
-					"valid_token"	=> "HFJEUUSNNSODJJEHHAGADMNDHS&$86324",
-					"categories" 	=> array(),
+					"ID" 				=> $user->ID,
+					"login" 			=> $userData->data->user_login,
+					"first_name" 		=> $first_name,
+					"last_name" 		=> $last_name,
+					"email" 			=> $userData->data->user_email,
+					"bio" 				=> $bio,
+					"printer_brand" 	=> $printer_brand,
+					"printer_model" 	=> $printer_model,
+					"cat_printer_brand" => $search_brand,
+					"cat_printer_model" => $search_model,
+					"display_name" 		=> $userData->data->display_name,
+					"profile_pic" 		=> ($foto_user) ? $foto_user : null,
+					"role" 				=> $user->roles[0],
+					"valid_token"		=> "HFJEUUSNNSO(h@rDc0d3d)DJJEHHAGADMNDHS&$86324",
+					"categories" 		=> array(),
 				);
+
+		if($printer_model !== -1)
+			$me['models_already'] =	$catalogue[$brand_object->name];
+
 		foreach ($assigned_terms as $each_term){
 			$me['categories'][] =   array(
 										"ID" => $each_term->term_id,
@@ -1135,7 +1142,6 @@ function recomend_event_to_user($user){
  */
 function update_user_profile($user_login, $args){
 	$user = get_user_by("slug", $user_login);
-
 	if(!$user)
 		wp_send_json_error();
 
@@ -1168,7 +1174,7 @@ function update_user_profile($user_login, $args){
 				$model_index = $args->printer_model;
 				$model_name = $catalogue[$brand_name][$model_index];
 				$model_object = get_term_by("name", $model_name, "printer-model");
-			
+				
 				$object_ptr_terms =  array($brand_object->term_id, $model_object->term_id);
 				
 				update_user_meta($user->ID, "printer_brand", $brand_object->term_id);
@@ -1182,7 +1188,6 @@ function update_user_profile($user_login, $args){
 		wp_set_object_terms( $user->ID, $object_terms, 'user_category', false );
 		clean_object_term_cache($user->ID, 'user_category');
 		
-
 		wp_send_json_success();
 	}
 	wp_send_json_error();
