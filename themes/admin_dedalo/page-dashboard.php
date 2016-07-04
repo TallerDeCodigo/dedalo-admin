@@ -17,12 +17,24 @@
 			</div>
 				
 	</div>
-
 	<div class="dashboard contenedor clearfix">
+		
 		<div class="column">
 			<p>Choose from categories to follow</p>
 			<p id="dashboard1">
-				<a class="choosed cat-choose" href="#">Lorem</a>
+<?php
+	global $current_user;
+    $current_user = wp_get_current_user();
+
+	$args = array('child_of'=>0,'hide_empty'=>0);
+	$categories = get_categories($args);
+
+	for($i=0; $i<count($categories); $i++){ 
+		print_r("<a class='choosed cat-choose unfollow_category follow_category'  data-id='$current_user->ID' href='#'>" . $categories[$i]->name . "</a>");
+ 		};
+?>
+
+				<!-- <a class="choosed cat-choose" href="#">Lorem</a>
 				<a class="choosed cat-choose" href="#">Ipsum</a>
 				<a class="choosed" href="#">Dolor</a>
 				<a class="choosed cat-choose" href="#">Sit</a>
@@ -49,7 +61,7 @@
 				<a class="choosed cat-choose" href="#">Integer</a>
 				<a class="choosed" href="#">Lorem</a>
 				<a class="choosed" href="#">Ipsum</a>
-				<a class="choosed" href="#">Dolor</a>
+				<a class="choosed" href="#">Dolor</a> -->
 			</p>
 		</div>
 		<div class="column">

@@ -1,5 +1,5 @@
 /*
-Theme Name: 3Dedalo
+Theme Name: 3Dedalo Admin
 Theme URI: http://tallerdecodigo.com
 Author: Pablo Covarrubias
 Author URI: http://tallerdecodigo.com
@@ -344,4 +344,21 @@ a.more { position:relative; display:inline-block; margin:15px 0px 45px; padding:
 a.more i { position:relative; top:6px; }
 
 
+/*PAGE CONTACTO*/
+#contacto{background:#303030;}
+.contacto h2{color:#1e88e5;font-size: 4rem;font-family: Arial;margin-top:0;}
+.contacto{width:30%;margin:0 auto;text-align: center;padding-top:150px;padding-bottom:300px;}
+.contacto input{font-size:1.5rem;width:100%;border-style:none; border-bottom:2px solid #606060;background:none;height:55px;outline:none;color:#fff;}
+.contacto input:last-child{border-bottom:none;background:#90caf9;width:100px;border-radius: 5px;color: #1e88e5;font-size: 2rem;margin-top:80px;margin-bottom:80px;cursor:pointer;}
+.contacto textarea{font-size:1.5rem;width:100%;border-style:none; border-bottom:2px solid #606060;background:none;height:55px;outline:none;color:#fff;}
+.contacto p a{color:#606060;text-decoration: none}
+.mensaje_ok{color:#fff;font-size:2rem;padding-top:150px; padding-bottom:300px;text-align:center;width:50%;margin:0 auto;}
+.bg{background:#303030;}
 
+/*PAGE ABOUT*/
+
+.page_content{width:70%;margin:0 auto;font-size:2rem;}
+.page_content span{color:#1e88e5;font-size: 2.4rem;}
+.page_content h2{font-size: 3rem; color:#1e88e5;letter-spacing: 3px}
+.page_txt{margin-top:60px;}
+.page_content p{line-height: 30px;}

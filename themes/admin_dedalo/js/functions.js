@@ -8,7 +8,6 @@ var vv;
 
 		console.log('hello from functions.js');
 
-
 		/**
 		 * Validación de emails
 		 */
@@ -121,6 +120,8 @@ btn_sign.onclick = function(){
 	var footer_height 	= $("footer").height();
 	var total_height	= $(window).height();
 	var altodeldiv	 	= total_height-(header_height+footer_height)+"px";
+
+	console.log(total_height);
 
 	$(".empty").css("height",altodeldiv);
 
@@ -307,6 +308,64 @@ btn_sign.onclick = function(){
 	     document.getElementById(dropZoneId).addEventListener("drop", function (e) {
 	         $("#" + dropZoneId).removeClass(mouseOverClass);
 	     }, true);
+
+
+
+
+/* Category follow events */
+
+	     $(document).on('click', '.follow_category', function(e){
+	     	console.log("folowCAt");
+	     	e.preventDefault();
+	     	var $context    = $(this);
+	     	var cat_id      = $(this).data('id');
+	     	$.post('page-dashboard.php');
+	     	var response    = apiRH.makeRequest(user+'/categories/follow/', {'cat_id': cat_id});
+	     	e.stopPropagation();
+	     	if(response.success){
+	     		e.stopPropagation();
+	     		$context.removeClass('follow_category').addClass('unfollow_category choosed');
+	     		return  alert('Category followed');
+	     	}
+	     	return alert('Oops! something happened');
+	     });
+
+	     $(document).on('click', '.unfollow_category', function(e){
+	     	e.preventDefault();
+	     	var $context    = $(this);
+	     	var cat_id      = $(this).data('id');
+	     	var response    = apiRH.makeRequest(user+'/categories/unfollow/', {'cat_id': cat_id});
+	     	e.stopPropagation();
+	     	if(response.success){
+	     		e.stopPropagation();
+	     		$context.removeClass('unfollow_category choosed').addClass('follow_category');
+	     		return app.toast('Category unfollowed');
+	     	}
+	     	return app.toast('Oops! something happened');
+	     });
+
+	     /*** User follow events ***/
+	     $('body').on('click', '.follow_user', function(){
+	     	var user_id = $(this).data('id');
+	     	var response = apiRH.makeRequest(user+'/follow', {'user_id': user_id});
+	     	if(response.success){
+	     		$(this).removeClass('follow_user').addClass('unfollow_user following');
+	     		app.toast("You are now following this maker");
+	     		return;
+	     	}
+	     });
+
+	     $('body').on('click', '.unfollow_user', function(){
+	     	var user_id = $(this).data('id');
+	     	var response = apiRH.makeRequest(user+'/unfollow', {'user_id': user_id});
+	     	if(response.success){
+	     		$(this).removeClass('unfollow_user following').addClass('follow_user');
+	     		return;
+	     	}
+	     });
+
+
+
 
 })(jQuery);
 
