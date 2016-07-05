@@ -33,7 +33,7 @@
 
 		$is_following = is_following_cat($user_login, $categories[$i]->term_id);
 		$following_class = ($is_following) ? "choosed unfollow_category" : "follow_category";
-		
+
 		echo("<a class='cat-choose ".$following_class." ' data-user='".$current_user->user_login."' data-id='" . $categories[$i]->term_id . "' href='#'>" . $categories[$i]->name . "</a>");
  		};
 ?>
@@ -51,9 +51,11 @@
 					$users = get_users($args);
 					foreach ($users as $userID):
 						$user = get_user_by('id', $userID);
-					$is_following = is_following_user($user, $categories[$i]->term_id);
+
+						$folowing_user =  is_following_user($current_user->ID, $user->ID);
+						$following_class = ($folowing_user) ? "following unfollow_user" : "follow_user";
 				?>
-					<a class="usuario">
+					<a class="usuario <?php echo $following_class; ?>" data-user="<?php echo $current_user->user_login; ?>" data-id="<?php echo $userID; ?>">
 						<?php 
 							if(get_the_author_meta('foto_user', $userID) != ''){
 							?>

@@ -311,13 +311,13 @@ btn_sign.onclick = function(){
 	     });
 
 	     /*** User follow events ***/
-	     $('body').on('click', '.follow_user', function(e){
+	     $(document).on('click', '.follow_user', function(e){
 	     	var user_id = $(this).data('id');
-	     	var response = apiRH.makeRequest(user+'/follow', {'user_id': user_id});
+	     	//var response = apiRH.makeRequest(user+'/follow', {'user_id': user_id});
 	     	var user_login = $(this).data('user');
 
-	     	var response = $.post('http://localhost/dedalo-admin/rest/v1/'+user_login+'/categories/follow/', {cat_id: cat_id})
-	     	.done(function( response ){
+	     	$.post('http://localhost/dedalo-admin/rest/v1/'+user_login+'/follow', {user_id: user_id})
+	     	 .done(function( response ){
 	     		console.log(response);
 	     		e.stopPropagation();
 		     	if(response.success){
@@ -337,11 +337,21 @@ btn_sign.onclick = function(){
 
 	     $('body').on('click', '.unfollow_user', function(){
 	     	var user_id = $(this).data('id');
-	     	var response = apiRH.makeRequest(user+'/unfollow', {'user_id': user_id});
-	     	if(response.success){
+	     	$.post('http://localhost/dedalo-admin/rest/v1/'+user_login+'/unfollow', {user_id: user_id})
+	     	.done(function( response ){
+	     		console.log(response);
+	     		e.stopPropagation();
+		     	if(response.success){
 	     		$(this).removeClass('unfollow_user following').addClass('follow_user');
 	     		return;
-	     	}
+	     	}else{
+		     		return alert('Oops! something happened');
+		     	}
+	     	})
+	     	 .fail(function(err){
+		     	console.log(err);
+		     });
+	     	
 	     });
 
 	 }); // END document ready
