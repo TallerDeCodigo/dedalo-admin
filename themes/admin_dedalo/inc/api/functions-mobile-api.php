@@ -402,16 +402,16 @@ function fetch_main_feed($filter = "all", $offset){
 		$userData = get_userdata( $user->ID );
 
 		$assigned_terms = wp_get_object_terms( $user->ID, 'user_category' );
-		$foto_user = get_user_meta( $user->ID, 'foto_user', TRUE );
-		$first_name = get_user_meta( $user->ID, 'first_name', TRUE );
-		$last_name = get_user_meta( $user->ID, 'last_name', TRUE );
-		$printer_brand = get_user_meta( $user->ID, 'printer_brand', TRUE );
-		$printer_model = get_user_meta( $user->ID, 'printer_model', TRUE );
-		$bio = get_user_meta( $user->ID, 'user_3dbio', TRUE );
+		$foto_user 		= get_user_meta( $user->ID, 'foto_user', TRUE );
+		$first_name 	= get_user_meta( $user->ID, 'first_name', TRUE );
+		$last_name 		= get_user_meta( $user->ID, 'last_name', TRUE );
+		$printer_brand 	= get_user_meta( $user->ID, 'printer_brand', TRUE );
+		$printer_model 	= get_user_meta( $user->ID, 'printer_model', TRUE );
+		$bio 			= get_user_meta( $user->ID, 'user_3dbio', TRUE );
+		$location 		= get_user_meta( $user->ID, 'latlong_maker', TRUE );
 
-		$brand_object = get_term_by("id", intval($printer_brand), "printer-model");
-
-		$model_object = get_term_by("id", intval($printer_model), "printer-model");
+		$brand_object 	= get_term_by("id", intval($printer_brand), "printer-model");
+		$model_object 	= get_term_by("id", intval($printer_model), "printer-model");
 
 		$catalogue = file_get_contents(THEMEPATH."inc/pModels.json");
 		$catalogue = json_decode($catalogue);
@@ -430,6 +430,7 @@ function fetch_main_feed($filter = "all", $offset){
 					"last_name" 		=> $last_name,
 					"email" 			=> $userData->data->user_email,
 					"bio" 				=> $bio,
+					"location_set" 		=> ($location != "") ? TRUE : FALSE,
 					"printer_brand" 	=> $printer_brand,
 					"printer_model" 	=> $printer_model,
 					"cat_printer_brand" => $search_brand,
