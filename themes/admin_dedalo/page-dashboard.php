@@ -69,7 +69,7 @@
 				<?php endforeach; ?>
 			</p>
 		</div>
-		<a class="more"><i class="material-icons">refresh</i> MORE</a>
+		<!-- <a class="more"><i class="material-icons">refresh</i> MORE</a> -->
 	</div>
 </div>
 <?php get_footer(); ?>

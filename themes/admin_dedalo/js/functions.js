@@ -322,7 +322,7 @@ btn_sign.onclick = function(){
 	     		e.stopPropagation();
 		     	if(response.success){
 	     			$(this).removeClass('follow_user').addClass('unfollow_user following');
-	     			alert("You are now following this maker");
+	     			console.log("You are now following this maker");
 	     			return;
 	     		}else{
 		     		return alert('Oops! something happened');
@@ -337,10 +337,10 @@ btn_sign.onclick = function(){
 
 	     $('body').on('click', '.unfollow_user', function(){
 	     	var user_id = $(this).data('id');
-	     	$.post('http://localhost/dedalo-admin/rest/v1/'+user_login+'/unfollow', {user_id: user_id})
+	     	var user_login = $(this).data('user');
+	     	$.post('http://localhost/dedalo-admin/rest/v1/' +user_login+ '/unfollow', {user_id: user_id})
 	     	.done(function( response ){
 	     		console.log(response);
-	     		e.stopPropagation();
 		     	if(response.success){
 	     		$(this).removeClass('unfollow_user following').addClass('follow_user');
 	     		return;
