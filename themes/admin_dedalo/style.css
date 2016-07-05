@@ -173,8 +173,8 @@ h3 {font-size: 30px; margin: 0 0 30px 0; font-weight: normal; color: #1e88e5; ma
 
 /*** page UPLOADS ***/
 
-#uploads{margin:30px 0px 10px 0px;}
-#upfiles{width:90%; margin:0 auto;background-color:#000; color:#fff;padding:20px 20px 10px 20px;}
+#uploads{width: 960px; margin: 0 auto;}
+#upfiles{width:90%; margin:0 auto; color:#fff;padding:20px 20px 10px 20px;}
 #upfiles label{display:inline;}
 fieldset{width:49%;}
 .fields{display:inline-block;/*height:100%;*/vertical-align: top;}

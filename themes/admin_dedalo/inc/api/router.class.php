@@ -498,6 +498,7 @@ class Router{
 			 * @see PUT endpoint "/rest/v1/user/:ulogin"
 			 * @return JSON formatted success response
 			 * @todo Make this endpoint a PATCH
+			 * Dedalo approved
 			 */
 			$slim->post('/rest/v1/user/:ulogin/password/', function($ulogin){
 				// $app = \Slim\Slim::getInstance();
@@ -507,6 +508,20 @@ class Router{
 				$var_array = $_POST;
 				$new_password = $var_array['user_pwd'];
 				echo update_user_password($ulogin, $var_array['user_pwd']);
+				exit;
+			});
+
+			/**
+			 * Update printer latlong
+			 * @param String $ulogin User whose param is being updated
+			 * @param String $latitude via POST
+			 * @param String $longitude via POST
+			 * @return JSON formatted success response
+			 * Dedalo approved
+			 */
+			$slim->post('/rest/v1/user/:ulogin/location/', function($ulogin){
+				extract($_POST);
+				echo update_user_latlong($ulogin, $latitude, $longitude);
 				exit;
 			});
 	

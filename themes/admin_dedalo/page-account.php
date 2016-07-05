@@ -1,4 +1,9 @@
-<?php get_header(); ?>
+<?php 
+	get_header(); 
+	global $current_user;
+    $current_user = wp_get_current_user();
+	$user_info = json_decode(file_get_contents(site_url("rest/v1/{$current_user->user_login}/me/")), TRUE);
+?>
 <div class="darks">
 	<div class="toper contenedor clearfix">
 			<div class="account">
@@ -8,11 +13,9 @@
 			</div>
 			<div class="account-menu">
 				<div>
-					<a href="<?php echo site_url() ?>/dashboard/"><div>DASHBOARD</div></a>
-					<a href="<?php echo site_url() ?>/account/"><div class="selected1">ACCOUNT</div></a>
-					<a href=""><div>PRODUCTS</div></a>
-					<a href=""><div>SALES</div></a>
-					<a href=""><div>FOLLOWING</div></a>
+					<a href="<?php echo site_url('dashboard'); ?>"><div>DASHBOARD</div></a>
+					<a href="<?php echo site_url('account'); ?>"><div class="selected1">ACCOUNT</div></a>
+					<a href="<?php echo site_url('upload-model'); ?>"><div>UPLOAD A MODEL</div></a>
 				</div>
 			</div>
 				
@@ -24,26 +27,26 @@
 					<td><i class="material-icons">account_circle</i> Personal Info</td>
 				</tr>
 				<tr>
-					<td><input type="text" onfocus="if(this.value == 'Name') { this.value = ''; }" value="Name"></td>
+					<td><input type="text" placeholder="First Name" value="<?php echo $user_info['first_name']; ?>"></td>
 				</tr>
 				<tr>
-					<td><input type="text" onfocus="if(this.value == 'Lastname') { this.value = ''; }" value="Lastname"></td>
+					<td><input type="text" placeholder="Last Name" value="<?php echo $user_info['last_name']; ?>"></td>
 				</tr>
 				<tr>
-					<td><input type="text" onfocus="if(this.value == 'E-mail') { this.value = ''; }" value="E-mail"></td>
+					<td><input type="text" placeholder="E-mail" value="<?php echo $user_info['email']; ?>"></td>
 				</tr>
 				<tr>
-					<td><input type="text" onfocus="if(this.value == 'Password') { this.value = ''; }" value="Password"></td>
+					<td><input type="password" placeholder="Password" value=""></td>
 				</tr>
 				<tr>
-					<td><input type="text" onfocus="if(this.value == 'Confirm password') { this.value = ''; }" value="Confirm password"></td>
+					<td><input type="password"  placeholder="Confirm password" value=""></td>
 				</tr>
 				<tr>
-					<td><input type="text" onfocus="if(this.value == 'Bio') { this.value = ''; }" value="Bio"></td>
+					<td><input type="text"  placeholder="Bio" value="<?php echo $user_info['bio']; ?>"></td>
 				</tr>
 			</table>
 		</div>
-		<div class="column">
+		<!-- <div class="column">
 			<table id="shipping">
 				<tr>
 					<td><i class="material-icons">local_shipping</i> Shipping</td>
@@ -198,8 +201,8 @@
 					</td>
 				</tr>
 			</table>
-		</div>
-		<a class="submit" href="#">SAVE</a>
+		</div> -->
+		<!-- <a class="submit" href="#">SAVE</a> -->
 	</div>
 </div>
 <?php get_footer(); ?>

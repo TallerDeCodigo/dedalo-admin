@@ -1637,6 +1637,22 @@ function update_user_password($user_login, $new_password){
 	return json_encode( array("success" => TRUE) );
 }
 
+/**
+ * Update printer latlong parameter
+ * @param String $user_login
+ * @param String $latitude
+ * @param String $longitude
+ * @return JSON encoded Bool $success
+ */
+function update_user_latlong($user_login, $latitude, $longitude){
+	$user = get_user_by('slug', $user_login);
+	if(!$user)
+		return json_encode( array("success" => FALSE, "message" => "404: User not found") );
+		
+	$done = update_user_meta( $user->ID, 'latlong_maker', "{$latitude},{$longitude}" );
+	return ($done) ? json_encode( array("success" => TRUE) ) : json_encode( array("success" => FALSE, "message" => "Meta not saved") );
+}
+
 /*  
  * Update the categories a user is indexed in
  *

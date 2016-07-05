@@ -56,80 +56,98 @@
 
 	}
 
-?>
-<?php get_header();?>
-	<section id="uploads">
-		<form id="upfiles" method="POST" action="#" enctype="multipart/form-data" name="upfiles">
-			<fieldset class="fields l">
-				<input type="text" class="textField" placeholder="Title" name="productTitle" required><br>
-				<?php
-					$args = array(
+
+	get_header(); ?>
+
+	<div class="darks">
+		<div class="toper contenedor clearfix">
+				<div class="account">
+					<?php $userID = get_current_user_id(); ?>
+					<a class="face-id" href="#"><img src="<?php echo get_user_meta($userID, 'foto_user', true); ?>"></a>
+					<h2><?php echo get_user_meta($userID, 'first_name', true);?></h2>
+				</div>
+				<div class="account-menu">
+					<div>
+						<a href="<?php echo site_url('dashboard'); ?>"><div>DASHBOARD</div></a>
+						<a href="<?php echo site_url('account'); ?>"><div>ACCOUNT</div></a>
+						<a href="<?php echo site_url('upload-model'); ?>"><div class="selected1">UPLOAD A MODEL</div></a>
+					</div>
+				</div>
+					
+		</div>
+		<section id="uploads">
+			<form id="upfiles" method="POST" action="#" enctype="multipart/form-data" name="upfiles">
+				<fieldset class="fields l">
+					<input type="text" class="textField" placeholder="Title" name="productTitle" required><br>
+					<?php
+						$args = array(
+										'show_count'=>'0',
+										'parent'=>'0',
+										'hierarchical'=>'1',
+										'hide_empty'=>'0',
+										'exclude'=>'1,9',
+										'echo'=>'0'
+										// 'show_option_none'=>'Select category'
+									 );
+						echo "<div id='drop1'>";
+							echo wp_dropdown_categories($args);
+						echo "</div>";
+					//print_r( wp_list_categories($args));
+
+						//obtiene las categorias parent
+					$catList = get_categories($args);
+
+					for($i=0; $i<count($catList);$i++){
+						//obtiene los ids de cada category parent
+						
+						$args2 = array(
 									'show_count'=>'0',
-									'parent'=>'0',
+									'parent'=>$catList[$i]->cat_ID,
 									'hierarchical'=>'1',
 									'hide_empty'=>'0',
-									'exclude'=>'1,9',
-									'echo'=>'0'
-									// 'show_option_none'=>'Select category'
-								 );
-					echo "<div id='drop1'>";
-						echo wp_dropdown_categories($args);
-					echo "</div>";
-				//print_r( wp_list_categories($args));
-
-					//obtiene las categorias parent
-				$catList = get_categories($args);
-
-				for($i=0; $i<count($catList);$i++){
-					//obtiene los ids de cada category parent
-					
-					$args2 = array(
-								'show_count'=>'0',
-								'parent'=>$catList[$i]->cat_ID,
-								'hierarchical'=>'1',
-								'hide_empty'=>'0',
-								'exclude'=>'9'
-								);
-					$catList[$i]->cat_ID;
-					echo "<div id=".$catList[$i]->cat_ID ." class='hidden show drop" . $catList[$i]->cat_ID . "'>";
-						wp_dropdown_categories( $args2 );
-					echo "</div>";
-					}
-				?>
-				<textarea placeholder="Write a description" class="textField" rows="10" name="description"></textarea>
-			</fieldset>
+									'exclude'=>'9'
+									);
+						$catList[$i]->cat_ID;
+						echo "<div id=".$catList[$i]->cat_ID ." class='hidden show drop" . $catList[$i]->cat_ID . "'>";
+							wp_dropdown_categories( $args2 );
+						echo "</div>";
+						}
+					?>
+					<textarea placeholder="Write a description" class="textField" rows="10" name="description"></textarea>
+				</fieldset>
 
 
-			<fieldset class="fields r">
+				<fieldset class="fields r">
 
-				<input type="text" class="textField" placeholder="Model file URL" name="modelFileUrl">
-				<p>Design tools</p>
-				<label for="tinkercad">Tinkercad</label>
-				<input type="radio" class="checks" id="tinkercad" <?php if(isset($_POST['tools']) AND $_POST['tools']== "tinkercad") : echo "checked = 'checked'"; endif; ?> name="tools" value="tinkercad"<?php echo $toolMarked; ?>>
+					<input type="text" class="textField" placeholder="Model file URL" name="modelFileUrl">
+					<p>Design tools</p>
+					<label for="tinkercad">Tinkercad</label>
+					<input type="radio" class="checks" id="tinkercad" <?php if(isset($_POST['tools']) AND $_POST['tools']== "tinkercad") : echo "checked = 'checked'"; endif; ?> name="tools" value="tinkercad"<?php echo $toolMarked; ?>>
 
-				<label for="blender">Blender</label>
-				<input type="radio" class="checks" id="blender" <?php if(isset($_POST['tools']) AND $_POST['tools']== "blender") : echo "checked = 'checked'"; endif; ?> name="tools" value="Blender"<?php echo $toolMarked; ?>>
+					<label for="blender">Blender</label>
+					<input type="radio" class="checks" id="blender" <?php if(isset($_POST['tools']) AND $_POST['tools']== "blender") : echo "checked = 'checked'"; endif; ?> name="tools" value="Blender"<?php echo $toolMarked; ?>>
 
-				<label for="other">Other</label>
-				<input type="radio" class="checks" id="other"  <?php if(isset($_POST['tools']) AND $_POST['tools']== "other") : echo "checked = 'checked'"; endif; ?> name="tools" value="other"<?php echo $toolMarked; ?>><br><br>
+					<label for="other">Other</label>
+					<input type="radio" class="checks" id="other"  <?php if(isset($_POST['tools']) AND $_POST['tools']== "other") : echo "checked = 'checked'"; endif; ?> name="tools" value="other"<?php echo $toolMarked; ?>><br><br>
 
-				<p>License</p>
-				<label for="cc">Creative Commons</label>
-				<input type="checkbox" id="cc" class="checks" name="cc" value="Creative Commons" <?php echo $license_checked; ?>><br>
+					<p>License</p>
+					<label for="cc">Creative Commons</label>
+					<input type="checkbox" id="cc" class="checks" name="cc" value="Creative Commons" <?php echo $license_checked; ?>><br>
 
-				<input type="text" class="textField" placeholder="Costo" name="costo" onkeypress='return event.charCode >= 36 && event.charCode <= 57'>
-					<div id="drop-zone">
-					    Drop files here
-					    <div id="clickHere">
-					        or click here
-					        <input type="file" name="file" id="file" multiple="false" />
-				        
-					    </div>
-					</div>
-				<?php wp_nonce_field( 'file', 'file_nonce' ); ?>
-				<input type="submit" id="go" name="submit" value="Send">
-			</fieldset>
-		</form>
-	</section>
-<?php get_sidebar(); ?>
+					<input type="text" class="textField" placeholder="Costo" name="costo" onkeypress='return event.charCode >= 36 && event.charCode <= 57'>
+						<div id="drop-zone">
+						    Drop files here
+						    <div id="clickHere">
+						        or click here
+						        <input type="file" name="file" id="file" multiple="false" />
+					        
+						    </div>
+						</div>
+					<?php wp_nonce_field( 'file', 'file_nonce' ); ?>
+					<input type="submit" id="go" name="submit" value="Send">
+				</fieldset>
+			</form>
+		</section>
+	</div>
+
 <?php get_footer(); ?>

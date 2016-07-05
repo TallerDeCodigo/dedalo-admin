@@ -8,11 +8,9 @@
 			</div>
 			<div class="account-menu">
 				<div>
-					<a href="<?php echo site_url() ?>/dashboard/"><div class="selected1">DASHBOARD</div></a>
-					<a href="<?php echo site_url() ?>/account/"><div>ACCOUNT</div></a>
-					<a href=""><div>PRODUCTS</div></a>
-					<a href=""><div>SALES</div></a>
-					<a href=""><div>FOLLOWING</div></a>
+					<a href="<?php echo site_url('dashboard'); ?>"><div class="selected1">DASHBOARD</div></a>
+					<a href="<?php echo site_url('account'); ?>"><div>ACCOUNT</div></a>
+					<a href="<?php echo site_url('upload-model'); ?>"><div>UPLOAD A MODEL</div></a>
 				</div>
 			</div>
 				
