@@ -505,8 +505,8 @@ class Router{
 				// $var_array = array();
 				// parse_str($app->request->getBody(), $var_array);
 				$var_array = $_POST;
-				$new_password = $var_array['password_nuevo'];
-				return update_user_password($ulogin, $var_array['password_nuevo']);
+				$new_password = $var_array['user_pwd'];
+				echo update_user_password($ulogin, $var_array['user_pwd']);
 				exit;
 			});
 	

@@ -1625,15 +1625,16 @@ function retrieve_user_followees($queried_login, $logged_name = NULL, $type = 's
  * Update user password
  * @param String $user_login The login name of the user
  * @param String $new_password The new password 
- * @return Bool $success
+ * @return JSON encoded Bool $success
  * TO DO: Encode (client-side) and decode (server-side) password for security
  */
 function update_user_password($user_login, $new_password){
 	$user = get_user_by('slug', $user_login);
-	if(wp_set_password($new_password, $user->ID));
-		wp_send_json_success();
-	wp_send_json_error();
-	exit;
+	if(!$user)
+		return json_encode( array("success" => FALSE) );
+		
+	wp_set_password($new_password, $user->ID);
+	return json_encode( array("success" => TRUE) );
 }
 
 /*  
