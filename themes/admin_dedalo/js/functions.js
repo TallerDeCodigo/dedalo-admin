@@ -121,8 +121,6 @@ btn_sign.onclick = function(){
 	var total_height	= $(window).height();
 	var altodeldiv	 	= total_height-(header_height+footer_height)+"px";
 
-	console.log(total_height);
-
 	$(".empty").css("height",altodeldiv);
 
 
@@ -166,93 +164,187 @@ btn_sign.onclick = function(){
 	        $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
 	    })
 	}
+	$(document).ready(function(){
 
-	$(document).on('click', '.mas', function() {
-	    var cantidad = parseInt($(this).parent().find( ".cantidad" ).html(), 10);
-	    var multip = $(this).parent().find( ".precio" ).html().replace("$ ", "");
-	    multip = parseInt(multip.replace(/,/g, ''), 10);
-	    multip = (multip/cantidad)*(cantidad+1);
-	    ++cantidad;
-	    $(this).parent().find( ".cantidad" ).html( cantidad );
-	    $(this).parent().find( ".precio" ).html( "$ " + multip );
-	    $(this).parent().find( ".precio" ).digits();
-	});
+		$(document).on('click', '.mas', function() {
+		    var cantidad = parseInt($(this).parent().find( ".cantidad" ).html(), 10);
+		    var multip = $(this).parent().find( ".precio" ).html().replace("$ ", "");
+		    multip = parseInt(multip.replace(/,/g, ''), 10);
+		    multip = (multip/cantidad)*(cantidad+1);
+		    ++cantidad;
+		    $(this).parent().find( ".cantidad" ).html( cantidad );
+		    $(this).parent().find( ".precio" ).html( "$ " + multip );
+		    $(this).parent().find( ".precio" ).digits();
+		});
 
-	$(document).on('click', '.menos', function() {
-	    var cantidad = parseInt($(this).parent().find( ".cantidad" ).html(), 10);
-	    var multip = $(this).parent().find( ".precio" ).html().replace("$ ", "");
-	    multip = parseInt(multip.replace(/,/g, ''), 10);
-	    multip = (multip/cantidad)*(cantidad-1);
-	    --cantidad;
-	    if (cantidad != 0) {
-	        $(this).parent().find( ".cantidad" ).html( cantidad );
-	        $(this).parent().find( ".precio" ).html( "$ " + multip );
-	        $(this).parent().find( ".precio" ).digits();
-	    }
-	});
+		$(document).on('click', '.menos', function() {
+		    var cantidad = parseInt($(this).parent().find( ".cantidad" ).html(), 10);
+		    var multip = $(this).parent().find( ".precio" ).html().replace("$ ", "");
+		    multip = parseInt(multip.replace(/,/g, ''), 10);
+		    multip = (multip/cantidad)*(cantidad-1);
+		    --cantidad;
+		    if (cantidad != 0) {
+		        $(this).parent().find( ".cantidad" ).html( cantidad );
+		        $(this).parent().find( ".precio" ).html( "$ " + multip );
+		        $(this).parent().find( ".precio" ).digits();
+		    }
+		});
 
-	$(document).on('click', '.close', function() {
-	    $(this).parent().remove();
-	    var totitems = $('.actions').length;
-	    totitems = totitems + " ITEMS";
-	    $("#items").html( totitems ) ;
-	});
+		$(document).on('click', '.close', function() {
+		    $(this).parent().remove();
+		    var totitems = $('.actions').length;
+		    totitems = totitems + " ITEMS";
+		    $("#items").html( totitems ) ;
+		});
 
-	$(document).on('click', '.addad', function() {
-	    $(this).parent().hide();
-	    $('.newad').toggle();
-	});
+		$(document).on('click', '.addad', function() {
+		    $(this).parent().hide();
+		    $('.newad').toggle();
+		});
 
-	$(document).on('click', '.addca', function() {
-	    $(this).parent().hide();
-	    $('.newca').toggle();
-	});
+		$(document).on('click', '.addca', function() {
+		    $(this).parent().hide();
+		    $('.newca').toggle();
+		});
 
-	$(document).on('click', '.edit1', function() {
-	    $(this).toggleClass( 'colorear' );
-	    $('#payment .separator[data-id=' + $(this).data('id') + ']').toggle();
-	});
+		$(document).on('click', '.edit1', function() {
+		    $(this).toggleClass( 'colorear' );
+		    $('#payment .separator[data-id=' + $(this).data('id') + ']').toggle();
+		});
 
-	$(document).on('click', '.edit2', function() {
-	    $(this).toggleClass( 'colorear' );
-	    $('#shipping .separator[data-id=' + $(this).data('id') + ']').toggle();
-	});
+		$(document).on('click', '.edit2', function() {
+		    $(this).toggleClass( 'colorear' );
+		    $('#shipping .separator[data-id=' + $(this).data('id') + ']').toggle();
+		});
 
-	$(document).on('click', '.shipp', function() {
-	    $(".shipp i").html( "panorama_fish_eye" );
-	    $(this).find( "i" ).html( "adjust" );
-	});
+		$(document).on('click', '.shipp', function() {
+		    $(".shipp i").html( "panorama_fish_eye" );
+		    $(this).find( "i" ).html( "adjust" );
+		});
 
-	$(document).on('click', '.paym', function() {
-	    $(".paym i").html( "panorama_fish_eye" );
-	    $(this).find( "i" ).html( "adjust" );
-	});
+		$(document).on('click', '.paym', function() {
+		    $(".paym i").html( "panorama_fish_eye" );
+		    $(this).find( "i" ).html( "adjust" );
+		});
 
-	$(document).on('click', '.more', function() {
-	    var extra = ' <a href="#">Lorem</a> <a href="#">Ipsum</a> <a href="#">Dolor</a> <a href="#">Sit</a> <a href="#">Amet</a> <a href="#">Consectetur</a> <a href="#">Adipiscing</a>';
-	    $("#dashboard1").append(extra);
-	    $("#dashboard1 a").addClass( "choosed" );
-	    var extra1 = ' <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a>';
-	    $("#dashboard2").append(extra1);
-	    $("#dashboard2 a").addClass( "usuario" );
-	});
+		$(document).on('click', '.more', function() {
+		    var extra = ' <a href="#">Lorem</a> <a href="#">Ipsum</a> <a href="#">Dolor</a> <a href="#">Sit</a> <a href="#">Amet</a> <a href="#">Consectetur</a> <a href="#">Adipiscing</a>';
+		    $("#dashboard1").append(extra);
+		    $("#dashboard1 a").addClass( "choosed" );
+		    var extra1 = ' <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a> <a><img src="images/users/'+Math.floor((Math.random() * 9) + 1)+'.png"></a>';
+		    $("#dashboard2").append(extra1);
+		    $("#dashboard2 a").addClass( "usuario" );
+		});
 
-	$(document).on('click', '.choosed', function() {
-	    if ($(this).hasClass( "cat-choose" )) {
-	        $(this).removeClass( "cat-choose" );
-	    } else {
-	        $(this).addClass( "cat-choose" );
-	    }
-	});
+		$(document).on('click', '.choosed', function() {
+		    if ($(this).hasClass( "cat-choose" )) {
+		        $(this).removeClass( "cat-choose" );
+		    } else {
+		        $(this).addClass( "cat-choose" );
+		    }
+		});
 
-	$(document).on('click', '.usuario', function() {
-	    if ($(this).hasClass( "following" )) {
-	        $(this).removeClass( "following" );
-	    } else {
-	        $(this).addClass( "following" );
-	    }
-	});
+		$(document).on('click', '.usuario', function() {
+		    if ($(this).hasClass( "following" )) {
+		        $(this).removeClass( "following" );
+		    } else {
+		        $(this).addClass( "following" );
+		    }
+		});
 
+
+
+
+
+		/* Category follow events */
+
+	    $(document).on('click', '.follow_category', function(e){
+
+	     	e.preventDefault();
+	     	var $context    = $(this);
+	     	var cat_id      = $(this).data('id');
+	     	var user_login  = $(this).data('user');
+
+	     	console.log(cat_id);
+
+	     	var response = $.post('http://localhost/dedalo-admin/rest/v1/'+user_login+'/categories/follow/', {cat_id: cat_id})
+	     	.done(function(response){
+	     		console.log(response);
+		     	e.stopPropagation();
+		     	if(response.success){
+		     		e.stopPropagation();
+		     		$context.removeClass('follow_category').addClass('unfollow_category choosed');
+		     		return  console.log('Category followed');
+		     	}else{	
+		     	return alert('Oops! something happened');
+		     	}
+	     	})
+	     	.fail(function(err){
+	     		console.log(err)
+	     	});
+
+	     	// var response    = apiRH.makeRequest('http://localhost/dedalo-admin/dashboard/', {'cat_id': cat_id});
+
+	     });
+
+	     $(document).on('click', '.unfollow_category', function(e){
+	     	e.preventDefault();
+	     	var $context    = $(this);
+	     	var cat_id      = $(this).data('id');
+	     	var user_login	= $(this).data('user');
+	     	var response = $.post('http://localhost/dedalo-admin/rest/v1/'+user_login+'/categories/unfollow/', {cat_id: cat_id})
+	     	.done(function( response ){
+	     		console.log(response);
+	     		e.stopPropagation();
+		     	if(response.success){
+		     		e.stopPropagation();
+		     		$context.removeClass('unfollow_category choosed').addClass('follow_category');
+		     		return console.log('Category unfollowed');
+		     	}else{
+		     		return alert('Oops! something happened');
+		     	}
+	     	})
+	     	 .fail(function(err){
+		     	console.log(err);
+		     });
+
+	     });
+
+	     /*** User follow events ***/
+	     $('body').on('click', '.follow_user', function(e){
+	     	var user_id = $(this).data('id');
+	     	var response = apiRH.makeRequest(user+'/follow', {'user_id': user_id});
+	     	var user_login = $(this).data('user');
+
+	     	var response = $.post('http://localhost/dedalo-admin/rest/v1/'+user_login+'/categories/follow/', {cat_id: cat_id})
+	     	.done(function( response ){
+	     		console.log(response);
+	     		e.stopPropagation();
+		     	if(response.success){
+	     			$(this).removeClass('follow_user').addClass('unfollow_user following');
+	     			alert("You are now following this maker");
+	     			return;
+	     		}else{
+		     		return alert('Oops! something happened');
+		     	}
+	     	})
+	     	 .fail(function(err){
+		     	console.log(err);
+		     });
+
+	     	
+	     });
+
+	     $('body').on('click', '.unfollow_user', function(){
+	     	var user_id = $(this).data('id');
+	     	var response = apiRH.makeRequest(user+'/unfollow', {'user_id': user_id});
+	     	if(response.success){
+	     		$(this).removeClass('unfollow_user following').addClass('follow_user');
+	     		return;
+	     	}
+	     });
+
+	 }); // END document ready
 
 
 	/*					*
@@ -308,61 +400,6 @@ btn_sign.onclick = function(){
 	     document.getElementById(dropZoneId).addEventListener("drop", function (e) {
 	         $("#" + dropZoneId).removeClass(mouseOverClass);
 	     }, true);
-
-
-
-
-/* Category follow events */
-
-	     $(document).on('click', '.follow_category', function(e){
-	     	console.log("folowCAt");
-	     	e.preventDefault();
-	     	var $context    = $(this);
-	     	var cat_id      = $(this).data('id');
-	     	$.post('page-dashboard.php');
-	     	var response    = apiRH.makeRequest(user+'/categories/follow/', {'cat_id': cat_id});
-	     	e.stopPropagation();
-	     	if(response.success){
-	     		e.stopPropagation();
-	     		$context.removeClass('follow_category').addClass('unfollow_category choosed');
-	     		return  alert('Category followed');
-	     	}
-	     	return alert('Oops! something happened');
-	     });
-
-	     $(document).on('click', '.unfollow_category', function(e){
-	     	e.preventDefault();
-	     	var $context    = $(this);
-	     	var cat_id      = $(this).data('id');
-	     	var response    = apiRH.makeRequest(user+'/categories/unfollow/', {'cat_id': cat_id});
-	     	e.stopPropagation();
-	     	if(response.success){
-	     		e.stopPropagation();
-	     		$context.removeClass('unfollow_category choosed').addClass('follow_category');
-	     		return app.toast('Category unfollowed');
-	     	}
-	     	return app.toast('Oops! something happened');
-	     });
-
-	     /*** User follow events ***/
-	     $('body').on('click', '.follow_user', function(){
-	     	var user_id = $(this).data('id');
-	     	var response = apiRH.makeRequest(user+'/follow', {'user_id': user_id});
-	     	if(response.success){
-	     		$(this).removeClass('follow_user').addClass('unfollow_user following');
-	     		app.toast("You are now following this maker");
-	     		return;
-	     	}
-	     });
-
-	     $('body').on('click', '.unfollow_user', function(){
-	     	var user_id = $(this).data('id');
-	     	var response = apiRH.makeRequest(user+'/unfollow', {'user_id': user_id});
-	     	if(response.success){
-	     		$(this).removeClass('unfollow_user following').addClass('follow_user');
-	     		return;
-	     	}
-	     });
 
 
 
