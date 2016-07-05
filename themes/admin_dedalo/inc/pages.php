@@ -18,6 +18,54 @@
 			);
 			wp_insert_post( $page, true );
 		}
+		
+		// Privacy Policies
+		if( ! get_page_by_path('privacy-policies') ){
+			$page = array(
+				'post_author' => 1,
+				'post_status' => 'publish',
+				'post_title'  => 'Privacy policies',
+				'post_name'   => 'privacy-policies',
+				'post_type'   => 'page'
+			);
+			wp_insert_post( $page, true );
+		}
+
+		// Terms & Conditions
+		if( ! get_page_by_path('terms-and-conditions') ){
+			$page = array(
+				'post_author' => 1,
+				'post_status' => 'publish',
+				'post_title'  => 'Terms and Conditions',
+				'post_name'   => 'terms-and-conditions',
+				'post_type'   => 'page'
+			);
+			wp_insert_post( $page, true );
+		}
+
+		// Sign up
+		if( ! get_page_by_path('sign-up') ){
+			$page = array(
+				'post_author' => 1,
+				'post_status' => 'publish',
+				'post_title'  => 'Sign up',
+				'post_name'   => 'sign-up',
+				'post_type'   => 'page'
+			);
+			wp_insert_post( $page, true );
+		}
+
+		// Log in
+		if( ! get_page_by_path('log-in') ){
+			$page = array(
+				'post_author' => 1,
+				'post_status' => 'publish',
+				'post_title'  => 'Log in',
+				'post_name'   => 'log-in',
+				'post_type'   => 'page'
+			);
+			wp_insert_post( $page, true );
+		}
 
 
 	});
